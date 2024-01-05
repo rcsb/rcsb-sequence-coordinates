@@ -14,7 +14,6 @@ import java.util.List;
 
 @Controller
 public class AlignmentsController implements SequenceAlignmentsQuery<Mono<SequenceAlignments>> {
-
     @QueryMapping
     public Mono<SequenceAlignments> alignments(@Argument String queryId) {
         SequenceAlignments alignment = new SequenceAlignments();

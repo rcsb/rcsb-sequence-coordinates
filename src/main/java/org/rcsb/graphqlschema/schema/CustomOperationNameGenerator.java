@@ -60,12 +60,10 @@ public class CustomOperationNameGenerator implements OperationInfoGenerator {
             name = params.getElement().getAnnotation(JsonProperty.class).value();
         } else {
             for (AnnotatedElement e : params.getElement().getElements()) {
-                if (e instanceof Field) {
-                    Field field = (Field) e;
+                if (e instanceof Field field) {
                     name = LOWER_CAMEL.to(LOWER_UNDERSCORE, field.getName());
                     break;
-                } else if (e instanceof Method) {
-                    Method method = (Method) e;
+                } else if (e instanceof Method method) {
                     name = LOWER_CAMEL.to(LOWER_UNDERSCORE, getFieldNameFromGetter(method));
                     break;
                 } else {

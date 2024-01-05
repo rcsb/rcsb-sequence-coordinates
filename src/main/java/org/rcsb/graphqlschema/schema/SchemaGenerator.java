@@ -25,25 +25,24 @@ public class SchemaGenerator {
                 .withOperationInfoGenerator(new CustomOperationNameGenerator());
 
         ServiceQueries serviceQueries = new ServiceQueries();
-        GraphQLSchema schema = new GraphQLSchemaGenerator()
+
+        return new GraphQLSchemaGenerator()
                 .withOperationsFromSingleton(serviceQueries)
                 .withNestedResolverBuilders(customBean)
                 // the ObjectMapper instance used by the web layer isn't shared with SPQR. You can reuse
                 // the settings by providing the prototype instance to JacksonValueMapperFactory.
                 //.withValueMapperFactory(new JacksonValueMapperFactory())
                 .generate();
-
-        return schema;
     }
 
     private static void saveSchema(GraphQLSchema schema, String fileName) {
         File file = new File(fileName);
-        file.getParentFile().mkdirs();
-        try (PrintWriter out = new PrintWriter(file)) {
-            out.println(new SchemaPrinter().print(schema));
-        }catch (FileNotFoundException e){
-            throw new UncheckedIOException(e);
-        }
+        if(file.getParentFile().mkdirs())
+            try (PrintWriter out = new PrintWriter(file)) {
+                out.println(new SchemaPrinter().print(schema));
+            }catch (FileNotFoundException e){
+                throw new UncheckedIOException(e);
+            }
     }
 
     public static void main(String[] args) {
