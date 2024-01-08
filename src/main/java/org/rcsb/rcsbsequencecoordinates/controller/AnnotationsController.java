@@ -1,5 +1,6 @@
 package org.rcsb.rcsbsequencecoordinates.controller;
 
+import org.rcsb.graphqlschema.query.AnnotationsConstants;
 import org.rcsb.graphqlschema.query.AnnotationsQuery;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
@@ -14,21 +15,21 @@ import java.util.List;
 @Controller
 public class AnnotationsController implements AnnotationsQuery<Flux<SequenceAnnotations>> {
 
-    @QueryMapping
+    @QueryMapping(name = AnnotationsConstants.ANNOTATIONS)
     public Flux<SequenceAnnotations> annotations(
-            @Argument String queryId,
-            @Argument SequenceReference.ReferenceName reference,
-            @Argument List<SequenceAnnotations.Source> sources
+            @Argument(name = AnnotationsConstants.QUERY_ID) String queryId,
+            @Argument(name = AnnotationsConstants.REFERENCE) SequenceReference.ReferenceName reference,
+            @Argument(name = AnnotationsConstants.SOURCES) List<SequenceAnnotations.Source> sources
     ) {
         SequenceAnnotations annotations = new SequenceAnnotations();
         return Flux.fromArray(new SequenceAnnotations[] {annotations});
     }
 
-    @QueryMapping
+    @QueryMapping(name = AnnotationsConstants.GROUP_ANNOTATIONS)
     public Flux<SequenceAnnotations> group_annotations(
-            @Argument String groupId,
-            @Argument GroupReference.ReferenceName group,
-            @Argument List<SequenceAnnotations.Source> sources
+            @Argument(name = AnnotationsConstants.GROUP_ID) String groupId,
+            @Argument(name = AnnotationsConstants.GROUP) GroupReference.ReferenceName group,
+            @Argument(name = AnnotationsConstants.SOURCES) List<SequenceAnnotations.Source> sources
     ) {
         SequenceAnnotations annotations = new SequenceAnnotations();
         return Flux.fromArray(new SequenceAnnotations[] {annotations});

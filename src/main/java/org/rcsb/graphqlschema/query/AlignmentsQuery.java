@@ -10,7 +10,7 @@ public interface AlignmentsQuery<X> {
             ReferenceName to
     );
 
-    X group_alignment(
+    X group_alignments(
             String groupId,
             GroupReference.ReferenceName group
     );

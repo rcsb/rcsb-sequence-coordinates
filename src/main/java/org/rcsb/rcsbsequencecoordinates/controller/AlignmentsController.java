@@ -1,6 +1,7 @@
 package org.rcsb.rcsbsequencecoordinates.controller;
 
 import graphql.schema.DataFetchingEnvironment;
+import org.rcsb.graphqlschema.query.AnnotationsConstants;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.rcsbsequencecoordinates.auto.AlignmentLogo;
@@ -18,21 +19,21 @@ import java.util.List;
 @Controller
 public class AlignmentsController implements AlignmentsQuery<Mono<SequenceAlignments>> {
 
-    @QueryMapping
+    @QueryMapping(name = AnnotationsConstants.ALIGNMENTS)
     public Mono<SequenceAlignments> alignments(
-            @Argument String queryId,
-            @Argument SequenceReference.ReferenceName from,
-            @Argument SequenceReference.ReferenceName to
+            @Argument(name = AnnotationsConstants.QUERY_ID) String queryId,
+            @Argument(name = AnnotationsConstants.FROM) SequenceReference.ReferenceName from,
+            @Argument(name = AnnotationsConstants.TO) SequenceReference.ReferenceName to
     ) {
         SequenceAlignments alignment = new SequenceAlignments();
         alignment.setAlignmentLength(1000);
         return Mono.justOrEmpty(alignment);
     }
 
-    @QueryMapping
-    public Mono<SequenceAlignments> group_alignment(
-            @Argument String queryId,
-            @Argument GroupReference.ReferenceName group
+    @QueryMapping(name = AnnotationsConstants.GROUP_ALIGNMENTS)
+    public Mono<SequenceAlignments> group_alignments(
+            @Argument(name = AnnotationsConstants.GROUP_ID) String groupId,
+            @Argument(name = AnnotationsConstants.GROUP) GroupReference.ReferenceName group
     ) {
         SequenceAlignments alignment = new SequenceAlignments();
         alignment.setAlignmentLength(1000);
@@ -41,8 +42,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<SequenceAlignm
 
     @SchemaMapping(field = GraphqlSchemaMapping.QUERY_SEQUENCE)
     public Mono<String> getQuerySequence(DataFetchingEnvironment dataFetchingEnvironment, SequenceAlignments sequenceAlignments){
-        // TODO Clever way to encode queryId to keep consistency
-        String queryId = dataFetchingEnvironment.getExecutionStepInfo().getParent().getArgument("queryId");
+        String queryId = dataFetchingEnvironment.getExecutionStepInfo().getParent().getArgument(AnnotationsConstants.QUERY_ID);
         return Mono.justOrEmpty("ABABAB");
     }
 
