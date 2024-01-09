@@ -17,11 +17,11 @@ public class SchemaGenerator {
     public static GraphQLSchema buildSchema() {
 
         // custom resolver builder to inject our own behaviour to beans within the specified packages
-        AbstractResolverBuilder customBean = new BeanResolverBuilder("org.rcsb.rcsbsequencecoordinates.auto")
+        AbstractResolverBuilder customBean = new BeanResolverBuilder("org.rcsb.mojave.auto")
                 //This solves the error of `PageInfo` being redefined. However, pagination related fields are dispatched as camelCase
                 //Error: You have redefined the type 'PageInfo' from being a 'GraphQLObjectType' to a 'GraphQLObjectType'
                 //For some reason `CustomOperationNameGenerator` redefines PageInfo type
-                .withFilters(member -> member.getDeclaringClass().getName().contains("org.rcsb.rcsbsequencecoordinates.auto"))
+                .withFilters(member -> member.getDeclaringClass().getName().contains("org.rcsb.mojave.auto"))
                 .withOperationInfoGenerator(new CustomOperationNameGenerator());
 
         ServiceQueries serviceQueries = new ServiceQueries();

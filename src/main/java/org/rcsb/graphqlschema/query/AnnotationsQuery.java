@@ -2,7 +2,7 @@ package org.rcsb.graphqlschema.query;
 
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.rcsbsequencecoordinates.auto.SequenceAnnotations;
+import org.rcsb.mojave.auto.SequenceAnnotations;
 
 import java.util.List;
 

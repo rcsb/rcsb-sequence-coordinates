@@ -5,8 +5,8 @@ import io.leangen.graphql.annotations.GraphQLNonNull;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.rcsbsequencecoordinates.auto.SequenceAlignments;
-import org.rcsb.rcsbsequencecoordinates.auto.SequenceAnnotations;
+import org.rcsb.mojave.auto.SequenceAlignments;
+import org.rcsb.mojave.auto.SequenceAnnotations;
 
 import java.util.List;
 

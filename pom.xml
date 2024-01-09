@@ -16,9 +16,8 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<rcsb.mojave.model.version>1.42.11</rcsb.mojave.model.version>
+		<rcsb.mojave.model.version>1.43.3-SEQUENCE-COORDINATES-SNAPSHOT</rcsb.mojave.model.version>
 		<rcsb.common.version>2.7.1</rcsb.common.version>
-		<rcsb.mojave.tools.version>1.6.0</rcsb.mojave.tools.version>
 
 		<schema.location>src/main/resources/schema</schema.location>
 		<generated.schema.location>${project.build.outputDirectory}/build_schema</generated.schema.location>
@@ -77,11 +76,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.rcsb</groupId>
-			<artifactId>rcsb-mojave-tools</artifactId>
-			<version>${rcsb.mojave.tools.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.rcsb</groupId>
 			<artifactId>rcsb-mojave-model</artifactId>
 			<version>${rcsb.mojave.model.version}</version>
 			<!-- jackson clashes with graphql-java -->
@@ -115,7 +109,7 @@
 			</plugin>
 
 			<!--
-				Schema Classes Generation
+				GraphQL Schema Generation
 			-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -128,81 +122,6 @@
 				<!-- executes the supplied java class in the current VM with the enclosing project's dependencies as classpath -->
 				<executions>
 					<execution>
-						<id>build-annotations-schema</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<!-- execute Java programs in the same VM -->
-							<goal>java</goal>
-						</goals>
-						<configuration>
-							<mainClass>org.rcsb.mojave.tools.core.GenerateCombinedJsonSchema</mainClass>
-							<arguments>
-								<argument>-r</argument>
-								<argument>true</argument>
-								<!-- where to put final schema -->
-								<argument>-o</argument>
-								<argument>${generated.schema.location}/${sequence.annotations.json.schema.name}</argument>
-								<!-- list of schemas to stitch -->
-								<argument>-i</argument>
-								<argument>file:${basedir}/${schema.location}/${sequence.annotations.json.schema.name}</argument>
-							</arguments>
-							<systemProperties>
-								<!-- Identifies a resource by type -->
-								<systemProperty>
-									<key>sourceScheme</key>
-									<value>resource</value>
-								</systemProperty>
-							</systemProperties>
-						</configuration>
-					</execution>
-					<execution>
-						<id>build-alignment-schema</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<!-- execute Java programs in the same VM -->
-							<goal>java</goal>
-						</goals>
-						<configuration>
-							<mainClass>org.rcsb.mojave.tools.core.GenerateCombinedJsonSchema</mainClass>
-							<arguments>
-								<argument>-r</argument>
-								<argument>true</argument>
-								<!-- where to put final schema -->
-								<argument>-o</argument>
-								<argument>${generated.schema.location}/${sequence.alignment.json.schema.name}</argument>
-								<!-- list of schemas to stitch -->
-								<argument>-i</argument>
-								<argument>file:${basedir}/${schema.location}/${sequence.alignment.json.schema.name}</argument>
-							</arguments>
-							<systemProperties>
-								<!-- Identifies a resource by type -->
-								<systemProperty>
-									<key>sourceScheme</key>
-									<value>resource</value>
-								</systemProperty>
-							</systemProperties>
-						</configuration>
-					</execution>
-					<execution>
-						<id>generate-ann-constants</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<!-- execute Java programs in the same VM -->
-							<goal>java</goal>
-						</goals>
-						<configuration>
-							<mainClass>org.rcsb.mojave.tools.core.GenerateSchemaConstants</mainClass>
-							<arguments>
-								<argument>-i</argument>
-								<argument>${generated.schema.location}</argument>
-								<argument>-o</argument>
-								<argument>${project.build.directory}/generated-sources/classes</argument>
-								<argument>-t</argument>
-								<argument>org.rcsb.rcsbsequencecoordinates.auto.AnnConstants</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
 						<id>generate-graphql-schema</id>
 						<phase>compile</phase>
 						<goals>
@@ -213,49 +132,6 @@
 							<arguments>
 								<argument>${project.build.directory}/classes/graphql/schema.graphqls</argument>
 							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.jsonschema2pojo</groupId>
-				<artifactId>jsonschema2pojo-maven-plugin</artifactId>
-				<version>1.1.1</version>
-				<configuration>
-					<serializable>true</serializable>
-					<inclusionLevel>NON_EMPTY</inclusionLevel>
-					<annotationStyle>jackson2</annotationStyle>
-					<includeJsr303Annotations>true</includeJsr303Annotations>
-					<initializeCollections>true</initializeCollections>
-					<includeToString>true</includeToString>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.rcsb</groupId>
-						<artifactId>rcsb-mojave-tools</artifactId>
-						<version>${rcsb.mojave.tools.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.rcsb</groupId>
-						<artifactId>rcsb-sequence-coordinates</artifactId>
-						<version>0.0.1-SNAPSHOT</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>generate-pojo</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<sourceType>jsonschema</sourceType>
-							<includeAdditionalProperties>false</includeAdditionalProperties>
-							<sourceDirectory>${generated.schema.location}</sourceDirectory>
-							<outputDirectory>${project.build.directory}/generated-sources/classes</outputDirectory>
-							<targetPackage>${project.auto.package}</targetPackage>
-							<customRuleFactory>org.rcsb.mojave.tools.jsonschema2pojo.rules.CustomRuleFactory</customRuleFactory>
-							<customAnnotator>org.rcsb.mojave.tools.jsonschema2pojo.annotations.CustomAnnotator</customAnnotator>
 						</configuration>
 					</execution>
 				</executions>

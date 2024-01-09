@@ -4,7 +4,7 @@ import org.rcsb.graphqlschema.query.AnnotationsConstants;
 import org.rcsb.graphqlschema.query.AnnotationsQuery;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.rcsbsequencecoordinates.auto.SequenceAnnotations;
+import org.rcsb.mojave.auto.SequenceAnnotations;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
