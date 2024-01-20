@@ -17,7 +17,7 @@
 		<java.version>17</java.version>
 
 		<rcsb.mojave.model.version>1.43.3-SEQUENCE-COORDINATES-SNAPSHOT</rcsb.mojave.model.version>
-		<rcsb.common.version>2.7.1</rcsb.common.version>
+		<rcsb.common.version>2.7.4-SEQUENCE-COORDINATES-SNAPSHOT</rcsb.common.version>
 
 		<schema.location>src/main/resources/schema</schema.location>
 		<generated.schema.location>${project.build.outputDirectory}/build_schema</generated.schema.location>
@@ -40,17 +40,21 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-rsocket</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-messaging</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>

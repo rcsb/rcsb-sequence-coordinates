@@ -17,18 +17,22 @@ public class SchemaGenerator {
     public static GraphQLSchema buildSchema() {
 
         // custom resolver builder to inject our own behaviour to beans within the specified packages
-        AbstractResolverBuilder customBean = new BeanResolverBuilder("org.rcsb.mojave.auto")
+        AbstractResolverBuilder mojaveBean = new BeanResolverBuilder("org.rcsb.mojave.auto")
                 //This solves the error of `PageInfo` being redefined. However, pagination related fields are dispatched as camelCase
                 //Error: You have redefined the type 'PageInfo' from being a 'GraphQLObjectType' to a 'GraphQLObjectType'
                 //For some reason `CustomOperationNameGenerator` redefines PageInfo type
                 .withFilters(member -> member.getDeclaringClass().getName().contains("org.rcsb.mojave.auto"))
                 .withOperationInfoGenerator(new CustomOperationNameGenerator());
 
+        AbstractResolverBuilder customBean = new BeanResolverBuilder("org.rcsb.graphqlschema.response")
+                .withFilters(member -> member.getDeclaringClass().getName().contains("org.rcsb.graphqlschema.response"))
+                .withOperationInfoGenerator(new CustomOperationNameGenerator());
+
         ServiceQueries serviceQueries = new ServiceQueries();
 
         return new GraphQLSchemaGenerator()
                 .withOperationsFromSingleton(serviceQueries)
-                .withNestedResolverBuilders(customBean)
+                .withNestedResolverBuilders(mojaveBean, customBean)
                 // the ObjectMapper instance used by the web layer isn't shared with SPQR. You can reuse
                 // the settings by providing the prototype instance to JacksonValueMapperFactory.
                 //.withValueMapperFactory(new JacksonValueMapperFactory())

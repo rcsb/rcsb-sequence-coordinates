@@ -18,7 +18,7 @@ public class GraphqlWiringFactory implements WiringFactory {
     @Override
     public DataFetcher<?> getDataFetcher(FieldWiringEnvironment fieldWiringEnvironment) {
         return dataFetchingEnvironment -> Arrays.stream(dataFetchingEnvironment.getSource().getClass().getDeclaredMethods()).filter(
-                method -> (method.getName().contains("get") && method.getAnnotation(JsonProperty.class).value().equals(dataFetchingEnvironment.getField().getName()))
+                method -> (method.getName().startsWith("get") && method.getAnnotation(JsonProperty.class).value().equals(dataFetchingEnvironment.getField().getName()))
         )
         .findAny()
         .map(

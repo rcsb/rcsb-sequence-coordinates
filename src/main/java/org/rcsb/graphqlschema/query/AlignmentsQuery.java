@@ -1,17 +1,17 @@
 package org.rcsb.graphqlschema.query;
 
 import org.rcsb.graphqlschema.reference.GroupReference;
-import org.rcsb.graphqlschema.reference.SequenceReference.ReferenceName;
+import org.rcsb.graphqlschema.reference.SequenceReference;
 
 public interface AlignmentsQuery<X> {
     X alignments(
             String queryId,
-            ReferenceName from,
-            ReferenceName to
+            SequenceReference from,
+            SequenceReference to
     );
 
     X group_alignments(
             String groupId,
-            GroupReference.ReferenceName group
+            GroupReference group
     );
 }

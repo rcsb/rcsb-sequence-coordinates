@@ -9,12 +9,12 @@ import java.util.List;
 public interface AnnotationsQuery<X> {
     X annotations(
             String queryId,
-            SequenceReference.ReferenceName reference,
+            SequenceReference reference,
             List<SequenceAnnotations.Source> sources
     );
     X group_annotations(
             String groupId,
-            GroupReference.ReferenceName group,
+            GroupReference group,
             List<SequenceAnnotations.Source> sources
     );
 }
