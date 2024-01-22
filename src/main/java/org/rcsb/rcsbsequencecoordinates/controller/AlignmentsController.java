@@ -3,7 +3,7 @@ package org.rcsb.rcsbsequencecoordinates.controller;
 import graphql.schema.DataFetchingEnvironment;
 import org.rcsb.collectors.SequenceCollector;
 import org.rcsb.graphqlschema.query.AlignmentsQuery;
-import org.rcsb.graphqlschema.schema.SchemaFieldConstants;
+import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.response.SequenceAlignments;
@@ -27,35 +27,35 @@ import static org.rcsb.utils.GraphqlMethods.getQueryName;
 public class AlignmentsController implements AlignmentsQuery<Mono<SequenceAlignments>> {
 
     private static final Logger logger = LoggerFactory.getLogger(AlignmentsController.class);
-    @QueryMapping(name = SchemaFieldConstants.ALIGNMENTS)
+    @QueryMapping(name = SchemaConstants.Query.ALIGNMENTS)
     public Mono<SequenceAlignments> alignments(
-            @Argument(name = SchemaFieldConstants.QUERY_ID) String queryId,
-            @Argument(name = SchemaFieldConstants.FROM) SequenceReference from,
-            @Argument(name = SchemaFieldConstants.TO) SequenceReference to
+            @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
+            @Argument(name = SchemaConstants.Param.FROM) SequenceReference from,
+            @Argument(name = SchemaConstants.Param.TO) SequenceReference to
     ) {
         return Mono.just(new SequenceAlignments());
     }
 
-    @QueryMapping(name = SchemaFieldConstants.GROUP_ALIGNMENTS)
+    @QueryMapping(name = SchemaConstants.Query.GROUP_ALIGNMENTS)
     public Mono<SequenceAlignments> group_alignments(
-            @Argument(name = SchemaFieldConstants.GROUP_ID) String groupId,
-            @Argument(name = SchemaFieldConstants.GROUP) GroupReference group
+            @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
+            @Argument(name = SchemaConstants.Param.GROUP) GroupReference group
     ) {
         return Mono.just(new SequenceAlignments());
     }
 
     @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.TARGET_ALIGNMENTS)
     public Flux<TargetAlignment> getTargetAlignments(DataFetchingEnvironment dataFetchingEnvironment){
-        if(getQueryName(dataFetchingEnvironment).equals(SchemaFieldConstants.ALIGNMENTS))
+        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.ALIGNMENTS))
             return getAlignments(
-                getArgument(dataFetchingEnvironment, SchemaFieldConstants.QUERY_ID),
-                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaFieldConstants.FROM)),
-                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaFieldConstants.TO))
+                getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
+                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
+                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
             );
-        if(getQueryName(dataFetchingEnvironment).equals(SchemaFieldConstants.GROUP_ALIGNMENTS))
+        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS))
             return getAlignments(
-                getArgument(dataFetchingEnvironment, SchemaFieldConstants.GROUP_ID),
-                GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaFieldConstants.GROUP))
+                getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
+                GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP))
             ) ;
         throw new RuntimeException(String.format("Undefined end point query %s", getQueryName(dataFetchingEnvironment)));
     }
@@ -67,7 +67,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<SequenceAlignm
 
     @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.QUERY_SEQUENCE)
     public Mono<String> getQuerySequence(DataFetchingEnvironment dataFetchingEnvironment){
-        return SequenceCollector.getSequence( getArgument(dataFetchingEnvironment, SchemaFieldConstants.QUERY_ID) );
+        return SequenceCollector.getSequence( getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID) );
     }
 
     /*@SchemaMapping(field = GraphqlSchemaMapping.ALIGNMENT_LOGO)
