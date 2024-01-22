@@ -8,4 +8,9 @@ public class GraphqlMethods {
         return dataFetchingEnvironment.getExecutionStepInfo().getParent().getArgument(argumentName);
     }
 
+
+    public static String getQueryName(DataFetchingEnvironment dataFetchingEnvironment){
+        return dataFetchingEnvironment.getExecutionStepInfo().getParent().getPath().getSegmentName();
+    }
+
 }

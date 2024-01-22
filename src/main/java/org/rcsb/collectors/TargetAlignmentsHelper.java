@@ -1,8 +1,12 @@
 package org.rcsb.collectors;
 
+import org.bson.conversions.Bson;
 import org.rcsb.common.constants.MongoCollections;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.mojave.CoreConstants;
+
+import static com.mongodb.client.model.Aggregates.project;
+import static com.mongodb.client.model.Projections.*;
 
 public class TargetAlignmentsHelper {
 
@@ -37,6 +41,20 @@ public class TargetAlignmentsHelper {
                         to
                 )
         );
+    }
+    public static String getGroupCollection(){
+        return MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCE_IDENTITY_GROUP_ALIGNMENTS;
+    }
+    public static String getGroupIndex(){
+        return CoreConstants.QUERY_ID;
+    }
+    public static Bson alignmentFields() {
+        return project(fields(
+                include(CoreConstants.TARGET_ID),
+                include(CoreConstants.ALIGNED_REGIONS),
+                include(CoreConstants.SCORES),
+                excludeId()
+        ));
     }
     private static boolean testUniprot(SequenceReference from, SequenceReference to){
         return from.equals(SequenceReference.UNIPROT) || to.equals(SequenceReference.UNIPROT);
