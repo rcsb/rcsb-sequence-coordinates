@@ -52,7 +52,7 @@ public class TargetAlignmentsHelper {
         return project(fields(
                 include(CoreConstants.TARGET_ID),
                 include(CoreConstants.ALIGNED_REGIONS),
-                include(CoreConstants.SCORES),
+                include(CoreConstants.COVERAGE),
                 excludeId()
         ));
     }

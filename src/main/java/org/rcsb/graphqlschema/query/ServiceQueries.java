@@ -15,7 +15,7 @@ public class ServiceQueries implements
         AlignmentsQuery<SequenceAlignments>,
         AnnotationsQuery<List<SequenceAnnotations>> {
 
-    @GraphQLQuery(name = SchemaConstants.Query.ALIGNMENTS, description = "Get sequence alignments")
+    @GraphQLQuery(name = SchemaConstants.Query.ALIGNMENT, description = "Get sequence alignments")
     public SequenceAlignments alignments(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.FROM, description = "Query sequence database") @GraphQLNonNull SequenceReference from,
@@ -24,7 +24,7 @@ public class ServiceQueries implements
         return new SequenceAlignments();
     }
 
-    @GraphQLQuery(name = SchemaConstants.Query.GROUP_ALIGNMENTS, description = "Get group alignments")
+    @GraphQLQuery(name = SchemaConstants.Query.GROUP_ALIGNMENT, description = "Get group alignments")
     public SequenceAlignments group_alignments(
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_ID, description = "Database group identifier") @GraphQLNonNull String groupId,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP, description = "Target Sequence database") @GraphQLNonNull GroupReference to

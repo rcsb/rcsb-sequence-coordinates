@@ -27,7 +27,7 @@ import static org.rcsb.utils.GraphqlMethods.getQueryName;
 public class AlignmentsController implements AlignmentsQuery<Mono<SequenceAlignments>> {
 
     private static final Logger logger = LoggerFactory.getLogger(AlignmentsController.class);
-    @QueryMapping(name = SchemaConstants.Query.ALIGNMENTS)
+    @QueryMapping(name = SchemaConstants.Query.ALIGNMENT)
     public Mono<SequenceAlignments> alignments(
             @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
             @Argument(name = SchemaConstants.Param.FROM) SequenceReference from,
@@ -36,7 +36,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<SequenceAlignm
         return Mono.just(new SequenceAlignments());
     }
 
-    @QueryMapping(name = SchemaConstants.Query.GROUP_ALIGNMENTS)
+    @QueryMapping(name = SchemaConstants.Query.GROUP_ALIGNMENT)
     public Mono<SequenceAlignments> group_alignments(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group
@@ -44,15 +44,15 @@ public class AlignmentsController implements AlignmentsQuery<Mono<SequenceAlignm
         return Mono.just(new SequenceAlignments());
     }
 
-    @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.TARGET_ALIGNMENTS)
+    @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.TARGET_ALIGNMENT)
     public Flux<TargetAlignment> getTargetAlignments(DataFetchingEnvironment dataFetchingEnvironment){
-        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.ALIGNMENTS))
+        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.ALIGNMENT))
             return getAlignments(
                 getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
                 SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
                 SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
             );
-        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS))
+        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT))
             return getAlignments(
                 getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
                 GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP))

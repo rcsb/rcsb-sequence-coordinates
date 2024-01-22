@@ -2,7 +2,7 @@ package org.rcsb.graphqlschema.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
-import org.rcsb.mojave.auto.Scores;
+import org.rcsb.mojave.auto.Coverage;
 import org.rcsb.mojave.auto.AlignedRegions;
 
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 public class TargetAlignment {
     private String targetId;
     private String targetSequence;
-    private Scores scores;
+    private Coverage coverage;
     private List<AlignedRegions> alignedRegions;
     @JsonProperty(SchemaConstants.Field.TARGET_ID)
     public String getTargetId(){
@@ -28,13 +28,13 @@ public class TargetAlignment {
     public void setTargetSequence(String targetSequence) {
         this.targetSequence = targetSequence;
     }
-    @JsonProperty(SchemaConstants.Field.SCORES)
-    public Scores getScores(){
-        return this.scores;
+    @JsonProperty(SchemaConstants.Field.COVERAGE)
+    public Coverage getCoverage(){
+        return this.coverage;
     }
-    @JsonProperty(SchemaConstants.Field.SCORES)
-    public void setScores(Scores scores){
-        this.scores = scores;
+    @JsonProperty(SchemaConstants.Field.COVERAGE)
+    public void setCoverage(Coverage coverage){
+        this.coverage = coverage;
     }
     @JsonProperty(SchemaConstants.Field.ALIGNED_REGIONS)
     public List<AlignedRegions> getAlignedRegions(){

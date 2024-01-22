@@ -7,7 +7,7 @@ import java.util.List;
 
 public class SequenceAlignments {
     private String querySequence;
-    private List<TargetAlignment> targetAlignments;
+    private List<TargetAlignment> targetAlignment;
     @JsonProperty(SchemaConstants.Field.QUERY_SEQUENCE)
     public String getQuerySequence() {
         return this.querySequence;
@@ -16,12 +16,12 @@ public class SequenceAlignments {
     public void setQuerySequence(String querySequence) {
         this.querySequence = querySequence;
     }
-    @JsonProperty(SchemaConstants.Field.TARGET_ALIGNMENTS)
-    public List<TargetAlignment> getTargetAlignments(){
-        return this.targetAlignments;
+    @JsonProperty(SchemaConstants.Field.TARGET_ALIGNMENT)
+    public List<TargetAlignment> getTargetAlignment(){
+        return this.targetAlignment;
     }
-    @JsonProperty(SchemaConstants.Field.TARGET_ALIGNMENTS)
-    public void setTargetAlignments(List<TargetAlignment> targetAlignments){
-        this.targetAlignments = targetAlignments;
+    @JsonProperty(SchemaConstants.Field.TARGET_ALIGNMENT)
+    public void setTargetAlignment(List<TargetAlignment> targetAlignment){
+        this.targetAlignment = targetAlignment;
     }
 }

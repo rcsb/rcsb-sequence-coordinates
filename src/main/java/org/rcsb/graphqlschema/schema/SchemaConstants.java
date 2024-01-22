@@ -9,21 +9,21 @@ public class SchemaConstants {
     private final static String SOURCES = "sources";
     private final static String GROUP_ID = "groupId";
     private final static String GROUP = "group";
-    private final static String ALIGNMENTS = "alignments";
-    private final static String GROUP_ALIGNMENTS = "group_alignments";
+    private final static String ALIGNMENT = "alignment";
+    private final static String GROUP_ALIGNMENT = "group_alignment";
     private final static String ANNOTATIONS = "annotations";
     private final static String GROUP_ANNOTATIONS = "group_annotations";
     private final static String QUERY_SEQUENCE = "query_sequence";
-    private final static String TARGET_ALIGNMENTS = "target_alignments";
+    private final static String TARGET_ALIGNMENT = "target_alignment";
     private final static String TARGET_ID = "target_id";
     private final static String TARGET_SEQUENCE = "target_sequence";
-    private final static String SCORES = "scores";
+    private final static String COVERAGE = "coverage";
     private final static String ALIGNED_REGIONS = "aligned_regions";
     private final static String ALIGNMENT_LOGO = "alignment_logo";
 
     public static class Query {
-        public final static String ALIGNMENTS = SchemaConstants.ALIGNMENTS;
-        public final static String GROUP_ALIGNMENTS = SchemaConstants.GROUP_ALIGNMENTS;
+        public final static String ALIGNMENT = SchemaConstants.ALIGNMENT;
+        public final static String GROUP_ALIGNMENT = SchemaConstants.GROUP_ALIGNMENT;
         public final static String ANNOTATIONS = SchemaConstants.ANNOTATIONS;
         public final static String GROUP_ANNOTATIONS = SchemaConstants.GROUP_ANNOTATIONS;
     }
@@ -40,13 +40,12 @@ public class SchemaConstants {
 
     public static  class Field {
         public final static String QUERY_SEQUENCE = SchemaConstants.QUERY_SEQUENCE;
-        public final static String TARGET_ALIGNMENTS = SchemaConstants.TARGET_ALIGNMENTS;
+        public final static String TARGET_ALIGNMENT = SchemaConstants.TARGET_ALIGNMENT;
         public final static String TARGET_ID = SchemaConstants.TARGET_ID;
         public final static String TARGET_SEQUENCE = SchemaConstants.TARGET_SEQUENCE;
-        public final static String SCORES = SchemaConstants.SCORES;
+        public final static String COVERAGE = SchemaConstants.COVERAGE;
         public final static String ALIGNED_REGIONS = SchemaConstants.ALIGNED_REGIONS;
         public final static String ALIGNMENT_LOGO = SchemaConstants.ALIGNMENT_LOGO;
     }
-
 
 }
