@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Filters.eq;
+import static org.rcsb.collectors.TargetAlignmentsHelper.getDocumentMap;
 
 public class TargetAlignmentsCollector {
 
@@ -20,7 +21,9 @@ public class TargetAlignmentsCollector {
                 match(eq(TargetAlignmentsHelper.getIndex(from, to), queryId)),
                 TargetAlignmentsHelper.alignmentFields()
         ))).map(
-                d-> CustomObjectMapper.getDeserializationMapper().convertValue(d,TargetAlignment.class)
+                d -> getDocumentMap(from, to).apply(d)
+        ).map(
+                d -> CustomObjectMapper.getDeserializationMapper().convertValue(d,TargetAlignment.class)
         );
     }
 
