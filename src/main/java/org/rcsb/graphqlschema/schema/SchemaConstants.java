@@ -13,6 +13,10 @@ public class SchemaConstants {
     private final static String GROUP_ALIGNMENT = "group_alignment";
     private final static String ANNOTATIONS = "annotations";
     private final static String GROUP_ANNOTATIONS = "group_annotations";
+    private final static String ALIGNMENT_SUBSCRIPTION = "alignment_subscription";
+    private final static String GROUP_ALIGNMENT_SUBSCRIPTION = "group_alignment_subscription";
+    private final static String ANNOTATIONS_SUBSCRIPTION = "annotations_subscription";
+    private final static String GROUP_ANNOTATIONS_SUBSCRIPTION = "group_annotations_subscription";
     private final static String QUERY_SEQUENCE = "query_sequence";
     private final static String TARGET_ALIGNMENT = "target_alignment";
     private final static String TARGET_ID = "target_id";
@@ -26,6 +30,13 @@ public class SchemaConstants {
         public final static String GROUP_ALIGNMENT = SchemaConstants.GROUP_ALIGNMENT;
         public final static String ANNOTATIONS = SchemaConstants.ANNOTATIONS;
         public final static String GROUP_ANNOTATIONS = SchemaConstants.GROUP_ANNOTATIONS;
+    }
+
+    public static class Subscription {
+        public final static String ALIGNMENT_SUBSCRIPTION = SchemaConstants.ALIGNMENT_SUBSCRIPTION;
+        public final static String GROUP_ALIGNMENT_SUBSCRIPTION = SchemaConstants.GROUP_ALIGNMENT_SUBSCRIPTION;
+        public final static String ANNOTATIONS_SUBSCRIPTION = SchemaConstants.ANNOTATIONS_SUBSCRIPTION;
+        public final static String GROUP_ANNOTATIONS_SUBSCRIPTION = SchemaConstants.GROUP_ANNOTATIONS_SUBSCRIPTION;
     }
 
     public static class Param {

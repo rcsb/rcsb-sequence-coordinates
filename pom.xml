@@ -95,6 +95,13 @@
 			<artifactId>rcsb-util</artifactId>
 			<version>1.7.0</version>
 		</dependency>
+
+		<!--The rsocket client needs this-->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

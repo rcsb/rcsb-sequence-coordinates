@@ -1,0 +1,62 @@
+package org.rcsb.client;
+
+import io.rsocket.transport.netty.client.WebsocketClientTransport;
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.graphql.client.RSocketGraphQlClient;
+
+import java.io.IOException;
+import java.net.URI;
+
+class RSocketClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(RSocketClient.class);
+    private final RSocketGraphQlClient client;
+    private RSocketClient(){
+        URI uri = URI.create("ws://132.249.213.162:8080/rsocket");
+        WebsocketClientTransport transport = WebsocketClientTransport.create(uri);
+        client = RSocketGraphQlClient.builder()
+               .clientTransport(transport)
+               .build();
+    }
+    private void request() throws IOException {
+        String query = """
+          subscription groupSubscription {
+            group_alignment_subscription(
+              group: SEQUENCE_IDENTITY
+              groupId: "1_30"
+            ){
+              target_id
+              target_sequence
+              aligned_regions{
+                query_begin
+                query_end
+                target_begin
+                target_end
+              }
+            }
+          }
+        """;
+        logger.info("Requesting: {}", query);
+        long timeS = System.currentTimeMillis();
+        client.document(query)
+                .executeSubscription()
+                .mapNotNull(r->r.toEntity(Document.class))
+                .doOnComplete(()->{
+                    long timeE = System.currentTimeMillis();
+                    logger.info("Request complete in {}", DurationFormatUtils.formatPeriod(timeS, timeE, "HH:mm:ss:SS"));
+                    System.exit(0);
+                })
+                .subscribe(d->{});
+
+        while (true) System.in.read();
+    }
+
+    public static void main(String[] args) throws IOException {
+        RSocketClient me = new RSocketClient();
+        me.request();
+    }
+
+}
