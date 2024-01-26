@@ -1,4 +1,4 @@
-package org.rcsb.collectors;
+package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;

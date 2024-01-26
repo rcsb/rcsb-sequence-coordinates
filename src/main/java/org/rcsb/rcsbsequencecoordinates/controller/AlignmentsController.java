@@ -17,8 +17,8 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static org.rcsb.collectors.SequenceCollector.getSequence;
-import static org.rcsb.collectors.TargetAlignmentsCollector.getAlignments;
+import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
+import static org.rcsb.collectors.alignments.TargetAlignmentsCollector.getAlignments;
 import static org.rcsb.utils.GraphqlMethods.getArgument;
 import static org.rcsb.utils.GraphqlMethods.getQueryName;
 
@@ -48,7 +48,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.FROM) SequenceReference from,
             @Argument(name = SchemaConstants.Param.TO) SequenceReference to
     ) {
-        return Flux.just();
+        return getAlignments(queryId, from, to);
     }
 
     @SubscriptionMapping(name = SchemaConstants.Subscription.GROUP_ALIGNMENT_SUBSCRIPTION)
@@ -56,10 +56,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group
     ) {
-        return getAlignments(
-                groupId,
-                group
-        );
+        return getAlignments(groupId, group);
     }
 
     @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.TARGET_ALIGNMENT)

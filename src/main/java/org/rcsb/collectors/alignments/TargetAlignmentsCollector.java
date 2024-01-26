@@ -1,4 +1,4 @@
-package org.rcsb.collectors;
+package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
 import org.rcsb.graphqlschema.reference.GroupReference;
@@ -13,7 +13,7 @@ import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Aggregates.sort;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.*;
-import static org.rcsb.collectors.TargetAlignmentsHelper.*;
+import static org.rcsb.collectors.alignments.TargetAlignmentsHelper.*;
 
 
 public class TargetAlignmentsCollector {

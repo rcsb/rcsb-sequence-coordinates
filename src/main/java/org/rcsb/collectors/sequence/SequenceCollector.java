@@ -1,4 +1,4 @@
-package org.rcsb.collectors;
+package org.rcsb.collectors.sequence;
 
 import org.rcsb.common.constants.MongoCollections;
 import org.rcsb.mojave.CoreConstants;
