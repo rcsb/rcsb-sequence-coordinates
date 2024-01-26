@@ -49,11 +49,31 @@ public class TargetAlignmentsHelper {
                 )
         );
     }
+    public static List<String> getSortFields(SequenceReference from, SequenceReference to){
+        if(from.equals(SequenceReference.NCBI_PROTEIN))
+            return List.of(CoreConstants.QUERY_BEGIN, CoreConstants.QUERY_END);
+        if(to.equals(SequenceReference.NCBI_PROTEIN))
+            return List.of(CoreConstants.TARGET_BEGIN, CoreConstants.TARGET_END);
+        if(from.equals(SequenceReference.UNIPROT))
+            return List.of(CoreConstants.QUERY_BEGIN, CoreConstants.QUERY_END);
+        if(to.equals(SequenceReference.UNIPROT))
+            return List.of(CoreConstants.TARGET_BEGIN, CoreConstants.TARGET_END);
+        throw new RuntimeException(
+                String.format(
+                        "Unknown index for references from %s to %s",
+                        from,
+                        to
+                )
+        );
+    }
     public static String getGroupCollection(){
         return MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCE_IDENTITY_GROUP_ALIGNMENTS;
     }
     public static String getGroupIndex(){
         return CoreConstants.QUERY_ID;
+    }
+    public static List<String> getGroupSortFields(){
+        return List.of(CoreConstants.QUERY_BEGIN, CoreConstants.QUERY_END);
     }
     public static Bson alignmentFields() {
         return project(fields(
