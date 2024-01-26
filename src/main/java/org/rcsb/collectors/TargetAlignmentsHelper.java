@@ -4,6 +4,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.rcsb.common.constants.MongoCollections;
 import org.rcsb.graphqlschema.reference.SequenceReference;
+import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.mojave.CoreConstants;
 
 import java.util.List;
@@ -66,15 +67,15 @@ public class TargetAlignmentsHelper {
     public static Function<Document,Document> getDocumentMap(SequenceReference from, SequenceReference to){
         if(getIndex(from, to).equals(CoreConstants.QUERY_ID))
             return(d) -> new Document(Map.of(
-                    CoreConstants.TARGET_ID, d.get(CoreConstants.TARGET_ID),
-                    CoreConstants.COVERAGE, d.get(CoreConstants.COVERAGE),
-                    CoreConstants.ALIGNED_REGIONS, d.get(CoreConstants.ALIGNED_REGIONS)
+                    SchemaConstants.Field.TARGET_ID, d.get(CoreConstants.TARGET_ID),
+                    SchemaConstants.Field.COVERAGE, d.get(CoreConstants.COVERAGE),
+                    SchemaConstants.Field.ALIGNED_REGIONS, d.get(CoreConstants.ALIGNED_REGIONS)
             ));
         if(getIndex(from, to).equals(CoreConstants.TARGET_ID))
             return (d) -> new Document(Map.of(
-                    CoreConstants.TARGET_ID, d.get(CoreConstants.QUERY_ID),
-                    CoreConstants.COVERAGE, switchCoverage(d.get(CoreConstants.COVERAGE, Document.class)),
-                    CoreConstants.ALIGNED_REGIONS, switchAlignedRegions(d.getList(CoreConstants.ALIGNED_REGIONS, Document.class))
+                    SchemaConstants.Field.TARGET_ID, d.get(CoreConstants.QUERY_ID),
+                    SchemaConstants.Field.COVERAGE, switchCoverage(d.get(CoreConstants.COVERAGE, Document.class)),
+                    SchemaConstants.Field.ALIGNED_REGIONS, switchAlignedRegions(d.getList(CoreConstants.ALIGNED_REGIONS, Document.class))
             ));
         throw new RuntimeException(
                 String.format(
@@ -86,19 +87,19 @@ public class TargetAlignmentsHelper {
     }
     private static Document switchCoverage(Document d){
         return new Document(Map.of(
-                CoreConstants.QUERY_COVERAGE, d.get(CoreConstants.TARGET_COVERAGE),
-                CoreConstants.QUERY_LENGTH, d.get(CoreConstants.TARGET_LENGTH),
-                CoreConstants.TARGET_COVERAGE, d.get(CoreConstants.QUERY_COVERAGE),
-                CoreConstants.TARGET_LENGTH, d.get(CoreConstants.QUERY_LENGTH)
+                SchemaConstants.Field.QUERY_COVERAGE, d.get(CoreConstants.TARGET_COVERAGE),
+                SchemaConstants.Field.QUERY_LENGTH, d.get(CoreConstants.TARGET_LENGTH),
+                SchemaConstants.Field.TARGET_COVERAGE, d.get(CoreConstants.QUERY_COVERAGE),
+                SchemaConstants.Field.TARGET_LENGTH, d.get(CoreConstants.QUERY_LENGTH)
         ));
     }
     private static List<Document> switchAlignedRegions(List<Document> documentList){
         return documentList.stream().map(
                 d-> new Document( Map.of(
-                        CoreConstants.QUERY_BEGIN, d.get(CoreConstants.TARGET_BEGIN),
-                        CoreConstants.QUERY_END, d.get(CoreConstants.TARGET_END),
-                        CoreConstants.TARGET_BEGIN, d.get(CoreConstants.QUERY_BEGIN),
-                        CoreConstants.TARGET_END, d.get(CoreConstants.QUERY_END)
+                        SchemaConstants.Field.QUERY_BEGIN, d.get(CoreConstants.TARGET_BEGIN),
+                        SchemaConstants.Field.QUERY_END, d.get(CoreConstants.TARGET_END),
+                        SchemaConstants.Field.TARGET_BEGIN, d.get(CoreConstants.QUERY_BEGIN),
+                        SchemaConstants.Field.TARGET_END, d.get(CoreConstants.QUERY_END)
                 ))
         ).collect(Collectors.toList());
     }

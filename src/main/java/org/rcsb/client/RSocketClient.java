@@ -9,6 +9,7 @@ import org.springframework.graphql.client.RSocketGraphQlClient;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class RSocketClient {
 
@@ -26,7 +27,7 @@ class RSocketClient {
           subscription groupSubscription {
             group_alignment_subscription(
               group: SEQUENCE_IDENTITY
-              groupId: "1_30"
+              groupId: "2_30"
             ){
               target_id
               target_sequence
@@ -41,17 +42,23 @@ class RSocketClient {
         """;
         logger.info("Requesting: {}", query);
         long timeS = System.currentTimeMillis();
+        AtomicInteger count = new AtomicInteger(0);
         client.document(query)
                 .executeSubscription()
                 .mapNotNull(r->r.toEntity(Document.class))
                 .doOnComplete(()->{
                     long timeE = System.currentTimeMillis();
-                    logger.info("Request complete in {}", DurationFormatUtils.formatPeriod(timeS, timeE, "HH:mm:ss:SS"));
+                    logger.info("Retrieved {} documents in {}", count.get(), DurationFormatUtils.formatPeriod(timeS, timeE, "HH:mm:ss:SS"));
                     System.exit(0);
                 })
-                .subscribe(d->{});
+                .subscribe(d->{
+                    if(count.getAndIncrement() == 0) {
+                        long timeE = System.currentTimeMillis();
+                        logger.info("Retrieved first document in {}", DurationFormatUtils.formatPeriod(timeS, timeE, "HH:mm:ss:SS"));
+                    }
+                });
 
-        while (true) System.in.read();
+        while(true) System.in.read();
     }
 
     public static void main(String[] args) throws IOException {

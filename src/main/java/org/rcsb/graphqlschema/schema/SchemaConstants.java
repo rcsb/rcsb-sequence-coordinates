@@ -1,5 +1,7 @@
 package org.rcsb.graphqlschema.schema;
 
+import org.rcsb.mojave.CoreConstants;
+
 public class SchemaConstants {
 
     private final static String QUERY_ID = "queryId";
@@ -24,6 +26,21 @@ public class SchemaConstants {
     private final static String COVERAGE = "coverage";
     private final static String ALIGNED_REGIONS = "aligned_regions";
     private final static String ALIGNMENT_LOGO = "alignment_logo";
+    /*
+    * Why next attributes are not defined quoting strings ?
+    * The main difference is that these attributes (getters and setters) are defined in mojave models classes:
+    * org.rcsb.mojave.auto.Coverage and org.rcsb.mojave.auto.AlignedRegions.
+    * For that reason, we use the same DW schema attribute names accessible from org.rcsb.mojave.CoreConstants
+    * instead of defining them here.
+    * */
+    private final static String QUERY_COVERAGE = CoreConstants.QUERY_COVERAGE;
+    private final static String TARGET_COVERAGE = CoreConstants.TARGET_COVERAGE;
+    private final static String QUERY_LENGTH = CoreConstants.QUERY_LENGTH;
+    private final static String TARGET_LENGTH = CoreConstants.TARGET_LENGTH;
+    private final static String QUERY_BEGIN = CoreConstants.QUERY_BEGIN;
+    private final static String QUERY_END = CoreConstants.QUERY_END;
+    private final static String TARGET_BEGIN = CoreConstants.TARGET_BEGIN;
+    private final static String TARGET_END = CoreConstants.TARGET_END;
 
     public static class Query {
         public final static String ALIGNMENT = SchemaConstants.ALIGNMENT;
@@ -57,6 +74,15 @@ public class SchemaConstants {
         public final static String COVERAGE = SchemaConstants.COVERAGE;
         public final static String ALIGNED_REGIONS = SchemaConstants.ALIGNED_REGIONS;
         public final static String ALIGNMENT_LOGO = SchemaConstants.ALIGNMENT_LOGO;
+        public final static String QUERY_COVERAGE = SchemaConstants.QUERY_COVERAGE;
+        public final static String TARGET_COVERAGE = SchemaConstants.TARGET_COVERAGE;
+        public final static String QUERY_LENGTH = SchemaConstants.QUERY_LENGTH;
+        public final static String TARGET_LENGTH = SchemaConstants.TARGET_LENGTH;
+        public final static String QUERY_BEGIN = SchemaConstants.QUERY_BEGIN;
+        public final static String QUERY_END = SchemaConstants.QUERY_END;
+        public final static String TARGET_BEGIN = SchemaConstants.TARGET_BEGIN;
+        public final static String TARGET_END = SchemaConstants.TARGET_END;
+
     }
 
 }
