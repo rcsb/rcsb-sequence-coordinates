@@ -1,6 +1,7 @@
 package org.rcsb.collectors.sequence;
 
 import org.rcsb.common.constants.MongoCollections;
+import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.mojave.CoreConstants;
 import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Mono;
@@ -12,8 +13,15 @@ import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
+import static org.rcsb.collectors.map.MapCollector.getQueryIdMap;
 
 public class SequenceCollector {
+
+    public static Mono<String> getSequence(String sequenceId, SequenceReference reference){
+        if(reference.equals(SequenceReference.PDB_INSTANCE))
+            return getQueryIdMap(sequenceId, reference).flatMap(SequenceCollector::getSequence).next();
+        return getSequence(sequenceId);
+    }
 
     public static Mono<String> getSequence(String sequenceId){
         return Mono.from(MongoStream.getMongoDatabase().getCollection(MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCES)
@@ -23,5 +31,6 @@ public class SequenceCollector {
                     )
                 )).map( d-> d.getString(CoreConstants.SEQUENCE));
     }
+
 
 }

@@ -18,7 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
-import static org.rcsb.collectors.alignments.TargetAlignmentsCollector.getAlignments;
+import static org.rcsb.collectors.alignments.AlignmentsCollector.getAlignments;
 import static org.rcsb.utils.GraphqlMethods.getArgument;
 import static org.rcsb.utils.GraphqlMethods.getQueryName;
 
@@ -76,13 +76,26 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     }
 
     @SchemaMapping(typeName = "TargetAlignment", field = GraphqlSchemaMapping.TARGET_SEQUENCE)
-    public Mono<String> getTargetSequence(Document targetAlignment){
-        return getSequence( targetAlignment.getString(CoreConstants.TARGET_ID) );
+    public Mono<String> getTargetSequence(DataFetchingEnvironment dataFetchingEnvironment, Document targetAlignment){
+        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT))
+            return getSequence(
+                    targetAlignment.getString(CoreConstants.TARGET_ID),
+                    SequenceReference.PDB_ENTITY
+            );
+        return getSequence(
+                targetAlignment.getString(CoreConstants.TARGET_ID),
+                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
+        );
     }
 
     @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.QUERY_SEQUENCE)
     public Mono<String> getQuerySequence(DataFetchingEnvironment dataFetchingEnvironment){
-        return getSequence( getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID) );
+        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT))
+            return null;
+        return getSequence(
+                getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
+                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM))
+        );
     }
 
     /*@SchemaMapping(field = GraphqlSchemaMapping.ALIGNMENT_LOGO)

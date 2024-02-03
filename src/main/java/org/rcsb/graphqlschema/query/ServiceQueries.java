@@ -4,6 +4,7 @@ import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLNonNull;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.annotations.GraphQLSubscription;
+import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.response.SequenceAlignments;
@@ -36,7 +37,7 @@ public class ServiceQueries implements
         return new SequenceAlignments();
     }
 
-    @GraphQLQuery(name = SchemaConstants.Subscription.ALIGNMENT_SUBSCRIPTION, description = "Get sequence alignments")
+    @GraphQLSubscription(name = SchemaConstants.Subscription.ALIGNMENT_SUBSCRIPTION, description = "Get sequence alignments")
     public List<TargetAlignment> alignment_subscription(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.FROM, description = "Query sequence database") @GraphQLNonNull SequenceReference from,
@@ -57,7 +58,7 @@ public class ServiceQueries implements
     public List<SequenceAnnotations> annotations(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.REFERENCE, description = "Query sequence database") @GraphQLNonNull SequenceReference reference,
-            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<SequenceAnnotations.Source> source
+            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source
     ) {
         return List.of(new SequenceAnnotations());
     }
@@ -66,7 +67,7 @@ public class ServiceQueries implements
     public List<SequenceAnnotations> group_annotations(
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_ID, description = "Database sequence identifier") @GraphQLNonNull String groupId,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP, description = "Query sequence database") @GraphQLNonNull GroupReference group,
-            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<SequenceAnnotations.Source> source
+            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source
     ) {
         return List.of(new SequenceAnnotations());
     }

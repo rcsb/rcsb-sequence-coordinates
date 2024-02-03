@@ -9,13 +9,14 @@ import org.rcsb.mojave.CoreConstants;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Projections.*;
 
-public class TargetAlignmentsHelper {
+public class AlignmentsHelper {
 
     public static String getCollection(SequenceReference from, SequenceReference to) {
         if(testUniprot(from, to) && testPdb(from, to))
@@ -32,15 +33,18 @@ public class TargetAlignmentsHelper {
                 )
         );
     }
+
     public static String getIndex(SequenceReference from, SequenceReference to){
-        if(from.equals(SequenceReference.NCBI_PROTEIN))
+        if(testNcbi(from))
             return CoreConstants.QUERY_ID;
-        if(to.equals(SequenceReference.NCBI_PROTEIN))
+        if(testNcbi(to))
             return CoreConstants.TARGET_ID;
-        if(from.equals(SequenceReference.UNIPROT))
+        if(testUniprot(from))
             return CoreConstants.QUERY_ID;
-        if(to.equals(SequenceReference.UNIPROT))
+        if(testUniprot(to))
             return CoreConstants.TARGET_ID;
+        if(testPdb(from) && testPdb(to))
+            return CoreConstants.QUERY_ID;
         throw new RuntimeException(
                 String.format(
                         "Unknown index for references from %s to %s",
@@ -49,6 +53,13 @@ public class TargetAlignmentsHelper {
                 )
         );
     }
+
+    public static String getAltIndex(SequenceReference from, SequenceReference to) {
+        if(getIndex(from, to).equals(CoreConstants.QUERY_ID))
+            return CoreConstants.TARGET_ID;
+        return CoreConstants.QUERY_ID;
+    }
+
     public static List<String> getSortFields(SequenceReference from, SequenceReference to){
         if(from.equals(SequenceReference.NCBI_PROTEIN))
             return List.of(CoreConstants.QUERY_BEGIN, CoreConstants.QUERY_END);
@@ -66,15 +77,23 @@ public class TargetAlignmentsHelper {
                 )
         );
     }
+
     public static String getGroupCollection(){
         return MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCE_IDENTITY_GROUP_ALIGNMENTS;
     }
+
     public static String getGroupIndex(){
         return CoreConstants.QUERY_ID;
     }
+
+    public static String getTargetIndex(){
+        return CoreConstants.TARGET_ID;
+    }
+
     public static List<String> getGroupSortFields(){
         return List.of(CoreConstants.QUERY_BEGIN, CoreConstants.QUERY_END);
     }
+
     public static Bson alignmentFields() {
         return project(fields(
                 include(CoreConstants.TARGET_ID),
@@ -84,9 +103,10 @@ public class TargetAlignmentsHelper {
                 excludeId()
         ));
     }
-    public static Function<Document,Document> getDocumentMap(SequenceReference from, SequenceReference to){
+
+    public static Function<Document,Document> targetIdSelector(SequenceReference from, SequenceReference to){
         if(getIndex(from, to).equals(CoreConstants.QUERY_ID))
-            return(d) -> new Document(Map.of(
+            return (d) -> new Document(Map.of(
                     SchemaConstants.Field.TARGET_ID, d.get(CoreConstants.TARGET_ID),
                     SchemaConstants.Field.COVERAGE, d.get(CoreConstants.COVERAGE),
                     SchemaConstants.Field.ALIGNED_REGIONS, d.get(CoreConstants.ALIGNED_REGIONS)
@@ -105,6 +125,37 @@ public class TargetAlignmentsHelper {
                 )
         );
     }
+
+    public static BiFunction<String, Document, Document> targetIdSubstitutor(SequenceReference reference){
+        if(reference.equals(SequenceReference.PDB_INSTANCE))
+            return (targetId, alignment) -> new Document(Map.of(
+                    SchemaConstants.Field.TARGET_ID, targetId,
+                    SchemaConstants.Field.COVERAGE, alignment.get(CoreConstants.COVERAGE),
+                    SchemaConstants.Field.ALIGNED_REGIONS, alignment.get(CoreConstants.ALIGNED_REGIONS)
+            ));
+        return (targetId, alignment) -> alignment;
+    }
+
+    public static Document identityAlignment(String queryId, Integer length){
+        return new Document(Map.of(
+                SchemaConstants.Field.TARGET_ID, queryId,
+                SchemaConstants.Field.COVERAGE, new Document(Map.of(
+                        SchemaConstants.Field.QUERY_COVERAGE, 1.0,
+                        SchemaConstants.Field.TARGET_COVERAGE, 1.0,
+                        SchemaConstants.Field.QUERY_LENGTH, length,
+                        SchemaConstants.Field.TARGET_LENGTH, length
+
+                )),
+                SchemaConstants.Field.ALIGNED_REGIONS, List.of(new Document(Map.of(
+                        SchemaConstants.Field.QUERY_BEGIN, 1,
+                        SchemaConstants.Field.QUERY_END, length,
+                        SchemaConstants.Field.TARGET_BEGIN, 1,
+                        SchemaConstants.Field.TARGET_END, length
+
+                )))
+        ));
+    }
+
     private static Document switchCoverage(Document d){
         return new Document(Map.of(
                 SchemaConstants.Field.QUERY_COVERAGE, d.get(CoreConstants.TARGET_COVERAGE),
@@ -113,6 +164,7 @@ public class TargetAlignmentsHelper {
                 SchemaConstants.Field.TARGET_LENGTH, d.get(CoreConstants.QUERY_LENGTH)
         ));
     }
+
     private static List<Document> switchAlignedRegions(List<Document> documentList){
         return documentList.stream().map(
                 d-> new Document( Map.of(
@@ -123,14 +175,37 @@ public class TargetAlignmentsHelper {
                 ))
         ).collect(Collectors.toList());
     }
+
+    public static boolean equivalentReferences(SequenceReference from, SequenceReference to){
+        if(from.equals(to))
+            return true;
+        if(testPdb(from) && testPdb(to))
+            return true;
+        return false;
+    }
+
     private static boolean testUniprot(SequenceReference from, SequenceReference to){
-        return from.equals(SequenceReference.UNIPROT) || to.equals(SequenceReference.UNIPROT);
+        return testUniprot(from) || testUniprot(to);
     }
+
     private static boolean testNcbi(SequenceReference from, SequenceReference to){
-        return from.equals(SequenceReference.NCBI_PROTEIN) || to.equals(SequenceReference.NCBI_PROTEIN);
+        return testNcbi(from) || testNcbi(to);
     }
+
     private static boolean testPdb(SequenceReference from, SequenceReference to){
-        return from.equals(SequenceReference.PDB_ENTITY) || to.equals(SequenceReference.PDB_ENTITY);
+        return testPdb(from) || testPdb(to);
+    }
+
+    private static boolean testUniprot(SequenceReference reference){
+        return reference.equals(SequenceReference.UNIPROT);
+    }
+
+    private static boolean testNcbi(SequenceReference reference){
+        return reference.equals(SequenceReference.NCBI_PROTEIN);
+    }
+
+    private static boolean testPdb(SequenceReference reference){
+        return reference.equals(SequenceReference.PDB_ENTITY) || reference.equals(SequenceReference.PDB_INSTANCE);
     }
 
 }

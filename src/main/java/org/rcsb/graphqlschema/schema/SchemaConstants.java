@@ -41,6 +41,14 @@ public class SchemaConstants {
     private final static String QUERY_END = CoreConstants.QUERY_END;
     private final static String TARGET_BEGIN = CoreConstants.TARGET_BEGIN;
     private final static String TARGET_END = CoreConstants.TARGET_END;
+    private final static String FEATURES = CoreConstants.FEATURES;
+    private final static String FEATURE_POSITIONS = CoreConstants.FEATURE_POSITIONS;
+    private final static String TYPE = CoreConstants.TYPE;
+    private final static String BEG_SEQ_ID = CoreConstants.BEG_SEQ_ID;
+    private final static String END_SEQ_ID = CoreConstants.END_SEQ_ID;
+    private final static String BEG_ORI_ID = CoreConstants.BEG_ORI_ID;
+    private final static String END_ORI_ID = CoreConstants.END_ORI_ID;
+    private final static String VALUES = CoreConstants.VALUES;
 
     public static class Query {
         public final static String ALIGNMENT = SchemaConstants.ALIGNMENT;
@@ -82,6 +90,14 @@ public class SchemaConstants {
         public final static String QUERY_END = SchemaConstants.QUERY_END;
         public final static String TARGET_BEGIN = SchemaConstants.TARGET_BEGIN;
         public final static String TARGET_END = SchemaConstants.TARGET_END;
+        public final static String FEATURES = SchemaConstants.FEATURES;
+        public final static String FEATURE_POSITIONS = SchemaConstants.FEATURE_POSITIONS;
+        public final static String TYPE = SchemaConstants.TYPE;
+        public final static String BEG_SEQ_ID = SchemaConstants.BEG_SEQ_ID;
+        public final static String END_SEQ_ID = SchemaConstants.END_SEQ_ID;
+        public final static String BEG_ORI_ID = SchemaConstants.BEG_ORI_ID;
+        public final static String END_ORI_ID = SchemaConstants.END_ORI_ID;
+        public final static String VALUES = SchemaConstants.VALUES;
 
     }
 

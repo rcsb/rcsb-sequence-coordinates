@@ -1,10 +1,11 @@
 package org.rcsb.rcsbsequencecoordinates.controller;
 
+import org.bson.Document;
+import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.graphqlschema.query.AnnotationsQuery;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.mojave.auto.SequenceAnnotations;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -12,27 +13,27 @@ import reactor.core.publisher.Flux;
 
 import java.util.List;
 
+import static org.rcsb.collectors.annotations.AnnotationsCollector.getAnnotations;
+
 @Controller
-public class AnnotationsController implements AnnotationsQuery<Flux<SequenceAnnotations>> {
+public class AnnotationsController implements AnnotationsQuery<Flux<Document>> {
 
     @QueryMapping(name = SchemaConstants.Query.ANNOTATIONS)
-    public Flux<SequenceAnnotations> annotations(
+    public Flux<Document> annotations(
             @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
             @Argument(name = SchemaConstants.Param.REFERENCE) SequenceReference reference,
-            @Argument(name = SchemaConstants.Param.SOURCES) List<SequenceAnnotations.Source> sources
+            @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences
     ) {
-        SequenceAnnotations annotations = new SequenceAnnotations();
-        return Flux.fromArray(new SequenceAnnotations[] {annotations});
+        return getAnnotations(queryId, reference, annotationReferences);
     }
 
     @QueryMapping(name = SchemaConstants.Query.GROUP_ANNOTATIONS)
-    public Flux<SequenceAnnotations> group_annotations(
+    public Flux<Document> group_annotations(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group,
-            @Argument(name = SchemaConstants.Param.SOURCES) List<SequenceAnnotations.Source> sources
+            @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences
     ) {
-        SequenceAnnotations annotations = new SequenceAnnotations();
-        return Flux.fromArray(new SequenceAnnotations[] {annotations});
+        return getAnnotations(groupId, group, annotationReferences);
     }
 
 }
