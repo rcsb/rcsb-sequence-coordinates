@@ -1,9 +1,19 @@
+/*
+ *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+ */
+
 package org.rcsb.graphqlschema.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 
 import java.util.List;
+
+/**
+ * @author : joan
+ * @mailto : joan.segura@rcsb.org
+ * @created : 2/5/24, Monday
+ **/
 
 public class SequenceAlignments {
     private String querySequence;

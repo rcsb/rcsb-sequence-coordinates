@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+ */
+
 package org.rcsb.collectors.map;
 
 import org.bson.Document;
@@ -10,6 +14,12 @@ import java.util.Arrays;
 
 import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Projections.*;
+
+/**
+ * @author : joan
+ * @mailto : joan.segura@rcsb.org
+ * @created : 2/5/24, Monday
+ **/
 
 public class MapHelper {
 

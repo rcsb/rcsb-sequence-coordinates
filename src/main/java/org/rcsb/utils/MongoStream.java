@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+ */
+
 package org.rcsb.utils;
 
 import com.mongodb.ConnectionString;
@@ -6,6 +10,12 @@ import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+/**
+ * @author : joan
+ * @mailto : joan.segura@rcsb.org
+ * @created : 2/5/24, Monday
+ **/
 
 public class MongoStream {
 

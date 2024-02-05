@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+ */
+
 package org.rcsb.rcsbsequencecoordinates.controller;
 
 import org.bson.Document;
@@ -14,6 +18,12 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 
 import static org.rcsb.collectors.annotations.AnnotationsCollector.getAnnotations;
+
+/**
+ * @author : joan
+ * @mailto : joan.segura@rcsb.org
+ * @created : 2/5/24, Monday
+ **/
 
 @Controller
 public class AnnotationsController implements AnnotationsQuery<Flux<Document>> {

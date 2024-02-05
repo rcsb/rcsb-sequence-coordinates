@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+ */
+
 package org.rcsb.graphqlschema.schema;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,14 +20,11 @@ import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 
 /**
- * A custom operation name generator based on the ideas discussed in https://github.com/leangen/graphql-spqr/issues/32
- * <p>
- * It will use the JsonProperty annotations to name fields and methods, or if absent it will do camel case to snake
- * case conversion.
- *
- *
- * @author Jose Duarte
- */
+ * @author : joan
+ * @mailto : joan.segura@rcsb.org
+ * @created : 2/5/24, Monday
+ **/
+
 public class CustomOperationNameGenerator implements OperationInfoGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomOperationNameGenerator.class);

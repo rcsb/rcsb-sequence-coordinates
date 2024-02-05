@@ -1,14 +1,19 @@
+/*
+ *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+ */
+
 package org.rcsb.rcsbsequencecoordinates.configuration;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import graphql.schema.DataFetcher;
-import graphql.schema.PropertyDataFetcher;
 import graphql.schema.idl.FieldWiringEnvironment;
 import graphql.schema.idl.WiringFactory;
 import org.bson.Document;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
+/**
+ * @author : joan
+ * @mailto : joan.segura@rcsb.org
+ * @created : 2/5/24, Monday
+ **/
 
 public class GraphqlWiringFactory implements WiringFactory {
 

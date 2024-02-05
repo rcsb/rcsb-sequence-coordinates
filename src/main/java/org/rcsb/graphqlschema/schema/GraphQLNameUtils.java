@@ -1,18 +1,18 @@
+/*
+ *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+ */
+
 package org.rcsb.graphqlschema.schema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utilities to ensure that GraphQL schema field names are consistent with
- * the specification for GraphQL query language. For more information refer to
- * <a href="https://graphql.github.io/graphql-spec/June2018/">GraphQL specification</>.
- *
- * Created on 3/26/19.
- *
- * @author Yana Valasatava
- * @since 3.0.0
- */
+ * @author : joan
+ * @mailto : joan.segura@rcsb.org
+ * @created : 2/5/24, Monday
+ **/
+
 public class GraphQLNameUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(GraphQLNameUtils.class);

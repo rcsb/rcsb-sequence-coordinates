@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+ */
+
 package org.rcsb.collectors.annotations;
 
 import org.bson.Document;
@@ -12,6 +16,12 @@ import java.util.List;
 
 import static org.rcsb.collectors.alignments.AlignmentsCollector.getAlignments;
 import static org.rcsb.collectors.annotations.AnnotationsHelper.*;
+
+/**
+ * @author : joan
+ * @mailto : joan.segura@rcsb.org
+ * @created : 2/5/24, Monday
+ **/
 
 public class AnnotationsCollector {
 

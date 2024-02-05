@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+ */
+
 package org.rcsb.rcsbsequencecoordinates.controller;
 
 import graphql.schema.DataFetchingEnvironment;
@@ -21,6 +25,12 @@ import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
 import static org.rcsb.collectors.alignments.AlignmentsCollector.getAlignments;
 import static org.rcsb.utils.GraphqlMethods.getArgument;
 import static org.rcsb.utils.GraphqlMethods.getQueryName;
+
+/**
+ * @author : joan
+ * @mailto : joan.segura@rcsb.org
+ * @created : 2/5/24, Monday
+ **/
 
 @Controller
 public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, AlignmentsSubscription<Flux<Document>> {
