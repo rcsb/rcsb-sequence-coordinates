@@ -5,6 +5,7 @@
 package org.rcsb.rcsbsequencecoordinates.controller;
 
 import org.bson.Document;
+import org.rcsb.graphqlschema.query.AnnotationsSubscription;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.graphqlschema.query.AnnotationsQuery;
@@ -26,7 +27,7 @@ import static org.rcsb.collectors.annotations.AnnotationsCollector.getAnnotation
  **/
 
 @Controller
-public class AnnotationsController implements AnnotationsQuery<Flux<Document>> {
+public class AnnotationsController implements AnnotationsQuery<Flux<Document>> , AnnotationsSubscription<Flux<Document>> {
 
     @QueryMapping(name = SchemaConstants.Query.ANNOTATIONS)
     public Flux<Document> annotations(
@@ -38,7 +39,7 @@ public class AnnotationsController implements AnnotationsQuery<Flux<Document>> {
     }
 
     @QueryMapping(name = SchemaConstants.Query.GROUP_ANNOTATIONS)
-    public Flux<Document> group_annotations(
+    public Flux<Document> groupAnnotations(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group,
             @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences
@@ -46,4 +47,15 @@ public class AnnotationsController implements AnnotationsQuery<Flux<Document>> {
         return getAnnotations(groupId, group, annotationReferences);
     }
 
+    @Override
+    @QueryMapping(name = SchemaConstants.Subscription.ANNOTATIONS_SUBSCRIPTION)
+    public Flux<Document> annotationsSubscription(String queryId, SequenceReference reference, List<AnnotationReference> annotationReferences) {
+        return getAnnotations(queryId, reference, annotationReferences);
+    }
+
+    @Override
+    @QueryMapping(name = SchemaConstants.Subscription.GROUP_ALIGNMENT_SUBSCRIPTION)
+    public Flux<Document> groupAnnotationsSubscription(String groupId, GroupReference group, List<AnnotationReference> annotationReferences) {
+        return getAnnotations(groupId, group, annotationReferences);
+    }
 }

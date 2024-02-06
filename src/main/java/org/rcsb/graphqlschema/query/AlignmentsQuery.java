@@ -20,7 +20,7 @@ public interface AlignmentsQuery<X> {
             SequenceReference to
     );
 
-    X group_alignment(
+    X groupAlignment(
             String groupId,
             GroupReference group
     );

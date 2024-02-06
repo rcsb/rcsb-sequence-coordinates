@@ -22,7 +22,7 @@ public interface AnnotationsQuery<X> {
             SequenceReference reference,
             List<AnnotationReference> sources
     );
-    X group_annotations(
+    X groupAnnotations(
             String groupId,
             GroupReference group,
             List<AnnotationReference> sources

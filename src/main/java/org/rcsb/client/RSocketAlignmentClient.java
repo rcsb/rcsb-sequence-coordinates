@@ -21,11 +21,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @created : 2/5/24, Monday
  **/
 
-class RSocketClient {
+class RSocketAlignmentClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(RSocketClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(RSocketAlignmentClient.class);
     private final RSocketGraphQlClient client;
-    private RSocketClient(){
+    private RSocketAlignmentClient(){
         URI uri = URI.create("ws://132.249.213.162:8080/rsocket");
         WebsocketClientTransport transport = WebsocketClientTransport.create(uri);
         client = RSocketGraphQlClient.builder()
@@ -72,7 +72,7 @@ class RSocketClient {
     }
 
     public static void main(String[] args) throws IOException {
-        RSocketClient me = new RSocketClient();
+        RSocketAlignmentClient me = new RSocketAlignmentClient();
         me.request();
     }
 

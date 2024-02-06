@@ -4,8 +4,11 @@
 
 package org.rcsb.graphqlschema.query;
 
+import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
+
+import java.util.List;
 
 /**
  * @author : joan
@@ -13,14 +16,15 @@ import org.rcsb.graphqlschema.reference.SequenceReference;
  * @created : 2/5/24, Monday
  **/
 
-public interface AlignmentsSubscription<X> {
-    X alignmentSubscription(
+public interface AnnotationsSubscription<X> {
+    X annotationsSubscription(
             String queryId,
-            SequenceReference from,
-            SequenceReference to
+            SequenceReference reference,
+            List<AnnotationReference> annotationReferences
     );
-    X groupAlignmentSubscription(
+    X groupAnnotationsSubscription(
             String groupId,
-            GroupReference group
+            GroupReference group,
+            List<AnnotationReference> annotationReferences
     );
 }

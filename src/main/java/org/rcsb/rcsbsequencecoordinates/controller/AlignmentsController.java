@@ -45,7 +45,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     }
 
     @QueryMapping(name = SchemaConstants.Query.GROUP_ALIGNMENT)
-    public Mono<Document> group_alignment(
+    public Mono<Document> groupAlignment(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group
     ) {
@@ -53,7 +53,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     }
 
     @SubscriptionMapping(name = SchemaConstants.Query.ALIGNMENT)
-    public Flux<Document> alignment_subscription(
+    public Flux<Document> alignmentSubscription(
             @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
             @Argument(name = SchemaConstants.Param.FROM) SequenceReference from,
             @Argument(name = SchemaConstants.Param.TO) SequenceReference to
@@ -62,7 +62,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     }
 
     @SubscriptionMapping(name = SchemaConstants.Subscription.GROUP_ALIGNMENT_SUBSCRIPTION)
-    public Flux<Document> group_alignment_subscription(
+    public Flux<Document> groupAlignmentSubscription(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group
     ) {
