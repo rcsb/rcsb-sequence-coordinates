@@ -29,12 +29,12 @@ public class GraphQlRSocketController {
         this.handler = new GraphQlRSocketHandler(graphQlService, List.of(), new Jackson2JsonEncoder());
     }
 
-    @MessageMapping("/graphql")
+    @MessageMapping("graphql")
     public Mono<Map<String, Object>> handle(Map<String, Object> payload) {
         return this.handler.handle(payload);
     }
 
-    @MessageMapping("/graphql")
+    @MessageMapping("graphql")
     public Flux<Map<String, Object>> handleSubscription(Map<String, Object> payload) {
         return this.handler.handleSubscription(payload);
     }

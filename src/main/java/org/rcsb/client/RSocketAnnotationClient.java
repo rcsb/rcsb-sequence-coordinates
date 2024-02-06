@@ -21,11 +21,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @created : 2/5/24, Monday
  **/
 
-class RSocketAlignmentClient {
+class RSocketAnnotationClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(RSocketAlignmentClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(RSocketAnnotationClient.class);
     private final RSocketGraphQlClient client;
-    private RSocketAlignmentClient(){
+    private RSocketAnnotationClient(){
         URI uri = URI.create("ws://localhost:8080/rsocket");
         WebsocketClientTransport transport = WebsocketClientTransport.create(uri);
         client = RSocketGraphQlClient.builder()
@@ -34,22 +34,37 @@ class RSocketAlignmentClient {
     }
     private void request() throws IOException {
         String query = """
-          subscription groupSubscription {
-            group_alignment_subscription(
-              group: SEQUENCE_IDENTITY
-              groupId: "2_30"
-            ){
-              target_id
-              target_sequence
-              aligned_regions{
-                query_begin
-                query_end
-                target_begin
-                target_end
-              }
-            }
-          }
-        """;
+                  subscription annotationSubscription {
+                          	annotations_subscription(
+                              queryId:"P01112"
+                              reference:UNIPROT
+                              sources:[UNIPROT, PDB_ENTITY, PDB_INSTANCE, PDB_INTERFACE]
+                            ){
+                            	target_id
+                                target_identifiers {
+                                  assembly_id
+                                  asym_id
+                                  entity_id
+                                  entry_id
+                                  interface_id
+                                  interface_partner_index
+                                  target_id
+                                  uniprot_id
+                                }
+                              	features{
+                                  name
+                                  type
+                                  feature_positions{
+                                    beg_seq_id
+                                    end_seq_id
+                                    beg_ori_id
+                                    end_ori_id
+                                    values
+                                  }
+                                }
+                          	}
+                          }
+                """;
         logger.info("Requesting: {}", query);
         long timeS = System.currentTimeMillis();
         AtomicInteger count = new AtomicInteger(0);
@@ -73,7 +88,7 @@ class RSocketAlignmentClient {
     }
 
     public static void main(String[] args) throws IOException {
-        RSocketAlignmentClient me = new RSocketAlignmentClient();
+        RSocketAnnotationClient me = new RSocketAnnotationClient();
         me.request();
     }
 

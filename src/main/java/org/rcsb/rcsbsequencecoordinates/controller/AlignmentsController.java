@@ -35,6 +35,7 @@ import static org.rcsb.utils.GraphqlMethods.getQueryName;
 @Controller
 public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, AlignmentsSubscription<Flux<Document>> {
 
+    @Override
     @QueryMapping(name = SchemaConstants.Query.ALIGNMENT)
     public Mono<Document> alignment(
             @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
@@ -44,6 +45,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
         return Mono.just(new Document());
     }
 
+    @Override
     @QueryMapping(name = SchemaConstants.Query.GROUP_ALIGNMENT)
     public Mono<Document> groupAlignment(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
@@ -52,6 +54,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
         return Mono.just(new Document());
     }
 
+    @Override
     @SubscriptionMapping(name = SchemaConstants.Query.ALIGNMENT)
     public Flux<Document> alignmentSubscription(
             @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
@@ -61,6 +64,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
         return getAlignments(queryId, from, to);
     }
 
+    @Override
     @SubscriptionMapping(name = SchemaConstants.Subscription.GROUP_ALIGNMENT_SUBSCRIPTION)
     public Flux<Document> groupAlignmentSubscription(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
@@ -87,7 +91,10 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
 
     @SchemaMapping(typeName = "TargetAlignment", field = GraphqlSchemaMapping.TARGET_SEQUENCE)
     public Mono<String> getTargetSequence(DataFetchingEnvironment dataFetchingEnvironment, Document targetAlignment){
-        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT))
+        if(
+                getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT) ||
+                getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Subscription.GROUP_ALIGNMENT_SUBSCRIPTION)
+        )
             return getSequence(
                     targetAlignment.getString(CoreConstants.TARGET_ID),
                     SequenceReference.PDB_ENTITY
