@@ -30,7 +30,7 @@ The properties are:
 | Property             | Action                                                                              | 
 |----------------------|-------------------------------------------------------------------------------------|
 | `aw.mongodb.db.name` | Set the DB name for the annotations warehouse DB.                                   |
-| `aw.mongodb.uri`     | Set the MongoDB connection URI (including host, username and password) for the DWH. |
+| `aw.mongodb.uri`     | Set the MongoDB connection URI (including host, username and password) for the AWH. |
 
 
 ## GraphQL schema generation
