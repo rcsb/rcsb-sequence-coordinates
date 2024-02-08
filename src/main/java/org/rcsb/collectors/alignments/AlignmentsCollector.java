@@ -5,6 +5,8 @@
 package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
+import org.rcsb.collectors.utils.AlignmentRangeIntersection;
+import org.rcsb.collectors.utils.RangeIntersection;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import reactor.core.publisher.Flux;
@@ -29,6 +31,16 @@ import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
  **/
 
 public class AlignmentsCollector {
+
+    public static Flux<Document> getAlignments(String queryId, SequenceReference from, SequenceReference to, List<Integer> range) {
+        RangeIntersection alignmentRangeIntersection = new RangeIntersection(range, new AlignmentRangeIntersection());
+        if(alignmentRangeIntersection.isEmptyRange())
+            return getAlignments(queryId, from, to);
+
+        return getAlignments(queryId, from, to)
+                .filter(alignmentRangeIntersection::isConnected)
+                .map(alignmentRangeIntersection::applyRange);
+    }
 
     public static Flux<Document> getAlignments(String queryId, SequenceReference from, SequenceReference to){
         return getQueryIdMap(queryId, from).flatMap(

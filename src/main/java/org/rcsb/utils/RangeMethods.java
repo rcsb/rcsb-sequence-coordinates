@@ -14,7 +14,7 @@ public class RangeMethods {
 
     public static Range intersection(Range a, Range x){
         if(a.bottom() > x.top() || x.bottom() > x.top())
-            return new Range(-1,0);
+            return new Range(0,-1);
         return new Range(Math.max(x.bottom(), a.bottom()), Math.min(x.top(), a.top()));
     }
 

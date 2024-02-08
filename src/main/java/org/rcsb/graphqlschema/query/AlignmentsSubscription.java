@@ -7,6 +7,8 @@ package org.rcsb.graphqlschema.query;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 
+import java.util.List;
+
 /**
  * @author : joan
  * @mailto : joan.segura@rcsb.org
@@ -17,7 +19,8 @@ public interface AlignmentsSubscription<X> {
     X alignmentSubscription(
             String queryId,
             SequenceReference from,
-            SequenceReference to
+            SequenceReference to,
+            List<Integer> range
     );
     X groupAlignmentSubscription(
             String groupId,

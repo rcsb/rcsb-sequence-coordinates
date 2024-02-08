@@ -35,7 +35,8 @@ public class ServiceQueries implements
     public SequenceAlignments alignment(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.FROM, description = "Query sequence database") @GraphQLNonNull SequenceReference from,
-            @GraphQLArgument(name = SchemaConstants.Param.TO, description = "Target Sequence database") @GraphQLNonNull SequenceReference to
+            @GraphQLArgument(name = SchemaConstants.Param.TO, description = "Target Sequence database") @GraphQLNonNull SequenceReference to,
+            @GraphQLArgument(name = SchemaConstants.Param.RANGE, description = "Optional integer list (2-tuple) to filter alignments to a particular region") List<@GraphQLNonNull Integer> range
     ) {
         return new SequenceAlignments();
     }
@@ -52,7 +53,8 @@ public class ServiceQueries implements
     public List<TargetAlignment> alignmentSubscription(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.FROM, description = "Query sequence database") @GraphQLNonNull SequenceReference from,
-            @GraphQLArgument(name = SchemaConstants.Param.TO, description = "Target Sequence database") @GraphQLNonNull SequenceReference to
+            @GraphQLArgument(name = SchemaConstants.Param.TO, description = "Target Sequence database") @GraphQLNonNull SequenceReference to,
+            @GraphQLArgument(name = SchemaConstants.Param.RANGE, description = "Optional integer list (2-tuple) to filter alignments to a particular region") List<@GraphQLNonNull Integer> range
     ) {
         return new ArrayList<>();
     }
@@ -69,7 +71,8 @@ public class ServiceQueries implements
     public List<SequenceAnnotations> annotations(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.REFERENCE, description = "Query sequence database") @GraphQLNonNull SequenceReference reference,
-            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source
+            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source,
+            @GraphQLArgument(name = SchemaConstants.Param.RANGE, description = "Optional integer list (2-tuple) to filter annotations to a particular region") List<@GraphQLNonNull Integer> range
     ) {
         return List.of(new SequenceAnnotations());
     }
@@ -87,7 +90,8 @@ public class ServiceQueries implements
     public List<SequenceAnnotations> annotationsSubscription(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.REFERENCE, description = "Query sequence database") @GraphQLNonNull SequenceReference reference,
-            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source
+            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source,
+            @GraphQLArgument(name = SchemaConstants.Param.RANGE, description = "Optional integer list (2-tuple) to filter annotations to a particular region") List<@GraphQLNonNull Integer> range
     ) {
         return List.of(new SequenceAnnotations());
     }

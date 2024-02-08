@@ -21,6 +21,8 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
 import static org.rcsb.collectors.alignments.AlignmentsCollector.getAlignments;
 import static org.rcsb.utils.GraphqlMethods.getArgument;
@@ -40,7 +42,8 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     public Mono<Document> alignment(
             @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
             @Argument(name = SchemaConstants.Param.FROM) SequenceReference from,
-            @Argument(name = SchemaConstants.Param.TO) SequenceReference to
+            @Argument(name = SchemaConstants.Param.TO) SequenceReference to,
+            @Argument(name = SchemaConstants.Param.RANGE) List<Integer> range
     ) {
         return Mono.just(new Document());
     }
@@ -59,9 +62,10 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     public Flux<Document> alignmentSubscription(
             @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
             @Argument(name = SchemaConstants.Param.FROM) SequenceReference from,
-            @Argument(name = SchemaConstants.Param.TO) SequenceReference to
+            @Argument(name = SchemaConstants.Param.TO) SequenceReference to,
+            @Argument(name = SchemaConstants.Param.RANGE) List<Integer> range
     ) {
-        return getAlignments(queryId, from, to);
+        return getAlignments(queryId, from, to, range);
     }
 
     @Override
@@ -77,9 +81,10 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     public Flux<Document> getTargetAlignments(DataFetchingEnvironment dataFetchingEnvironment){
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.ALIGNMENT))
             return getAlignments(
-                getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
-                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
-                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
+                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
+                    SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
+                    SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO)),
+                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.RANGE)
             );
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT))
             return getAlignments(

@@ -20,7 +20,8 @@ public interface AnnotationsQuery<X> {
     X annotations(
             String queryId,
             SequenceReference reference,
-            List<AnnotationReference> sources
+            List<AnnotationReference> sources,
+            List<Integer> range
     );
     X groupAnnotations(
             String groupId,

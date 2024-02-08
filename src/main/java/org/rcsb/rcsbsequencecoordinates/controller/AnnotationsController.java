@@ -35,9 +35,10 @@ public class AnnotationsController implements AnnotationsQuery<Flux<Document>> ,
     public Flux<Document> annotations(
             @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
             @Argument(name = SchemaConstants.Param.REFERENCE) SequenceReference reference,
-            @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences
+            @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences,
+            @Argument(name = SchemaConstants.Param.RANGE) List<Integer> range
     ) {
-        return getAnnotations(queryId, reference, annotationReferences);
+        return getAnnotations(queryId, reference, annotationReferences, range);
     }
 
     @Override
@@ -55,9 +56,10 @@ public class AnnotationsController implements AnnotationsQuery<Flux<Document>> ,
     public Flux<Document> annotationsSubscription(
             @Argument(name = SchemaConstants.Param.QUERY_ID) String queryId,
             @Argument(name = SchemaConstants.Param.REFERENCE) SequenceReference reference,
-            @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences
+            @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences,
+            @Argument(name = SchemaConstants.Param.RANGE) List<Integer> range
     ) {
-        return getAnnotations(queryId, reference, annotationReferences);
+        return getAnnotations(queryId, reference, annotationReferences, range);
     }
 
     @Override
