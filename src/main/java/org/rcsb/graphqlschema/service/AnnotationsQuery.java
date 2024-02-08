@@ -4,6 +4,7 @@
 
 package org.rcsb.graphqlschema.service;
 
+import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
@@ -21,11 +22,13 @@ public interface AnnotationsQuery<X> {
             String queryId,
             SequenceReference reference,
             List<AnnotationReference> sources,
+            List<AnnotationFilter> annotationFilters,
             List<Integer> range
     );
     X groupAnnotations(
             String groupId,
             GroupReference group,
-            List<AnnotationReference> sources
+            List<AnnotationReference> sources,
+            List<AnnotationFilter> annotationFilters
     );
 }

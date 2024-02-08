@@ -16,15 +16,20 @@ import java.util.Set;
  * @mailto : joan.segura@rcsb.org
  * @created : 2/7/24, Wednesday
  **/
-public class GroupFilter {
+public class GroupFilterOperator {
 
     private final Set<String> filter;
 
-    public GroupFilter(List<String> filter){
-        this.filter = new HashSet<>(filter);
+    public GroupFilterOperator(List<String> filter){
+        if(filter == null || filter.isEmpty())
+            this.filter = null;
+        else
+            this.filter = new HashSet<>(filter);
     }
 
     public boolean contains(Document alignment){
+        if(filter == null)
+            return true;
         return filter.contains( alignment.getString(SchemaConstants.Field.TARGET_ID) );
     }
 

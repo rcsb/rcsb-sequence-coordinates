@@ -5,8 +5,10 @@
 package org.rcsb.collectors.annotations;
 
 import org.bson.Document;
+import org.rcsb.collectors.utils.AnnotationFilterOperator;
 import org.rcsb.collectors.utils.AnnotationRangeIntersection;
-import org.rcsb.collectors.utils.RangeIntersection;
+import org.rcsb.collectors.utils.RangeIntersectionOperator;
+import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
@@ -27,41 +29,66 @@ import static org.rcsb.collectors.annotations.AnnotationsHelper.*;
 
 public class AnnotationsCollector {
 
-    public static Flux<Document> getAnnotations(String queryId, SequenceReference sequenceReference, List<AnnotationReference> annotationReferences, List<Integer> range) {
-        RangeIntersection annotationRangeIntersection = new RangeIntersection(range, new AnnotationRangeIntersection());
-        if(annotationRangeIntersection.isEmptyRange())
-            return getAnnotations(queryId, sequenceReference, annotationReferences);
-        return getAnnotations(queryId, sequenceReference, annotationReferences)
+    public static Flux<Document> getAnnotations(
+            String queryId,
+            SequenceReference sequenceReference,
+            List<AnnotationReference> annotationReferences,
+            List<AnnotationFilter> annotationFilters,
+            List<Integer> range
+    ) {
+        RangeIntersectionOperator annotationRangeIntersection = new RangeIntersectionOperator(range, new AnnotationRangeIntersection());
+        return getAnnotations(queryId, sequenceReference, annotationReferences, annotationFilters)
                 .filter(annotationRangeIntersection::isConnected)
                 .map(annotationRangeIntersection::applyRange);
     }
 
-    public static Flux<Document> getAnnotations(String groupId, GroupReference groupReference, List<AnnotationReference> annotationReferences){
+    public static Flux<Document> getAnnotations(
+            String groupId,
+            GroupReference groupReference,
+            List<AnnotationReference> annotationReferences,
+            List<AnnotationFilter> annotationFilters
+    ){
         if(groupReference.equals(GroupReference.MATCHING_UNIPROT_ACCESSION))
-            return getAnnotations(groupId, SequenceReference.UNIPROT, annotationReferences);
+            return getAnnotations(groupId, SequenceReference.UNIPROT, annotationReferences, annotationFilters);
         return Flux.fromIterable(annotationReferences)
                 .flatMap(
-                        annotationReference -> getAnnotations(groupId, groupReference, annotationReference)
+                        annotationReference -> getAnnotations(groupId, groupReference, annotationReference, annotationFilters)
                 );
     }
 
-    private static Flux<Document> getAnnotations(String queryId, SequenceReference sequenceReference, List<AnnotationReference> annotationReferences) {
+    private static Flux<Document> getAnnotations(
+            String queryId,
+            SequenceReference sequenceReference,
+            List<AnnotationReference> annotationReferences,
+            List<AnnotationFilter> annotationFilters
+    ) {
         return Flux.fromIterable(annotationReferences)
                 .flatMap(
-                        annotationReference -> getAnnotations(queryId, sequenceReference, annotationReference)
+                        annotationReference -> getAnnotations(queryId, sequenceReference, annotationReference, annotationFilters)
                 );
     }
 
-    private static Flux<Document> getAnnotations(String groupId, GroupReference groupReference, AnnotationReference annotationReference) {
+    private static Flux<Document> getAnnotations(
+            String groupId,
+            GroupReference groupReference,
+            AnnotationReference annotationReference,
+            List<AnnotationFilter> annotationFilters
+    ) {
         return getAlignments(
                 groupId,
                 groupReference
         ).flatMap(
-                alignment -> getAnnotations(alignment.getString(CoreConstants.TARGET_ID), groupReference.toSequenceReference(), annotationReference)
+                alignment -> getAnnotations(alignment.getString(CoreConstants.TARGET_ID), groupReference.toSequenceReference(), annotationReference, annotationFilters)
         );
     }
 
-    private static Flux<Document> getAnnotations(String queryId, SequenceReference sequenceReference, AnnotationReference annotationReference) {
+    private static Flux<Document> getAnnotations(
+            String queryId,
+            SequenceReference sequenceReference,
+            AnnotationReference annotationReference,
+            List<AnnotationFilter> annotationFilters
+    ) {
+        AnnotationFilterOperator annotationFilter = new AnnotationFilterOperator(annotationFilters);
         return getAlignments(
                 queryId,
                 sequenceReference,
@@ -72,7 +99,15 @@ public class AnnotationsCollector {
                                 getAggregation(alignment.getString(CoreConstants.TARGET_ID), annotationReference)
                         )
                 ).map(
+                        annotations -> addSource(annotationReference, annotations)
+                ).filter(
+                        annotationFilter::targetCheck
+                ).map(
+                        annotationFilter::applyFilterToFeatures
+                ).map(
                         annotations -> mapAnnotations(annotations, alignment)
+                ).filter(
+                        AnnotationsHelper::hasFeatures
                 )
         );
     }

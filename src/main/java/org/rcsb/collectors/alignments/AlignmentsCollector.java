@@ -6,8 +6,8 @@ package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
 import org.rcsb.collectors.utils.AlignmentRangeIntersection;
-import org.rcsb.collectors.utils.GroupFilter;
-import org.rcsb.collectors.utils.RangeIntersection;
+import org.rcsb.collectors.utils.GroupFilterOperator;
+import org.rcsb.collectors.utils.RangeIntersectionOperator;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import reactor.core.publisher.Flux;
@@ -34,10 +34,7 @@ import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
 public class AlignmentsCollector {
 
     public static Flux<Document> getAlignments(String queryId, SequenceReference from, SequenceReference to, List<Integer> range) {
-        RangeIntersection alignmentRangeIntersection = new RangeIntersection(range, new AlignmentRangeIntersection());
-        if(alignmentRangeIntersection.isEmptyRange())
-            return getAlignments(queryId, from, to);
-
+        RangeIntersectionOperator alignmentRangeIntersection = new RangeIntersectionOperator(range, new AlignmentRangeIntersection());
         return getAlignments(queryId, from, to)
                 .filter(alignmentRangeIntersection::isConnected)
                 .map(alignmentRangeIntersection::applyRange);
@@ -68,9 +65,7 @@ public class AlignmentsCollector {
     }
 
     public static Flux<Document> getAlignments(String groupId, GroupReference group, List<String> filter){
-        if(filter == null || filter.isEmpty())
-            return getAlignments(groupId, group);
-        GroupFilter groupFilter = new GroupFilter(filter);
+        GroupFilterOperator groupFilter = new GroupFilterOperator(filter);
         return getAlignments(groupId, group)
                 .filter(groupFilter::contains);
     }

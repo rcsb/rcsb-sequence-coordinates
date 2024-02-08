@@ -9,14 +9,43 @@ import org.rcsb.utils.Range;
 
 import java.util.List;
 
+import static org.rcsb.utils.RangeMethods.intersection;
+
 /**
  * @author : joan
  * @mailto : joan.segura@rcsb.org
- * @created : 2/7/24, Wednesday
+ * @created : 2/6/24, Tuesday
  **/
-public interface RangeIntersectionOperator {
-    List<Document> getRegions(Document root);
-    int getRegionBegin(Document region);
-    int getRegionEnd(Document region);
-    Document applyRange(Range range, Document root);
+public class RangeIntersectionOperator {
+
+    private final Range range;
+    private final RangeIntersection rangeIntersection;
+
+    public RangeIntersectionOperator(List<Integer> range, RangeIntersection rangeIntersection){
+        if(range == null)
+            this.range = new Range(0,-1);
+        else if(range.size() != 2)
+            throw new RuntimeException(String.format("Illegal range of size %s", range.size()));
+        else
+            this.range = new Range( range.get(0), range.get(1));
+        this.rangeIntersection = rangeIntersection;
+    }
+
+    public boolean isConnected(Document alignment) {
+        if(range.isEmpty())
+            return true;
+        return rangeIntersection.getRegions(alignment).stream().anyMatch(
+                region -> !intersection(
+                            range,
+                            new Range(rangeIntersection.getRegionBegin(region), rangeIntersection.getRegionEnd(region))
+                        ).isEmpty()
+        );
+    }
+
+    public Document applyRange(Document root){
+        if(range.isEmpty())
+            return root;
+        return rangeIntersection.applyRange(range, root);
+    }
+
 }

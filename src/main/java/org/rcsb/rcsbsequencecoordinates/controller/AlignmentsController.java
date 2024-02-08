@@ -53,7 +53,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     public Mono<Document> groupAlignment(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group,
-            @Argument(name = SchemaConstants.Param.FILTER) List<String> filter
+            @Argument(name = SchemaConstants.Param.GROUP_FILTER) List<String> filter
     ) {
         return Mono.just(new Document());
     }
@@ -74,7 +74,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     public Flux<Document> groupAlignmentSubscription(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group,
-            @Argument(name = SchemaConstants.Param.FILTER) List<String> filter
+            @Argument(name = SchemaConstants.Param.GROUP_FILTER) List<String> filter
     ) {
         return getAlignments(groupId, group, filter);
     }
@@ -92,7 +92,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             return getAlignments(
                     getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
                     GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP)),
-                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.FILTER)
+                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_FILTER)
             );
         throw new RuntimeException(String.format("Undefined end point query %s", getQueryName(dataFetchingEnvironment)));
     }

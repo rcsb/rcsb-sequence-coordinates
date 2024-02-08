@@ -56,15 +56,6 @@ public class AnnotationsHelper {
         );
     }
 
-    private static Bson annotationsFields() {
-        return project(fields(
-                include(CoreConstants.TARGET_ID),
-                include(CoreConstants.FEATURES),
-                include(CoreConstants.TARGET_IDENTIFIERS),
-                excludeId()
-        ));
-    }
-
     public static Document mapAnnotations(Document annotations, Document alignment){
         annotations.put(
                 SchemaConstants.Field.FEATURES,
@@ -74,6 +65,27 @@ public class AnnotationsHelper {
                         .collect(Collectors.toList())
         );
         return annotations;
+    }
+
+    public static Document addSource(AnnotationReference annotationReference, Document annotations){
+        annotations.put(
+                SchemaConstants.Field.SOURCE,
+                annotationReference
+        );
+        return annotations;
+    }
+
+    public static boolean hasFeatures(Document annotations){
+        return annotations.containsKey(SchemaConstants.Field.FEATURES) && !annotations.getList(SchemaConstants.Field.FEATURES, Document.class).isEmpty();
+    }
+
+    private static Bson annotationsFields() {
+        return project(fields(
+                include(CoreConstants.TARGET_ID),
+                include(CoreConstants.FEATURES),
+                include(CoreConstants.TARGET_IDENTIFIERS),
+                excludeId()
+        ));
     }
 
     private static Document mapFeature(Document feature, Document alignment){

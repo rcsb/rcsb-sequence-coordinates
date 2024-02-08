@@ -20,7 +20,7 @@ import static org.rcsb.utils.RangeMethods.mapIndex;
  * @mailto : joan.segura@rcsb.org
  * @created : 2/6/24, Tuesday
  **/
-public class AlignmentRangeIntersection implements RangeIntersectionOperator {
+public class AlignmentRangeIntersection implements RangeIntersection {
 
     @Override
     public List<Document> getRegions(Document alignment) {

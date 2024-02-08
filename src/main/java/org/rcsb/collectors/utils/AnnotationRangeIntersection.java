@@ -20,7 +20,7 @@ import static org.rcsb.utils.RangeMethods.mapIndex;
  * @mailto : joan.segura@rcsb.org
  * @created : 2/6/24, Tuesday
  **/
-public class AnnotationRangeIntersection implements RangeIntersectionOperator {
+public class AnnotationRangeIntersection implements RangeIntersection {
 
     @Override
     public List<Document> getRegions(Document annotation) {

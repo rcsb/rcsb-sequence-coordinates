@@ -8,13 +8,14 @@ import io.leangen.graphql.annotations.GraphQLArgument;
 import io.leangen.graphql.annotations.GraphQLNonNull;
 import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.annotations.GraphQLSubscription;
+import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.response.SequenceAlignments;
+import org.rcsb.graphqlschema.response.SequenceAnnotations;
 import org.rcsb.graphqlschema.response.TargetAlignment;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
-import org.rcsb.mojave.auto.SequenceAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class ServiceQueries implements
     public SequenceAlignments groupAlignment(
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_ID, description = "Database group identifier") @GraphQLNonNull String groupId,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP, description = "Target Sequence database") @GraphQLNonNull GroupReference to,
-            @GraphQLArgument(name = SchemaConstants.Param.FILTER, description = "Optional string list of allowed group member identifiers") List<@GraphQLNonNull String> filter
+            @GraphQLArgument(name = SchemaConstants.Param.GROUP_FILTER, description = "Optional string list of allowed group member identifiers") List<@GraphQLNonNull String> filter
     ) {
         return new SequenceAlignments();
     }
@@ -68,7 +69,7 @@ public class ServiceQueries implements
     public List<TargetAlignment> groupAlignmentSubscription(
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_ID, description = "Database group identifier") @GraphQLNonNull String groupId,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP, description = "Target Sequence database") @GraphQLNonNull GroupReference to,
-            @GraphQLArgument(name = SchemaConstants.Param.FILTER, description = "Optional string list of allowed group member identifiers") List<@GraphQLNonNull String> filter
+            @GraphQLArgument(name = SchemaConstants.Param.GROUP_FILTER, description = "Optional string list of allowed group member identifiers") List<@GraphQLNonNull String> filter
     ) {
         return new ArrayList<>();
     }
@@ -79,8 +80,9 @@ public class ServiceQueries implements
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.REFERENCE, description = "Query sequence database") @GraphQLNonNull SequenceReference reference,
             @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source,
+            @GraphQLArgument(name = SchemaConstants.Param.ANNOTATION_FILTERS, description = "Optional annotation filter by type or target identifier") List<@GraphQLNonNull AnnotationFilter> annotationFilters,
             @GraphQLArgument(name = SchemaConstants.Param.RANGE, description = "Optional integer list (2-tuple) to filter annotations to a particular region") List<@GraphQLNonNull Integer> range
-    ) {
+            ) {
         return List.of(new SequenceAnnotations());
     }
 
@@ -89,7 +91,8 @@ public class ServiceQueries implements
     public List<SequenceAnnotations> groupAnnotations(
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_ID, description = "Database sequence identifier") @GraphQLNonNull String groupId,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP, description = "Query sequence database") @GraphQLNonNull GroupReference group,
-            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source
+            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source,
+            @GraphQLArgument(name = SchemaConstants.Param.ANNOTATION_FILTERS, description = "Optional annotation filter by type or target identifier") List<@GraphQLNonNull AnnotationFilter> annotationFilters
     ) {
         return List.of(new SequenceAnnotations());
     }
@@ -100,6 +103,7 @@ public class ServiceQueries implements
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.REFERENCE, description = "Query sequence database") @GraphQLNonNull SequenceReference reference,
             @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source,
+            @GraphQLArgument(name = SchemaConstants.Param.ANNOTATION_FILTERS, description = "Optional annotation filter by type or target identifier") List<@GraphQLNonNull AnnotationFilter> annotationFilters,
             @GraphQLArgument(name = SchemaConstants.Param.RANGE, description = "Optional integer list (2-tuple) to filter annotations to a particular region") List<@GraphQLNonNull Integer> range
     ) {
         return List.of(new SequenceAnnotations());
@@ -110,7 +114,8 @@ public class ServiceQueries implements
     public List<SequenceAnnotations> groupAnnotationsSubscription(
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_ID, description = "Database sequence identifier") @GraphQLNonNull String groupId,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP, description = "Query sequence database") @GraphQLNonNull GroupReference group,
-            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source
+            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source,
+            @GraphQLArgument(name = SchemaConstants.Param.ANNOTATION_FILTERS, description = "Optional annotation filter by type or target identifier") List<@GraphQLNonNull AnnotationFilter> annotationFilters
     ) {
         return List.of(new SequenceAnnotations());
     }
