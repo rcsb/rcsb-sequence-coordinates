@@ -6,8 +6,8 @@ package org.rcsb.rcsbsequencecoordinates.controller;
 
 import graphql.schema.DataFetchingEnvironment;
 import org.bson.Document;
-import org.rcsb.graphqlschema.query.AlignmentsQuery;
-import org.rcsb.graphqlschema.query.AlignmentsSubscription;
+import org.rcsb.graphqlschema.service.AlignmentsQuery;
+import org.rcsb.graphqlschema.service.AlignmentsSubscription;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
@@ -52,7 +52,8 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     @QueryMapping(name = SchemaConstants.Query.GROUP_ALIGNMENT)
     public Mono<Document> groupAlignment(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
-            @Argument(name = SchemaConstants.Param.GROUP) GroupReference group
+            @Argument(name = SchemaConstants.Param.GROUP) GroupReference group,
+            @Argument(name = SchemaConstants.Param.FILTER) List<String> filter
     ) {
         return Mono.just(new Document());
     }
@@ -72,9 +73,10 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     @SubscriptionMapping(name = SchemaConstants.Subscription.GROUP_ALIGNMENT_SUBSCRIPTION)
     public Flux<Document> groupAlignmentSubscription(
             @Argument(name = SchemaConstants.Param.GROUP_ID) String groupId,
-            @Argument(name = SchemaConstants.Param.GROUP) GroupReference group
+            @Argument(name = SchemaConstants.Param.GROUP) GroupReference group,
+            @Argument(name = SchemaConstants.Param.FILTER) List<String> filter
     ) {
-        return getAlignments(groupId, group);
+        return getAlignments(groupId, group, filter);
     }
 
     @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.TARGET_ALIGNMENT)
@@ -88,8 +90,9 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             );
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT))
             return getAlignments(
-                getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
-                GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP))
+                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
+                    GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP)),
+                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.FILTER)
             );
         throw new RuntimeException(String.format("Undefined end point query %s", getQueryName(dataFetchingEnvironment)));
     }

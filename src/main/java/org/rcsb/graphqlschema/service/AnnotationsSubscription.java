@@ -2,7 +2,7 @@
  *  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
  */
 
-package org.rcsb.graphqlschema.query;
+package org.rcsb.graphqlschema.service;
 
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;

@@ -6,6 +6,7 @@ package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
 import org.rcsb.collectors.utils.AlignmentRangeIntersection;
+import org.rcsb.collectors.utils.GroupFilter;
 import org.rcsb.collectors.utils.RangeIntersection;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
@@ -64,6 +65,14 @@ public class AlignmentsCollector {
                         t -> targetIdSubstitutor(to).apply(t, d)
                 )
         );
+    }
+
+    public static Flux<Document> getAlignments(String groupId, GroupReference group, List<String> filter){
+        if(filter == null || filter.isEmpty())
+            return getAlignments(groupId, group);
+        GroupFilter groupFilter = new GroupFilter(filter);
+        return getAlignments(groupId, group)
+                .filter(groupFilter::contains);
     }
 
     public static Flux<Document> getAlignments(String groupId, GroupReference group){

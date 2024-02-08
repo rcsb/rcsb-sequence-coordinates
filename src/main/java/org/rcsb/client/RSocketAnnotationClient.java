@@ -26,7 +26,7 @@ class RSocketAnnotationClient {
     private static final Logger logger = LoggerFactory.getLogger(RSocketAnnotationClient.class);
     private final RSocketGraphQlClient client;
     private RSocketAnnotationClient(){
-        URI uri = URI.create("ws://localhost:8080/rsocket");
+        URI uri = URI.create("ws://132.249.213.162:8080/rsocket");
         WebsocketClientTransport transport = WebsocketClientTransport.create(uri);
         client = RSocketGraphQlClient.builder()
                .clientTransport(transport)

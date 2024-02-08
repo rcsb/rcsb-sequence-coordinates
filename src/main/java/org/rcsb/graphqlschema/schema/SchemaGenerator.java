@@ -9,7 +9,7 @@ import graphql.schema.idl.SchemaPrinter;
 import io.leangen.graphql.GraphQLSchemaGenerator;
 import io.leangen.graphql.metadata.strategy.query.AbstractResolverBuilder;
 import io.leangen.graphql.metadata.strategy.query.BeanResolverBuilder;
-import org.rcsb.graphqlschema.query.ServiceQueries;
+import org.rcsb.graphqlschema.service.ServiceQueries;
 
 import java.io.File;
 import java.io.FileNotFoundException;

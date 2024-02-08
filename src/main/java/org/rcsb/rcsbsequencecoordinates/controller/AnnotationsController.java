@@ -5,10 +5,10 @@
 package org.rcsb.rcsbsequencecoordinates.controller;
 
 import org.bson.Document;
-import org.rcsb.graphqlschema.query.AnnotationsSubscription;
+import org.rcsb.graphqlschema.service.AnnotationsSubscription;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
-import org.rcsb.graphqlschema.query.AnnotationsQuery;
+import org.rcsb.graphqlschema.service.AnnotationsQuery;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.springframework.graphql.data.method.annotation.Argument;

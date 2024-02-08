@@ -18,6 +18,7 @@ public class SchemaConstants {
     private final static String FROM = "from";
     private final static String TO = "to";
     private final static String RANGE = "range";
+    private final static String FILTER = "filter";
     private final static String REFERENCE = "reference";
     private final static String SOURCES = "sources";
     private final static String GROUP_ID = "groupId";
@@ -80,6 +81,7 @@ public class SchemaConstants {
         public final static String FROM = SchemaConstants.FROM;
         public final static String TO = SchemaConstants.TO;
         public final static String RANGE = SchemaConstants.RANGE;
+        public final static String FILTER = SchemaConstants.FILTER;
         public final static String REFERENCE = SchemaConstants.REFERENCE;
         public final static String SOURCES = SchemaConstants.SOURCES;
         public final static String GROUP_ID = SchemaConstants.GROUP_ID;
