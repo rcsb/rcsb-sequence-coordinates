@@ -64,8 +64,8 @@ public class AlignmentsHelper {
         );
     }
 
-    public static String getAltIndex(SequenceReference from, SequenceReference to) {
-        if(getIndex(from, to).equals(CoreConstants.QUERY_ID))
+    public static String getAltIndex(String index) {
+        if(index.equals(CoreConstants.QUERY_ID))
             return CoreConstants.TARGET_ID;
         return CoreConstants.QUERY_ID;
     }

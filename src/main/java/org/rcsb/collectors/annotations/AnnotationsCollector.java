@@ -74,7 +74,7 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return AlignmentsCollector
+        return AlignmentsCollector.build()
                 .request(
                     groupId,
                     groupReference
@@ -92,7 +92,7 @@ public class AnnotationsCollector {
             List<AnnotationFilter> annotationFilters
     ) {
         AnnotationFilterOperator annotationFilter = new AnnotationFilterOperator(annotationFilters);
-        return AlignmentsCollector
+        return AlignmentsCollector.build()
                 .request(
                     queryId,
                     sequenceReference,
@@ -100,22 +100,16 @@ public class AnnotationsCollector {
                 )
                 .get()
                 .flatMap(
-                    alignment -> Flux.from(
-                            MongoStream.getMongoDatabase().getCollection(getCollection(annotationReference)).aggregate(
+                    alignment ->
+                            Flux.from(MongoStream.getMongoDatabase().getCollection(getCollection(annotationReference)).aggregate(
                                     getAggregation(alignment.getString(CoreConstants.TARGET_ID), annotationReference)
-                            )
-                    ).map(
-                           annotations -> addSource(annotationReference, annotations)
-                    ).filter(
-                            annotationFilter::targetCheck
-                    ).map(
-                            annotationFilter::applyFilterToFeatures
-                    ).map(
-                            annotations -> mapAnnotations(annotations, alignment)
-                    ).filter(
-                        AnnotationsHelper::hasFeatures
-                    )
-            );
+                            ))
+                            .map(annotations -> addSource(annotationReference, annotations))
+                            .filter(annotationFilter::targetCheck)
+                            .map(annotationFilter::applyFilterToFeatures)
+                            .map(annotations -> mapAnnotations(annotations, alignment))
+                            .filter(AnnotationsHelper::hasFeatures)
+                );
     }
 
 }

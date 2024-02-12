@@ -5,8 +5,8 @@
 package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.rcsb.collectors.utils.AlignmentRangeIntersection;
-import org.rcsb.collectors.utils.GroupFilterOperator;
 import org.rcsb.collectors.utils.RangeIntersectionOperator;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
@@ -14,13 +14,14 @@ import reactor.core.publisher.Flux;
 
 import org.rcsb.utils.MongoStream;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Aggregates.sort;
-import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Aggregates.*;
+import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Sorts.*;
 import static org.rcsb.collectors.alignments.AlignmentsHelper.*;
 import static org.rcsb.collectors.map.MapCollector.getQueryIdMap;
@@ -35,24 +36,26 @@ import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
 
 public class AlignmentsCollector {
 
-    private final Supplier<Flux<Document>> documentSupplier;
+    private Supplier<Flux<Document>> documentSupplier;
     private Function<Flux<Document>,Flux<Document>> filterRange = Function.identity();
-    private Function<Flux<Document>,Flux<Document>> filterTarget = Function.identity();
+    private List<String> filterTarget = List.of();
+    private List<Integer> page = List.of();
 
-    private AlignmentsCollector(Supplier<Flux<Document>> documentSupplier){
-        this.documentSupplier = documentSupplier;
+    private AlignmentsCollector(){
     }
 
-    public static AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to){
-        return new AlignmentsCollector( () -> getAlignments(queryId, from, to) );
+    public static AlignmentsCollector build(){
+        return new AlignmentsCollector();
     }
 
-    public static AlignmentsCollector request(String queryId, String targetId, SequenceReference from, SequenceReference to){
-        return new AlignmentsCollector( () -> getAlignments(queryId, targetId, from, to) );
+    public AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to){
+        documentSupplier = () -> getAlignments(queryId, from, to);
+        return this;
     }
 
-    public static AlignmentsCollector request(String groupId, GroupReference group){
-        return new AlignmentsCollector( () -> getAlignments(groupId, group));
+    public AlignmentsCollector request(String groupId, GroupReference group){
+        documentSupplier = () -> getAlignments(groupId, group);
+        return this;
     }
 
     public AlignmentsCollector range(List<Integer> range){
@@ -64,17 +67,23 @@ public class AlignmentsCollector {
     }
 
     public AlignmentsCollector filter(List<String> filter){
-        GroupFilterOperator groupFilter = new GroupFilterOperator(filter);
-        this.filterTarget = documentFlux -> documentFlux
-                .filter(groupFilter::contains);
+        if(filter != null)
+            this.filterTarget = filter;
+        return this;
+    }
+
+    public AlignmentsCollector page(Integer first, Integer offset){
+        if(first != null && offset != null)
+            page = List.of(offset, first);
         return this;
     }
 
     public Flux<Document> get(){
-        return this.filterRange.apply(this.filterTarget.apply(documentSupplier.get()));
+        return documentSupplier.get()
+                .transform(filterRange);
     }
 
-    private static Flux<Document> getAlignments(String queryId, SequenceReference from, SequenceReference to){
+    private Flux<Document> getAlignments(String queryId, SequenceReference from, SequenceReference to){
         return getQueryIdMap(queryId, from).flatMap(
                 q -> alignmentsCollector(from, to).apply(q, from, to)
         ).map(
@@ -86,66 +95,69 @@ public class AlignmentsCollector {
         );
     }
 
-    private static Flux<Document> getAlignments(String queryId, String targetId, SequenceReference from, SequenceReference to){
-        return getQueryIdMap(queryId, from).flatMap(
-                q-> getQueryIdMap(targetId, to).flatMap(t -> getAlignmentDocuments(q, t, from, to))
-        ).map(
-                d -> targetIdSelector(from, to).apply(d)
-        ).flatMap(
-                d-> getTargetIdMap(d.getString(getTargetIndex()), to).map(
-                        t -> targetIdSubstitutor(to).apply(t, d)
-                )
-        );
-    }
-
-    private static Flux<Document> getAlignments(String groupId, GroupReference group){
+    private Flux<Document> getAlignments(String groupId, GroupReference group){
         if(group.equals(GroupReference.MATCHING_UNIPROT_ACCESSION))
             return getAlignments(groupId, SequenceReference.UNIPROT, SequenceReference.PDB_ENTITY);
         return getAlignmentDocuments(groupId);
     }
 
-    private static AlignmentBuilder alignmentsCollector(SequenceReference from, SequenceReference to){
+    private AlignmentBuilder alignmentsCollector(SequenceReference from, SequenceReference to){
         if(equivalentReferences(from,to))
             return (q, f, t) -> getIdentityAlignment(q);
-        return AlignmentsCollector::getAlignmentDocuments;
+        return this::getAlignmentDocuments;
     }
 
     private static Flux<Document> getIdentityAlignment(String queryId){
         return Flux.from(getSequence(queryId).map(sequence->identityAlignment(queryId, sequence.length())));
     }
 
-    private static Flux<Document> getAlignmentDocuments(String queryId, SequenceReference from, SequenceReference to){
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getCollection(from, to)).aggregate(List.of(
-                match(eq(getIndex(from, to), queryId)),
-                sort(orderBy(
-                        ascending(getSortFields(from, to).get(0)),
-                        descending(getSortFields(from, to).get(1))
-                )),
-                alignmentFields()
-        )));
+    private Flux<Document> getAlignmentDocuments(String queryId, SequenceReference from, SequenceReference to){
+        return getAlignmentDocuments(
+                getCollection(from, to),
+                getIndex(from,to),
+                queryId,
+                getSortFields(from,to)
+        );
     }
 
-    private static Flux<Document> getAlignmentDocuments(String groupId){
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getGroupCollection()).aggregate(List.of(
-                match(eq(getGroupIndex(), groupId)),
-                sort(orderBy(
-                        ascending(getGroupSortFields().get(0)),
-                        descending(getGroupSortFields().get(1))
-                )),
-                alignmentFields()
-        )));
+    private Flux<Document> getAlignmentDocuments(String groupId){
+        return getAlignmentDocuments(
+                getGroupCollection(),
+                getGroupIndex(),
+                groupId,
+                getGroupSortFields()
+        );
     }
 
-    private static Flux<Document> getAlignmentDocuments(String queryId, String targetId, SequenceReference from, SequenceReference to){
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getCollection(from, to)).aggregate(List.of(
-                match(eq(getIndex(from, to), queryId)),
-                match(eq(getAltIndex(from, to), targetId)),
+    private Flux<Document> getAlignmentDocuments(String collection, String attribute, String id, List<String> sortFields){
+        List<Bson> aggregation = new ArrayList<>(List.of(
+                match(eq(attribute, id)),
                 sort(orderBy(
-                        ascending(getSortFields(from, to).get(0)),
-                        descending(getSortFields(from, to).get(1))
+                        ascending(sortFields.get(0)),
+                        descending(sortFields.get(1))
                 )),
                 alignmentFields()
-        )).first());
+        ));
+        aggregation.addAll(aggregationPage());
+        aggregation.addAll(aggregationFilter(attribute));
+        return Flux.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation));
+    }
+
+    private List<Bson> aggregationPage(){
+        if(page.size() == 2)
+            return List.of(
+                    skip(page.get(0)),
+                    limit(page.get(1))
+            );
+        return List.of();
+    }
+
+    private List<Bson> aggregationFilter(String attribute){
+        if(!filterTarget.isEmpty())
+            return List.of(match(or(filterTarget.stream().map(
+                    targetId -> eq(getAltIndex(attribute), targetId)
+            ).collect(Collectors.toList()))));
+        return List.of();
     }
 
 }
