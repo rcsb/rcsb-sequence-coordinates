@@ -80,7 +80,11 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     }
 
     @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.TARGET_ALIGNMENT)
-    public Flux<Document> getTargetAlignments(DataFetchingEnvironment dataFetchingEnvironment){
+    public Flux<Document> getTargetAlignments(
+            DataFetchingEnvironment dataFetchingEnvironment,
+            @Argument(name = SchemaConstants.Param.FIRST) Integer first,
+            @Argument(name = SchemaConstants.Param.OFFSET) Integer offset
+    ){
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.ALIGNMENT))
             return getAlignments(
                     getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),

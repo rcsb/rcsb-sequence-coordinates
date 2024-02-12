@@ -25,6 +25,8 @@ public class SchemaConstants {
     private final static String SOURCE = "source";
     private final static String GROUP_ID = "groupId";
     private final static String GROUP = "group";
+    private final static String FIRST = "first";
+    private final static String OFFSET = "offset";
     private final static String ALIGNMENT = "alignment";
     private final static String GROUP_ALIGNMENT = "group_alignment";
     private final static String ANNOTATIONS = "annotations";
@@ -89,6 +91,8 @@ public class SchemaConstants {
         public final static String SOURCES = SchemaConstants.SOURCES;
         public final static String GROUP_ID = SchemaConstants.GROUP_ID;
         public final static String GROUP = SchemaConstants.GROUP;
+        public final static String FIRST = SchemaConstants.FIRST;
+        public final static String OFFSET = SchemaConstants.OFFSET;
     }
 
     public static  class Field {

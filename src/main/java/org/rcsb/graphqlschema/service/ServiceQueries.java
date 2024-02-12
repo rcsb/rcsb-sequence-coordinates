@@ -4,10 +4,7 @@
 
 package org.rcsb.graphqlschema.service;
 
-import io.leangen.graphql.annotations.GraphQLArgument;
-import io.leangen.graphql.annotations.GraphQLNonNull;
-import io.leangen.graphql.annotations.GraphQLQuery;
-import io.leangen.graphql.annotations.GraphQLSubscription;
+import io.leangen.graphql.annotations.*;
 import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
@@ -51,6 +48,15 @@ public class ServiceQueries implements
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_FILTER, description = "Optional string list of allowed group member identifiers") List<@GraphQLNonNull String> filter
     ) {
         return new SequenceAlignments();
+    }
+
+    @GraphQLQuery(name = SchemaConstants.Field.TARGET_ALIGNMENT, description = "Multiple sequence alignment of group members.")
+    public List<TargetAlignment> targetAlignments(
+            @GraphQLContext SequenceAlignments alignments,
+            @GraphQLArgument(name = SchemaConstants.Param.FIRST) Integer first,
+            @GraphQLArgument(name = SchemaConstants.Param.OFFSET) Integer offset
+    ){
+        return List.of();
     }
 
     @Override
