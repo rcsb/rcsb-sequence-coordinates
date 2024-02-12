@@ -6,6 +6,7 @@ package org.rcsb.rcsbsequencecoordinates.controller;
 
 import graphql.schema.DataFetchingEnvironment;
 import org.bson.Document;
+import org.rcsb.collectors.alignments.AlignmentsCollector;
 import org.rcsb.graphqlschema.service.AlignmentsQuery;
 import org.rcsb.graphqlschema.service.AlignmentsSubscription;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
@@ -24,7 +25,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
-import static org.rcsb.collectors.alignments.AlignmentsCollector.getAlignments;
 import static org.rcsb.utils.GraphqlMethods.getArgument;
 import static org.rcsb.utils.GraphqlMethods.getQueryName;
 
@@ -66,7 +66,10 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.TO) SequenceReference to,
             @Argument(name = SchemaConstants.Param.RANGE) List<Integer> range
     ) {
-        return getAlignments(queryId, from, to, range);
+        return AlignmentsCollector
+                .request(queryId, from, to)
+                .range(range)
+                .get();
     }
 
     @Override
@@ -76,7 +79,10 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group,
             @Argument(name = SchemaConstants.Param.GROUP_FILTER) List<String> filter
     ) {
-        return getAlignments(groupId, group, filter);
+        return AlignmentsCollector
+                .request(groupId, group)
+                .filter(filter)
+                .get();
     }
 
     @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.TARGET_ALIGNMENT)
@@ -86,18 +92,25 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.OFFSET) Integer offset
     ){
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.ALIGNMENT))
-            return getAlignments(
-                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
-                    SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
-                    SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO)),
-                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.RANGE)
-            );
+            return AlignmentsCollector
+                    .request(
+                        getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
+                        SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
+                        SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
+                    )
+                    .range(
+                            getArgument(dataFetchingEnvironment, SchemaConstants.Param.RANGE)
+                    )
+                    .get();
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT))
-            return getAlignments(
-                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
-                    GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP)),
-                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_FILTER)
-            );
+            return AlignmentsCollector
+                    .request(
+                        getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
+                        GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP))
+                    ).filter(
+                            getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_FILTER)
+                    )
+                    .get();
         throw new RuntimeException(String.format("Undefined end point query %s", getQueryName(dataFetchingEnvironment)));
     }
 

@@ -15,6 +15,8 @@ import reactor.core.publisher.Flux;
 import org.rcsb.utils.MongoStream;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Aggregates.sort;
@@ -33,14 +35,46 @@ import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
 
 public class AlignmentsCollector {
 
-    public static Flux<Document> getAlignments(String queryId, SequenceReference from, SequenceReference to, List<Integer> range) {
-        RangeIntersectionOperator alignmentRangeIntersection = new RangeIntersectionOperator(range, new AlignmentRangeIntersection());
-        return getAlignments(queryId, from, to)
-                .filter(alignmentRangeIntersection::isConnected)
-                .map(alignmentRangeIntersection::applyRange);
+    private final Supplier<Flux<Document>> documentSupplier;
+    private Function<Flux<Document>,Flux<Document>> filterRange = Function.identity();
+    private Function<Flux<Document>,Flux<Document>> filterTarget = Function.identity();
+
+    private AlignmentsCollector(Supplier<Flux<Document>> documentSupplier){
+        this.documentSupplier = documentSupplier;
     }
 
-    public static Flux<Document> getAlignments(String queryId, SequenceReference from, SequenceReference to){
+    public static AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to){
+        return new AlignmentsCollector( () -> getAlignments(queryId, from, to) );
+    }
+
+    public static AlignmentsCollector request(String queryId, String targetId, SequenceReference from, SequenceReference to){
+        return new AlignmentsCollector( () -> getAlignments(queryId, targetId, from, to) );
+    }
+
+    public static AlignmentsCollector request(String groupId, GroupReference group){
+        return new AlignmentsCollector( () -> getAlignments(groupId, group));
+    }
+
+    public AlignmentsCollector range(List<Integer> range){
+        RangeIntersectionOperator alignmentRangeIntersection = new RangeIntersectionOperator(range, new AlignmentRangeIntersection());
+        this.filterRange = documentFlux -> documentFlux
+                .filter(alignmentRangeIntersection::isConnected)
+                .map(alignmentRangeIntersection::applyRange);
+        return this;
+    }
+
+    public AlignmentsCollector filter(List<String> filter){
+        GroupFilterOperator groupFilter = new GroupFilterOperator(filter);
+        this.filterTarget = documentFlux -> documentFlux
+                .filter(groupFilter::contains);
+        return this;
+    }
+
+    public Flux<Document> get(){
+        return this.filterRange.apply(this.filterTarget.apply(documentSupplier.get()));
+    }
+
+    private static Flux<Document> getAlignments(String queryId, SequenceReference from, SequenceReference to){
         return getQueryIdMap(queryId, from).flatMap(
                 q -> alignmentsCollector(from, to).apply(q, from, to)
         ).map(
@@ -52,7 +86,7 @@ public class AlignmentsCollector {
         );
     }
 
-    public static Flux<Document> getAlignments(String queryId, String targetId, SequenceReference from, SequenceReference to){
+    private static Flux<Document> getAlignments(String queryId, String targetId, SequenceReference from, SequenceReference to){
         return getQueryIdMap(queryId, from).flatMap(
                 q-> getQueryIdMap(targetId, to).flatMap(t -> getAlignmentDocuments(q, t, from, to))
         ).map(
@@ -64,13 +98,7 @@ public class AlignmentsCollector {
         );
     }
 
-    public static Flux<Document> getAlignments(String groupId, GroupReference group, List<String> filter){
-        GroupFilterOperator groupFilter = new GroupFilterOperator(filter);
-        return getAlignments(groupId, group)
-                .filter(groupFilter::contains);
-    }
-
-    public static Flux<Document> getAlignments(String groupId, GroupReference group){
+    private static Flux<Document> getAlignments(String groupId, GroupReference group){
         if(group.equals(GroupReference.MATCHING_UNIPROT_ACCESSION))
             return getAlignments(groupId, SequenceReference.UNIPROT, SequenceReference.PDB_ENTITY);
         return getAlignmentDocuments(groupId);

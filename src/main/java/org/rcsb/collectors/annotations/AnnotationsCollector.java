@@ -5,6 +5,7 @@
 package org.rcsb.collectors.annotations;
 
 import org.bson.Document;
+import org.rcsb.collectors.alignments.AlignmentsCollector;
 import org.rcsb.collectors.utils.AnnotationFilterOperator;
 import org.rcsb.collectors.utils.AnnotationRangeIntersection;
 import org.rcsb.collectors.utils.RangeIntersectionOperator;
@@ -18,7 +19,6 @@ import reactor.core.publisher.Flux;
 
 import java.util.List;
 
-import static org.rcsb.collectors.alignments.AlignmentsCollector.getAlignments;
 import static org.rcsb.collectors.annotations.AnnotationsHelper.*;
 
 /**
@@ -74,12 +74,15 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return getAlignments(
-                groupId,
-                groupReference
-        ).flatMap(
-                alignment -> getAnnotations(alignment.getString(CoreConstants.TARGET_ID), groupReference.toSequenceReference(), annotationReference, annotationFilters)
-        );
+        return AlignmentsCollector
+                .request(
+                    groupId,
+                    groupReference
+                )
+                .get()
+                .flatMap(
+                    alignment -> getAnnotations(alignment.getString(CoreConstants.TARGET_ID), groupReference.toSequenceReference(), annotationReference, annotationFilters)
+                );
     }
 
     private static Flux<Document> getAnnotations(
@@ -89,27 +92,30 @@ public class AnnotationsCollector {
             List<AnnotationFilter> annotationFilters
     ) {
         AnnotationFilterOperator annotationFilter = new AnnotationFilterOperator(annotationFilters);
-        return getAlignments(
-                queryId,
-                sequenceReference,
-                annotationReference.toSequenceReference()
-        ).flatMap(
-                alignment -> Flux.from(
-                        MongoStream.getMongoDatabase().getCollection(getCollection(annotationReference)).aggregate(
-                                getAggregation(alignment.getString(CoreConstants.TARGET_ID), annotationReference)
-                        )
-                ).map(
-                        annotations -> addSource(annotationReference, annotations)
-                ).filter(
-                        annotationFilter::targetCheck
-                ).map(
-                        annotationFilter::applyFilterToFeatures
-                ).map(
-                        annotations -> mapAnnotations(annotations, alignment)
-                ).filter(
-                        AnnotationsHelper::hasFeatures
+        return AlignmentsCollector
+                .request(
+                    queryId,
+                    sequenceReference,
+                    annotationReference.toSequenceReference()
                 )
-        );
+                .get()
+                .flatMap(
+                    alignment -> Flux.from(
+                            MongoStream.getMongoDatabase().getCollection(getCollection(annotationReference)).aggregate(
+                                    getAggregation(alignment.getString(CoreConstants.TARGET_ID), annotationReference)
+                            )
+                    ).map(
+                           annotations -> addSource(annotationReference, annotations)
+                    ).filter(
+                            annotationFilter::targetCheck
+                    ).map(
+                            annotationFilter::applyFilterToFeatures
+                    ).map(
+                            annotations -> mapAnnotations(annotations, alignment)
+                    ).filter(
+                        AnnotationsHelper::hasFeatures
+                    )
+            );
     }
 
 }
