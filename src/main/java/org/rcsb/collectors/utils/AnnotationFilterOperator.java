@@ -11,7 +11,6 @@ import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author : joan
@@ -59,7 +58,7 @@ public class AnnotationFilterOperator {
                 .filter(
                         feature -> filterFeature(annotations.get(SchemaConstants.Field.SOURCE, AnnotationReference.class), feature)
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private boolean filterFeature(AnnotationReference annotationReference, Document feature){

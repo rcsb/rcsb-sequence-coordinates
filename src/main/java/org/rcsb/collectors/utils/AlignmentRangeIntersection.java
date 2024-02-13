@@ -10,7 +10,6 @@ import org.rcsb.utils.Range;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.rcsb.utils.RangeMethods.intersection;
 import static org.rcsb.utils.RangeMethods.mapIndex;
@@ -55,7 +54,7 @@ public class AlignmentRangeIntersection implements RangeIntersection {
         return regions.stream()
                 .map(region -> applyRangeToRegion(range, region))
                 .filter(d->!d.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Document applyRangeToRegion(Range range, Document region){

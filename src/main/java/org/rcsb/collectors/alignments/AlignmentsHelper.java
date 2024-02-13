@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Projections.*;
@@ -64,10 +63,17 @@ public class AlignmentsHelper {
         );
     }
 
-    public static String getAltIndex(String index) {
-        if(index.equals(CoreConstants.QUERY_ID))
+    public static String getAltIndex(String attribute) {
+        if(attribute.equals(CoreConstants.QUERY_ID))
             return CoreConstants.TARGET_ID;
         return CoreConstants.QUERY_ID;
+    }
+
+    public static String getLengthAttribute(SequenceReference from, SequenceReference to){
+        String index = getIndex(from, to);
+        if(index.equals(CoreConstants.QUERY_ID))
+            return CoreConstants.QUERY_LENGTH;
+        return CoreConstants.TARGET_LENGTH;
     }
 
     public static List<String> getSortFields(SequenceReference from, SequenceReference to){
@@ -96,6 +102,10 @@ public class AlignmentsHelper {
         return CoreConstants.QUERY_ID;
     }
 
+    public static String getGroupLengthAttribute(){
+        return CoreConstants.QUERY_LENGTH;
+    }
+
     public static String getTargetIndex(){
         return CoreConstants.TARGET_ID;
     }
@@ -109,6 +119,13 @@ public class AlignmentsHelper {
                 include(CoreConstants.TARGET_ID),
                 include(CoreConstants.QUERY_ID),
                 include(CoreConstants.ALIGNED_REGIONS),
+                include(CoreConstants.COVERAGE),
+                excludeId()
+        ));
+    }
+
+    public static Bson alignmentLengthFields() {
+        return project(fields(
                 include(CoreConstants.COVERAGE),
                 excludeId()
         ));
@@ -183,7 +200,7 @@ public class AlignmentsHelper {
                         SchemaConstants.Field.TARGET_BEGIN, d.get(CoreConstants.QUERY_BEGIN),
                         SchemaConstants.Field.TARGET_END, d.get(CoreConstants.QUERY_END)
                 ))
-        ).collect(Collectors.toList());
+        ).toList();
     }
 
     public static boolean equivalentReferences(SequenceReference from, SequenceReference to){

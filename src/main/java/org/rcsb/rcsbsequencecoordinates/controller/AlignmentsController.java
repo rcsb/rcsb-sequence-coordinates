@@ -6,7 +6,8 @@ package org.rcsb.rcsbsequencecoordinates.controller;
 
 import graphql.schema.DataFetchingEnvironment;
 import org.bson.Document;
-import org.rcsb.collectors.alignments.AlignmentsCollector;
+import org.rcsb.collectors.alignments.AlignmentLengthCollector;
+import org.rcsb.collectors.alignments.TargetAlignmentCollector;
 import org.rcsb.graphqlschema.service.AlignmentsQuery;
 import org.rcsb.graphqlschema.service.AlignmentsSubscription;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
@@ -66,7 +67,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.TO) SequenceReference to,
             @Argument(name = SchemaConstants.Param.RANGE) List<Integer> range
     ) {
-        return AlignmentsCollector.build()
+        return TargetAlignmentCollector.build()
                 .request(queryId, from, to)
                 .range(range)
                 .get();
@@ -79,7 +80,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group,
             @Argument(name = SchemaConstants.Param.GROUP_FILTER) List<String> filter
     ) {
-        return AlignmentsCollector.build()
+        return TargetAlignmentCollector.build()
                 .request(groupId, group)
                 .filter(filter)
                 .get();
@@ -92,7 +93,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.OFFSET) Integer offset
     ){
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.ALIGNMENT))
-            return AlignmentsCollector.build()
+            return TargetAlignmentCollector.build()
                     .request(
                         getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
                         SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
@@ -102,7 +103,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
                     .page(first, offset)
                     .get();
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT))
-            return AlignmentsCollector.build()
+            return TargetAlignmentCollector.build()
                     .request(
                         getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
                         GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP))
@@ -136,6 +137,20 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
         return getSequence(
                 getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
                 SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM))
+        );
+    }
+
+    @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.ALIGNMENT_LENGTH)
+    public Mono<Integer> getAlignmentLength(DataFetchingEnvironment dataFetchingEnvironment){
+        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT))
+            return AlignmentLengthCollector.request(
+                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
+                    GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP))
+            );
+        return AlignmentLengthCollector.request(
+                getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
+                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
+                SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
         );
     }
 

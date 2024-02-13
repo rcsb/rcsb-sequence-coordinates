@@ -10,7 +10,6 @@ import org.rcsb.utils.Range;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.rcsb.utils.RangeMethods.intersection;
 import static org.rcsb.utils.RangeMethods.mapIndex;
@@ -26,7 +25,7 @@ public class AnnotationRangeIntersection implements RangeIntersection {
     public List<Document> getRegions(Document annotation) {
         return annotation.getList(SchemaConstants.Field.FEATURES, Document.class).stream()
                 .flatMap(feature->feature.getList(SchemaConstants.Field.FEATURE_POSITIONS, Document.class).stream())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -54,7 +53,7 @@ public class AnnotationRangeIntersection implements RangeIntersection {
         return annotation.getList(SchemaConstants.Field.FEATURES, Document.class).stream()
                 .map(feature -> applyRangeToFeature(range, feature))
                 .filter(feature -> !feature.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Document applyRangeToFeature(Range range, Document feature){
@@ -72,7 +71,7 @@ public class AnnotationRangeIntersection implements RangeIntersection {
         return feature.getList(SchemaConstants.Field.FEATURE_POSITIONS, Document.class).stream()
                 .map(position -> applyRangeToPosition(range, position))
                 .filter(position -> !position.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Document applyRangeToPosition(Range range, Document position) {

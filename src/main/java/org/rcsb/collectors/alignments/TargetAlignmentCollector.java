@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.*;
@@ -34,31 +33,31 @@ import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
  * @created : 2/5/24, Monday
  **/
 
-public class AlignmentsCollector {
+public class TargetAlignmentCollector {
 
     private Supplier<Flux<Document>> documentSupplier;
     private Function<Flux<Document>,Flux<Document>> filterRange = Function.identity();
     private List<String> filterTarget = List.of();
     private List<Integer> page = List.of();
 
-    private AlignmentsCollector(){
+    private TargetAlignmentCollector(){
     }
 
-    public static AlignmentsCollector build(){
-        return new AlignmentsCollector();
+    public static TargetAlignmentCollector build(){
+        return new TargetAlignmentCollector();
     }
 
-    public AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to){
+    public TargetAlignmentCollector request(String queryId, SequenceReference from, SequenceReference to){
         documentSupplier = () -> getAlignments(queryId, from, to);
         return this;
     }
 
-    public AlignmentsCollector request(String groupId, GroupReference group){
+    public TargetAlignmentCollector request(String groupId, GroupReference group){
         documentSupplier = () -> getAlignments(groupId, group);
         return this;
     }
 
-    public AlignmentsCollector range(List<Integer> range){
+    public TargetAlignmentCollector range(List<Integer> range){
         RangeIntersectionOperator alignmentRangeIntersection = new RangeIntersectionOperator(range, new AlignmentRangeIntersection());
         this.filterRange = documentFlux -> documentFlux
                 .filter(alignmentRangeIntersection::isConnected)
@@ -66,13 +65,13 @@ public class AlignmentsCollector {
         return this;
     }
 
-    public AlignmentsCollector filter(List<String> filter){
+    public TargetAlignmentCollector filter(List<String> filter){
         if(filter != null)
             this.filterTarget = filter;
         return this;
     }
 
-    public AlignmentsCollector page(Integer first, Integer offset){
+    public TargetAlignmentCollector page(Integer first, Integer offset){
         if(first != null && offset != null)
             page = List.of(offset, first);
         return this;
@@ -156,7 +155,7 @@ public class AlignmentsCollector {
         if(!filterTarget.isEmpty())
             return List.of(match(or(filterTarget.stream().map(
                     targetId -> eq(getAltIndex(attribute), targetId)
-            ).collect(Collectors.toList()))));
+            ).toList())));
         return List.of();
     }
 

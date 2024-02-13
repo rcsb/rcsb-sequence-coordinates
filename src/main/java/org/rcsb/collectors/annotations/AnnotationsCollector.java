@@ -5,7 +5,7 @@
 package org.rcsb.collectors.annotations;
 
 import org.bson.Document;
-import org.rcsb.collectors.alignments.AlignmentsCollector;
+import org.rcsb.collectors.alignments.TargetAlignmentCollector;
 import org.rcsb.collectors.utils.AnnotationFilterOperator;
 import org.rcsb.collectors.utils.AnnotationRangeIntersection;
 import org.rcsb.collectors.utils.RangeIntersectionOperator;
@@ -74,7 +74,7 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return AlignmentsCollector.build()
+        return TargetAlignmentCollector.build()
                 .request(
                     groupId,
                     groupReference
@@ -92,7 +92,7 @@ public class AnnotationsCollector {
             List<AnnotationFilter> annotationFilters
     ) {
         AnnotationFilterOperator annotationFilter = new AnnotationFilterOperator(annotationFilters);
-        return AlignmentsCollector.build()
+        return TargetAlignmentCollector.build()
                 .request(
                     queryId,
                     sequenceReference,

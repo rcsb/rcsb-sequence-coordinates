@@ -36,6 +36,7 @@ public class SchemaConstants {
     private final static String ANNOTATIONS_SUBSCRIPTION = "annotations_subscription";
     private final static String GROUP_ANNOTATIONS_SUBSCRIPTION = "group_annotations_subscription";
     private final static String QUERY_SEQUENCE = "query_sequence";
+    private final static String ALIGNMENT_LENGTH = "alignment_length";
     private final static String TARGET_ALIGNMENT = "target_alignment";
     private final static String TARGET_ID = "target_id";
     private final static String TARGET_SEQUENCE = "target_sequence";
@@ -97,6 +98,7 @@ public class SchemaConstants {
 
     public static  class Field {
         public final static String QUERY_SEQUENCE = SchemaConstants.QUERY_SEQUENCE;
+        public final static String ALIGNMENT_LENGTH = SchemaConstants.ALIGNMENT_LENGTH;
         public final static String TARGET_ALIGNMENT = SchemaConstants.TARGET_ALIGNMENT;
         public final static String TARGET_ID = SchemaConstants.TARGET_ID;
         public final static String TARGET_SEQUENCE = SchemaConstants.TARGET_SEQUENCE;

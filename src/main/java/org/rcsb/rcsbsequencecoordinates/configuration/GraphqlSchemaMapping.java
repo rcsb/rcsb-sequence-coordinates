@@ -20,8 +20,15 @@ public class GraphqlSchemaMapping {
     public static final String ALIGNMENT_LOGO = SchemaConstants.Field.ALIGNMENT_LOGO;
     public static final String TARGET_ALIGNMENT = SchemaConstants.Field.TARGET_ALIGNMENT;
     public static final String TARGET_SEQUENCE = SchemaConstants.Field.TARGET_SEQUENCE;
+    public static final String ALIGNMENT_LENGTH = SchemaConstants.Field.ALIGNMENT_LENGTH;
     public static List<String> getFields() {
-        return List.of(QUERY_SEQUENCE, ALIGNMENT_LOGO, TARGET_ALIGNMENT, TARGET_SEQUENCE);
+        return List.of(
+                QUERY_SEQUENCE,
+                ALIGNMENT_LOGO,
+                TARGET_ALIGNMENT,
+                TARGET_SEQUENCE,
+                ALIGNMENT_LENGTH
+        );
     }
 
 }

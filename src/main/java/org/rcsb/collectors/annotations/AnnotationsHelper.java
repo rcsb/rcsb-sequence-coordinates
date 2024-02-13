@@ -15,7 +15,6 @@ import org.rcsb.utils.Range;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Aggregates.project;
@@ -62,7 +61,7 @@ public class AnnotationsHelper {
                 annotations.getList(CoreConstants.FEATURES, Document.class).stream()
                         .map(feature-> mapFeature(feature, alignment))
                         .filter(d->!d.getList(CoreConstants.FEATURE_POSITIONS, Document.class).isEmpty())
-                        .collect(Collectors.toList())
+                        .toList()
         );
         return annotations;
     }
@@ -93,7 +92,7 @@ public class AnnotationsHelper {
                 SchemaConstants.Field.FEATURE_POSITIONS,
                 feature.getList(CoreConstants.FEATURE_POSITIONS, Document.class).stream().flatMap(
                         featurePosition-> featurePositionIntersection(featurePosition, alignment).stream()
-                ).collect(Collectors.toList())
+                ).toList()
         );
         feature.put(
                 SchemaConstants.Field.TYPE,
@@ -105,7 +104,7 @@ public class AnnotationsHelper {
     private static List<Document> featurePositionIntersection(Document featurePosition, Document alignment){
         return alignment.getList(CoreConstants.ALIGNED_REGIONS, Document.class).stream().map(
                 alignmentRegion -> featureToAlignmentIntersection(featurePosition,alignmentRegion)
-        ).filter(d->!d.isEmpty()).collect(Collectors.toList());
+        ).filter(d->!d.isEmpty()).toList();
     }
 
     private static Document featureToAlignmentIntersection(Document featurePosition, Document alignmentRegion){
