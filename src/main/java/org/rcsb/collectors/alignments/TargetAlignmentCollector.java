@@ -6,6 +6,7 @@ package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.rcsb.collectors.sequence.SequenceCollector;
 import org.rcsb.collectors.utils.AlignmentRangeIntersection;
 import org.rcsb.collectors.utils.RangeIntersectionOperator;
 import org.rcsb.graphqlschema.reference.GroupReference;
@@ -25,7 +26,7 @@ import static com.mongodb.client.model.Sorts.*;
 import static org.rcsb.collectors.alignments.AlignmentsHelper.*;
 import static org.rcsb.collectors.map.MapCollector.getQueryIdMap;
 import static org.rcsb.collectors.map.MapCollector.getTargetIdMap;
-import static org.rcsb.collectors.sequence.SequenceCollector.getSequence;
+import static org.rcsb.collectors.sequence.SequenceCollector.request;
 
 /**
  * @author : joan
@@ -107,7 +108,7 @@ public class TargetAlignmentCollector {
     }
 
     private static Flux<Document> getIdentityAlignment(String queryId){
-        return Flux.from(getSequence(queryId).map(sequence->identityAlignment(queryId, sequence.length())));
+        return Flux.from(SequenceCollector.request(queryId).map(sequence->identityAlignment(queryId, sequence.length())));
     }
 
     private Flux<Document> getAlignmentDocuments(String queryId, SequenceReference from, SequenceReference to){

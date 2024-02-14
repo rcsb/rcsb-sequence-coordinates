@@ -19,6 +19,8 @@ public class SequenceAlignments {
     private String querySequence;
     private List<TargetAlignment> targetAlignment;
     private Integer alignmentLength;
+    private List<List<AlignmentLogo>> alignmentLogo;
+
     @JsonProperty(SchemaConstants.Field.QUERY_SEQUENCE)
     public String getQuerySequence() {
         return this.querySequence;
@@ -43,6 +45,15 @@ public class SequenceAlignments {
     @JsonProperty(SchemaConstants.Field.ALIGNMENT_LENGTH)
     public void setAlignmentLength(Integer alignmentLength) {
         this.alignmentLength = alignmentLength;
+    }
+
+    @JsonProperty(SchemaConstants.Field.ALIGNMENT_LOGO)
+    public List<List<AlignmentLogo>> getAlignmentLogo() {
+        return alignmentLogo;
+    }
+    @JsonProperty(SchemaConstants.Field.ALIGNMENT_LOGO)
+    public void setAlignmentLogo(List<List<AlignmentLogo>> alignmentLogo) {
+        this.alignmentLogo = alignmentLogo;
     }
 
 }

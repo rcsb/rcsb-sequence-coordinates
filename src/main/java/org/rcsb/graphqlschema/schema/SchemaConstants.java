@@ -43,6 +43,8 @@ public class SchemaConstants {
     private final static String COVERAGE = "coverage";
     private final static String ALIGNED_REGIONS = "aligned_regions";
     private final static String ALIGNMENT_LOGO = "alignment_logo";
+    private final static String VALUE = "value";
+    private final static String SYMBOL = "symbol";
     /*
     * Why next attributes are not defined quoting strings ?
     * The main difference is that these attributes (getters and setters) are defined in mojave models classes:
@@ -105,6 +107,8 @@ public class SchemaConstants {
         public final static String COVERAGE = SchemaConstants.COVERAGE;
         public final static String ALIGNED_REGIONS = SchemaConstants.ALIGNED_REGIONS;
         public final static String ALIGNMENT_LOGO = SchemaConstants.ALIGNMENT_LOGO;
+        public final static String VALUE = SchemaConstants.VALUE;
+        public final static String SYMBOL = SchemaConstants.SYMBOL;
         public final static String QUERY_COVERAGE = SchemaConstants.QUERY_COVERAGE;
         public final static String TARGET_COVERAGE = SchemaConstants.TARGET_COVERAGE;
         public final static String QUERY_LENGTH = SchemaConstants.QUERY_LENGTH;
@@ -122,7 +126,6 @@ public class SchemaConstants {
         public final static String END_ORI_ID = SchemaConstants.END_ORI_ID;
         public final static String VALUES = SchemaConstants.VALUES;
         public final static String SOURCE = SchemaConstants.SOURCE;
-
     }
 
 }

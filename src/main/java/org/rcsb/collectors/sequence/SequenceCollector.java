@@ -27,13 +27,13 @@ import static org.rcsb.collectors.map.MapCollector.getQueryIdMap;
 
 public class SequenceCollector {
 
-    public static Mono<String> getSequence(String sequenceId, SequenceReference reference){
+    public static Mono<String> request(String sequenceId, SequenceReference reference){
         if(reference.equals(SequenceReference.PDB_INSTANCE))
-            return getQueryIdMap(sequenceId, reference).flatMap(SequenceCollector::getSequence).next();
-        return getSequence(sequenceId);
+            return getQueryIdMap(sequenceId, reference).flatMap(SequenceCollector::request).next();
+        return request(sequenceId);
     }
 
-    public static Mono<String> getSequence(String sequenceId){
+    public static Mono<String> request(String sequenceId){
         return Mono.from(MongoStream.getMongoDatabase().getCollection(MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCES)
                 .aggregate(List.of(
                         match(eq(CoreConstants.SEQUENCE_ID, sequenceId)),
