@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  **/
 public class AlignmentLogoCollector {
 
-    private int alignmentLength;
+    private int alignmentLength = -1;
     private AlignmentLogoCollector(){}
 
     public static AlignmentLogoCollector build(){
@@ -39,10 +39,9 @@ public class AlignmentLogoCollector {
 
 
     private Flux<int[][]> buildAlignmentLogo(String groupId, GroupReference group){
-        return AlignmentLengthCollector
-                .request(groupId, group)
+        return AlignmentLengthCollector.request(groupId, group)
                 .doOnNext(this::setAlignmentLength)
-                .flatMapMany(length -> processAlignments(groupId, group));
+                .thenMany(processAlignments(groupId, group));
     }
 
     private Flux<int[][]> processAlignments(String groupId, GroupReference group){
