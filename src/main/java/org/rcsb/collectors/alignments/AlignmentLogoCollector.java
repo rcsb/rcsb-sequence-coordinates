@@ -8,6 +8,7 @@ import org.bson.Document;
 import org.rcsb.collectors.sequence.SequenceCollector;
 import org.rcsb.collectors.utils.SequenceSymbol;
 import org.rcsb.graphqlschema.reference.GroupReference;
+import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,6 +38,11 @@ public class AlignmentLogoCollector {
                 .map(this::formatLogo);
     }
 
+    public Mono<List<List<Document>>> request(String queryId, SequenceReference from, SequenceReference to){
+        return buildAlignmentLogo(queryId, from, to)
+                .reduce(this::mergeLogo)
+                .map(this::formatLogo);
+    }
 
     private Flux<int[][]> buildAlignmentLogo(String groupId, GroupReference group){
         return AlignmentLengthCollector.request(groupId, group)
@@ -44,9 +50,22 @@ public class AlignmentLogoCollector {
                 .thenMany(processAlignments(groupId, group));
     }
 
+    private Flux<int[][]> buildAlignmentLogo(String queryId, SequenceReference from, SequenceReference to){
+        return AlignmentLengthCollector.request(queryId, from, to)
+                .doOnNext(this::setAlignmentLength)
+                .thenMany(processAlignments(queryId, from, to));
+    }
+
     private Flux<int[][]> processAlignments(String groupId, GroupReference group){
         return TargetAlignmentCollector.build()
                 .request(groupId, group)
+                .get()
+                .flatMap(this::buildAlignmentLogo);
+    }
+
+    private Flux<int[][]> processAlignments(String queryId, SequenceReference from, SequenceReference to){
+        return TargetAlignmentCollector.build()
+                .request(queryId, from, to)
                 .get()
                 .flatMap(this::buildAlignmentLogo);
     }
