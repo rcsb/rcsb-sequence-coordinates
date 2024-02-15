@@ -31,4 +31,11 @@ public interface AnnotationsQuery<X> {
             List<AnnotationReference> sources,
             List<AnnotationFilter> annotationFilters
     );
+
+    X groupAnnotationsSummary(
+            String groupId,
+            GroupReference group,
+            List<AnnotationReference> sources,
+            List<AnnotationFilter> annotationFilters
+    );
 }

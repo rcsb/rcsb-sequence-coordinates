@@ -104,6 +104,17 @@ public class ServiceQueries implements
     }
 
     @Override
+    @GraphQLQuery(name = SchemaConstants.Query.GROUP_ANNOTATIONS_SUMMARY, description = "Get a positional summary of group annotations")
+    public List<SequenceAnnotations> groupAnnotationsSummary(
+            @GraphQLArgument(name = SchemaConstants.Param.GROUP_ID, description = "Database sequence identifier") @GraphQLNonNull String groupId,
+            @GraphQLArgument(name = SchemaConstants.Param.GROUP, description = "Query sequence database") @GraphQLNonNull GroupReference group,
+            @GraphQLArgument(name = SchemaConstants.Param.SOURCES, description = "List defining the annotation collections to be requested") @GraphQLNonNull List<AnnotationReference> source,
+            @GraphQLArgument(name = SchemaConstants.Param.ANNOTATION_FILTERS, description = "Optional annotation filter by type or target identifier") List<@GraphQLNonNull AnnotationFilter> annotationFilters
+    ) {
+        return List.of(new SequenceAnnotations());
+    }
+
+    @Override
     @GraphQLSubscription(name = SchemaConstants.Subscription.ANNOTATIONS_SUBSCRIPTION, description = "Get sequence annotations")
     public List<SequenceAnnotations> annotationsSubscription(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,

@@ -26,7 +26,6 @@ import static com.mongodb.client.model.Sorts.*;
 import static org.rcsb.collectors.alignments.AlignmentsHelper.*;
 import static org.rcsb.collectors.map.MapCollector.getQueryIdMap;
 import static org.rcsb.collectors.map.MapCollector.getTargetIdMap;
-import static org.rcsb.collectors.sequence.SequenceCollector.request;
 
 /**
  * @author : joan

@@ -31,6 +31,7 @@ public class SchemaConstants {
     private final static String GROUP_ALIGNMENT = "group_alignment";
     private final static String ANNOTATIONS = "annotations";
     private final static String GROUP_ANNOTATIONS = "group_annotations";
+    private final static String GROUP_ANNOTATIONS_SUMMARY = "group_annotations_summary";
     private final static String ALIGNMENT_SUBSCRIPTION = "alignment_subscription";
     private final static String GROUP_ALIGNMENT_SUBSCRIPTION = "group_alignment_subscription";
     private final static String ANNOTATIONS_SUBSCRIPTION = "annotations_subscription";
@@ -62,7 +63,11 @@ public class SchemaConstants {
     private final static String TARGET_END = CoreConstants.TARGET_END;
     private final static String FEATURES = CoreConstants.FEATURES;
     private final static String FEATURE_POSITIONS = CoreConstants.FEATURE_POSITIONS;
+    private final static String ADDITIONAL_PROPERTIES = CoreConstants.ADDITIONAL_PROPERTIES;
+    private final static String PROPERTY_NAME = CoreConstants.PROPERTY_NAME;
+    private final static String PROPERTY_VALUE = CoreConstants.PROPERTY_VALUE;
     private final static String TYPE = CoreConstants.TYPE;
+    private final static String NAME = CoreConstants.NAME;
     private final static String BEG_SEQ_ID = CoreConstants.BEG_SEQ_ID;
     private final static String END_SEQ_ID = CoreConstants.END_SEQ_ID;
     private final static String BEG_ORI_ID = CoreConstants.BEG_ORI_ID;
@@ -74,6 +79,7 @@ public class SchemaConstants {
         public final static String GROUP_ALIGNMENT = SchemaConstants.GROUP_ALIGNMENT;
         public final static String ANNOTATIONS = SchemaConstants.ANNOTATIONS;
         public final static String GROUP_ANNOTATIONS = SchemaConstants.GROUP_ANNOTATIONS;
+        public final static String GROUP_ANNOTATIONS_SUMMARY = SchemaConstants.GROUP_ANNOTATIONS_SUMMARY;
     }
 
     public static class Subscription {
@@ -119,7 +125,11 @@ public class SchemaConstants {
         public final static String TARGET_END = SchemaConstants.TARGET_END;
         public final static String FEATURES = SchemaConstants.FEATURES;
         public final static String FEATURE_POSITIONS = SchemaConstants.FEATURE_POSITIONS;
+        public final static String ADDITIONAL_PROPERTIES = SchemaConstants.ADDITIONAL_PROPERTIES;
+        public final static String PROPERTY_NAME = SchemaConstants.PROPERTY_NAME;
+        public final static String PROPERTY_VALUE = SchemaConstants.PROPERTY_VALUE;
         public final static String TYPE = SchemaConstants.TYPE;
+        public final static String NAME = SchemaConstants.NAME;
         public final static String BEG_SEQ_ID = SchemaConstants.BEG_SEQ_ID;
         public final static String END_SEQ_ID = SchemaConstants.END_SEQ_ID;
         public final static String BEG_ORI_ID = SchemaConstants.BEG_ORI_ID;
