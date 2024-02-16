@@ -5,12 +5,15 @@
 package org.rcsb.collectors.utils;
 
 import org.bson.Document;
+import org.rcsb.collectors.map.MapCollector;
 import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.params.AnnotationFilter.FieldName;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
+import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
+import reactor.core.publisher.Flux;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @author : joan
@@ -21,7 +24,11 @@ public class AnnotationFilterOperator {
 
     private final List<AnnotationFilter> annotationFilter;
 
-    public AnnotationFilterOperator(List<AnnotationFilter> annotationFilter){
+    public static AnnotationFilterOperator build(List<AnnotationFilter> annotationFilter){
+        return new AnnotationFilterOperator(annotationFilter);
+    }
+
+    private AnnotationFilterOperator(List<AnnotationFilter> annotationFilter){
         if(annotationFilter == null || annotationFilter.isEmpty())
             this.annotationFilter = null;
         else
@@ -53,6 +60,14 @@ public class AnnotationFilterOperator {
         return annotations;
     }
 
+    public Flux<String> applyToAlignments(SequenceReference sequenceReference, AnnotationReference annotationReference) {
+        return Flux.fromStream(annotationFilter.stream())
+                .filter(f -> filterApplyToAlignmentsCheck(annotationReference, f))
+                .flatMap(
+                        f -> MapCollector.mapIds(annotationReference.toSequenceReference(), sequenceReference, f.getValues())
+                );
+    }
+
     private List<Document> filterFeatures(Document annotations){
         return annotations.getList(SchemaConstants.Field.FEATURES,Document.class).stream()
                 .filter(
@@ -80,6 +95,10 @@ public class AnnotationFilterOperator {
         return filter.getField().equals(fieldName);
     }
 
+    private boolean filterCheck(AnnotationFilter.OperationType operationType, AnnotationFilter filter){
+        return filter.getOperation().equals(operationType);
+    }
+
     private boolean filterCheck(AnnotationReference annotationReference, AnnotationFilter filter){
         if(filter.getSource() == null)
             return true;
@@ -92,6 +111,12 @@ public class AnnotationFilterOperator {
         if(annotationFilter.getOperation().equals(AnnotationFilter.OperationType.CONTAINS))
             return annotationFilter.getValues().stream().anyMatch(value::contains);
         return false;
+    }
+
+    private boolean filterApplyToAlignmentsCheck(AnnotationReference annotationReference, AnnotationFilter f) {
+        return  (f.getSource() == null || filterCheck(annotationReference, f)) &&
+                filterCheck(AnnotationFilter.OperationType.EQUALS, f) &&
+                filterCheck(FieldName.TARGET_ID, f);
     }
 
 }

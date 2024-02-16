@@ -17,6 +17,7 @@ import org.rcsb.mojave.CoreConstants;
 import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.rcsb.collectors.annotations.AnnotationsHelper.*;
@@ -74,14 +75,43 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
+        return AnnotationFilterOperator.build(annotationFilters)
+                .applyToAlignments(SequenceReference.PDB_ENTITY, annotationReference)
+                .collectList()
+                .flatMapMany(
+                        groupFilter-> getAnnotations(
+                                groupId,
+                                groupReference,
+                                groupFilter,
+                                annotationReference,
+                                annotationFilters
+                        )
+                );
+    }
+
+    private static Flux<Document> getAnnotations(
+            String groupId,
+            GroupReference groupReference,
+            List<String> groupFilter,
+            AnnotationReference annotationReference,
+            List<AnnotationFilter> annotationFilters
+    ) {
         return TargetAlignmentCollector.build()
                 .request(
-                    groupId,
-                    groupReference
+                        groupId,
+                        groupReference
+                )
+                .filter(
+                    groupFilter
                 )
                 .get()
                 .flatMap(
-                    alignment -> getAnnotations(alignment.getString(CoreConstants.TARGET_ID), groupReference.toSequenceReference(), annotationReference, annotationFilters)
+                        alignment -> getAnnotations(
+                                alignment.getString(CoreConstants.TARGET_ID),
+                                groupReference.toSequenceReference(),
+                                annotationReference,
+                                annotationFilters
+                        )
                 );
     }
 
@@ -107,7 +137,7 @@ public class AnnotationsCollector {
             List<AnnotationFilter> annotationFilters,
             Document alignment
     ) {
-        AnnotationFilterOperator filter = new AnnotationFilterOperator(annotationFilters);
+        AnnotationFilterOperator filter = AnnotationFilterOperator.build(annotationFilters);
         return Flux.from(MongoStream.getMongoDatabase().getCollection(getCollection(annotationReference)).aggregate(
                        getAggregation(alignment.getString(CoreConstants.TARGET_ID), annotationReference)
                ))
