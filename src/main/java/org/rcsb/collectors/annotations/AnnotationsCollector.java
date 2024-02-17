@@ -5,7 +5,7 @@
 package org.rcsb.collectors.annotations;
 
 import org.bson.Document;
-import org.rcsb.collectors.alignments.TargetAlignmentCollector;
+import org.rcsb.collectors.alignments.AlignmentsCollector;
 import org.rcsb.collectors.utils.AnnotationFilterOperator;
 import org.rcsb.collectors.utils.AnnotationRangeIntersection;
 import org.rcsb.collectors.utils.RangeIntersectionOperator;
@@ -17,7 +17,6 @@ import org.rcsb.mojave.CoreConstants;
 import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Flux;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.rcsb.collectors.annotations.AnnotationsHelper.*;
@@ -96,7 +95,7 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return TargetAlignmentCollector.build()
+        return AlignmentsCollector.build()
                 .request(
                         groupId,
                         groupReference
@@ -121,7 +120,7 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return TargetAlignmentCollector.build()
+        return AlignmentsCollector.build()
                 .request(
                     queryId,
                     sequenceReference,

@@ -5,7 +5,7 @@
 package org.rcsb.collectors.utils;
 
 import org.bson.Document;
-import org.rcsb.collectors.map.MapCollector;
+import org.rcsb.collectors.alignments.AlignmentsCollector;
 import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.params.AnnotationFilter.FieldName;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
@@ -40,10 +40,7 @@ public class AnnotationFilterOperator {
             return true;
         return annotationFilter.stream()
                 .filter(
-                        f -> filterCheck(FieldName.TARGET_ID, f)
-                )
-                .filter(
-                        f -> filterCheck(annotations.get(SchemaConstants.Field.SOURCE, AnnotationReference.class), f)
+                        f -> filterCheck(FieldName.TARGET_ID, f) && filterCheck(annotations.get(SchemaConstants.Field.SOURCE, AnnotationReference.class), f)
                 )
                 .allMatch(
                         f -> valueCheck(annotations.getString(SchemaConstants.Field.TARGET_ID), f)
@@ -61,10 +58,12 @@ public class AnnotationFilterOperator {
     }
 
     public Flux<String> applyToAlignments(SequenceReference sequenceReference, AnnotationReference annotationReference) {
+        if(annotationFilter == null)
+            return Flux.just();
         return Flux.fromStream(annotationFilter.stream())
                 .filter(f -> filterApplyToAlignmentsCheck(annotationReference, f))
                 .flatMap(
-                        f -> MapCollector.mapIds(annotationReference.toSequenceReference(), sequenceReference, f.getValues())
+                        f -> AlignmentsCollector.mapIds(annotationReference.toSequenceReference(), sequenceReference, f.getValues())
                 );
     }
 
@@ -81,10 +80,7 @@ public class AnnotationFilterOperator {
             return true;
         return annotationFilter.stream()
                 .filter(
-                        f -> filterCheck(FieldName.TYPE, f)
-                )
-                .filter(
-                        f -> filterCheck(annotationReference, f)
+                        f -> filterCheck(FieldName.TYPE, f) && filterCheck(annotationReference, f)
                 )
                 .allMatch(
                         f -> valueCheck(feature.getString(SchemaConstants.Field.TYPE), f)

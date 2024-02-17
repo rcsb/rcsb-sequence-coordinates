@@ -6,6 +6,7 @@ package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.rcsb.collectors.map.MapCollector;
 import org.rcsb.collectors.sequence.SequenceCollector;
 import org.rcsb.collectors.utils.AlignmentRangeIntersection;
 import org.rcsb.collectors.utils.RangeIntersectionOperator;
@@ -33,31 +34,31 @@ import static org.rcsb.collectors.map.MapCollector.getTargetIdMap;
  * @created : 2/5/24, Monday
  **/
 
-public class TargetAlignmentCollector {
+public class AlignmentsCollector {
 
     private Supplier<Flux<Document>> documentSupplier;
     private Function<Flux<Document>,Flux<Document>> filterRange = Function.identity();
     private List<String> filterTarget = List.of();
     private List<Integer> page = List.of();
 
-    private TargetAlignmentCollector(){
+    private AlignmentsCollector(){
     }
 
-    public static TargetAlignmentCollector build(){
-        return new TargetAlignmentCollector();
+    public static AlignmentsCollector build(){
+        return new AlignmentsCollector();
     }
 
-    public TargetAlignmentCollector request(String queryId, SequenceReference from, SequenceReference to){
+    public AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to){
         documentSupplier = () -> getAlignments(queryId, from, to);
         return this;
     }
 
-    public TargetAlignmentCollector request(String groupId, GroupReference group){
+    public AlignmentsCollector request(String groupId, GroupReference group){
         documentSupplier = () -> getAlignments(groupId, group);
         return this;
     }
 
-    public TargetAlignmentCollector range(List<Integer> range){
+    public AlignmentsCollector range(List<Integer> range){
         RangeIntersectionOperator alignmentRangeIntersection = new RangeIntersectionOperator(range, new AlignmentRangeIntersection());
         this.filterRange = documentFlux -> documentFlux
                 .filter(alignmentRangeIntersection::isConnected)
@@ -65,13 +66,13 @@ public class TargetAlignmentCollector {
         return this;
     }
 
-    public TargetAlignmentCollector filter(List<String> filter){
+    public AlignmentsCollector filter(List<String> filter){
         if(filter != null)
             this.filterTarget = filter;
         return this;
     }
 
-    public TargetAlignmentCollector page(Integer first, Integer offset){
+    public AlignmentsCollector page(Integer first, Integer offset){
         if(first != null && offset != null)
             page = List.of(offset, first);
         return this;
@@ -80,6 +81,16 @@ public class TargetAlignmentCollector {
     public Flux<Document> get(){
         return documentSupplier.get()
                 .transform(filterRange);
+    }
+
+    public static Flux<String> mapIds(SequenceReference from, SequenceReference to, List<String> ids){
+        if(equivalentReferences(from,to))
+            return MapCollector.mapEquivalentReferences(from, to, ids);
+        return getMapDocuments(
+                getCollection(from, to),
+                getIndex(from, to),
+                ids
+        ).map(map -> map.getString(getAltIndex(from, to)));
     }
 
     private Flux<Document> getAlignments(String queryId, SequenceReference from, SequenceReference to){
@@ -139,6 +150,14 @@ public class TargetAlignmentCollector {
         ));
         aggregation.addAll(aggregationPage());
         aggregation.addAll(aggregationFilter(attribute));
+        return Flux.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation));
+    }
+
+    private static Flux<Document> getMapDocuments(String collection, String attribute, List<String> ids){
+        List<Bson> aggregation = List.of(
+                match(or(ids.stream().map(id->eq(attribute, id)).toList())),
+                mapFields()
+        );
         return Flux.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation));
     }
 

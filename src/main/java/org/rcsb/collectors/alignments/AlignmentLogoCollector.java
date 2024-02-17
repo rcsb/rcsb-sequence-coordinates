@@ -57,14 +57,14 @@ public class AlignmentLogoCollector {
     }
 
     private Flux<int[][]> processAlignments(String groupId, GroupReference group){
-        return TargetAlignmentCollector.build()
+        return AlignmentsCollector.build()
                 .request(groupId, group)
                 .get()
                 .flatMap(this::buildAlignmentLogo);
     }
 
     private Flux<int[][]> processAlignments(String queryId, SequenceReference from, SequenceReference to){
-        return TargetAlignmentCollector.build()
+        return AlignmentsCollector.build()
                 .request(queryId, from, to)
                 .get()
                 .flatMap(this::buildAlignmentLogo);

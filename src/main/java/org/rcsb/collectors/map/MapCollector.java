@@ -5,8 +5,6 @@
 package org.rcsb.collectors.map;
 
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.mojave.CoreConstants;
-import org.rcsb.utils.IdentifierSeparator;
 import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Flux;
 
@@ -37,44 +35,48 @@ public class MapCollector {
         return Flux.just(targetId);
     }
 
-    public static Flux<String> mapIds(SequenceReference from, SequenceReference to, List<String> ids){
+    public static Flux<String> mapEquivalentReferences(SequenceReference from, SequenceReference to, List<String> ids){
+        if(from.equals(SequenceReference.PDB_ENTITY) && to.equals(SequenceReference.PDB_INSTANCE))
+            return pdbEntityToInstanceMap(ids);
+        if(from.equals(SequenceReference.PDB_INSTANCE) && to.equals(SequenceReference.PDB_ENTITY))
+            return pdbInstanceToEntityMap(ids);
         if(from.equals(to))
             return Flux.fromIterable(ids);
-        return translateInstancesToEntities(ids);
-    }
-
-    private static Flux<String> translateInstancesToEntities(List<String> instanceIds) {
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getPdbInstanceMapCollection()).aggregate(
-                List.of(match(or(instanceIds.stream().map(
-                        instanceId -> and(
-                                eq(CoreConstants.ENTRY_ID, parseEntryFromInstance(instanceId)),
-                                eq(CoreConstants.ASYM_ID, parseAsymFromInstance(instanceId))
-                        )
-                ).toList())))
-        )).map(
-            document -> String.format(
-                    "%s%s%s",
-                    document.getString(CoreConstants.ENTRY_ID),
-                    IdentifierSeparator.ENTITY_SEPARATOR,
-                    document.getString(CoreConstants.ENTITY_ID)
-            )
-        );
+        throw new RuntimeException( String.format(
+                "Reference map from: %s to: %s is not equivalent",
+                from,
+                to
+        ));
     }
 
     private static Flux<String> pdbInstanceToEntityMap(String id){
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getPdbInstanceMapCollection()).aggregate(List.of(
-                match(eq(getEntryIdField(), parseEntryFromInstance(id))),
-                match(eq(getAsymIdField(), parseAsymFromInstance(id))),
-                pdbInstanceMapFields()
-        ))).map(MapHelper::entityFromInstanceMap);
+        return pdbInstanceToEntityMap(List.of(id));
+    }
+
+    private static Flux<String> pdbInstanceToEntityMap(List<String> ids) {
+        return Flux.from(MongoStream.getMongoDatabase().getCollection(getPdbInstanceMapCollection()).aggregate(
+                List.of(match(or(ids.stream().map(
+                        id -> and(
+                                eq(getEntryIdField(), parseEntryFromInstance(id)),
+                                eq(getAsymIdField(), parseAsymFromInstance(id))
+                        )
+                ).toList())))
+        )).map(MapHelper::entityFromInstanceMap);
     }
 
     private static Flux<String> pdbEntityToInstanceMap(String id){
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getPdbInstanceMapCollection()).aggregate(List.of(
-                match(eq(getEntryIdField(), parseEntryFromEntity(id))),
-                match(eq(getEntityIdField(), parseEntityFromEntity(id))),
-                pdbInstanceMapFields()
-        ))).map(MapHelper::instanceFromInstanceMap);
+        return pdbEntityToInstanceMap(List.of(id));
+    }
+
+    private static Flux<String> pdbEntityToInstanceMap(List<String> ids) {
+        return Flux.from(MongoStream.getMongoDatabase().getCollection(getPdbInstanceMapCollection()).aggregate(
+                List.of(match(or(ids.stream().map(
+                        id -> and(
+                                eq(getEntryIdField(), parseEntryFromEntity(id)),
+                                eq(getEntityIdField(), parseEntityFromEntity(id))
+                        )
+                ).toList())))
+        )).map(MapHelper::instanceFromInstanceMap);
     }
 
 }

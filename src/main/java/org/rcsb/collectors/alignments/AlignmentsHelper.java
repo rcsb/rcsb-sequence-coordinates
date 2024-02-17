@@ -63,6 +63,10 @@ public class AlignmentsHelper {
         );
     }
 
+    public static String getAltIndex(SequenceReference from, SequenceReference to) {
+        return getAltIndex(getIndex(from,to));
+    }
+
     public static String getAltIndex(String attribute) {
         if(attribute.equals(CoreConstants.QUERY_ID))
             return CoreConstants.TARGET_ID;
@@ -120,6 +124,14 @@ public class AlignmentsHelper {
                 include(CoreConstants.QUERY_ID),
                 include(CoreConstants.ALIGNED_REGIONS),
                 include(CoreConstants.COVERAGE),
+                excludeId()
+        ));
+    }
+
+    public static Bson mapFields() {
+        return project(fields(
+                include(CoreConstants.TARGET_ID),
+                include(CoreConstants.QUERY_ID),
                 excludeId()
         ));
     }
