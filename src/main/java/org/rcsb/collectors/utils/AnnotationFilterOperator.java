@@ -11,9 +11,13 @@ import org.rcsb.graphqlschema.params.AnnotationFilter.FieldName;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
+import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Flux;
 
 import java.util.*;
+
+import static org.rcsb.collectors.annotations.AnnotationsHelper.*;
+import static org.rcsb.collectors.map.MapHelper.instanceFromInstanceMap;
 
 /**
  * @author : joan
@@ -62,9 +66,22 @@ public class AnnotationFilterOperator {
             return Flux.just();
         return Flux.fromStream(annotationFilter.stream())
                 .filter(f -> filterApplyToAlignmentsCheck(annotationReference, f))
-                .flatMap(
-                        f -> AlignmentsCollector.mapIds(annotationReference.toSequenceReference(), sequenceReference, f.getValues())
+                .flatMap(f->mapIds(annotationReference, f.getValues()))
+                .collectList()
+                .filter(list-> !list.isEmpty())
+                .flatMapMany(
+                        ids -> AlignmentsCollector.mapIds(annotationReference.toSequenceReference(), sequenceReference, ids)
                 );
+    }
+
+    private Flux<String> mapIds(AnnotationReference annotationReference, List<String>ids){
+        if( !annotationReference.equals(AnnotationReference.PDB_INTERFACE) )
+            return Flux.fromIterable(ids);
+        return Flux.from(MongoStream.getMongoDatabase().getCollection(getCollection(annotationReference)).aggregate(
+                getAggregation(ids)
+        )).map(
+                interfaceMap -> instanceFromInstanceMap(interfaceMap.get(getTargetIdentifiersAttribute(), Document.class))
+        );
     }
 
     private List<Document> filterFeatures(Document annotations){

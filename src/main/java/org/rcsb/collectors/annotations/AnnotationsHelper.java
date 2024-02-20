@@ -13,12 +13,14 @@ import org.rcsb.mojave.CoreConstants;
 import org.rcsb.mojave.auto.Feature;
 import org.rcsb.utils.Range;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Projections.*;
 import static org.rcsb.collectors.map.MapHelper.parseAsymFromInstance;
 import static org.rcsb.collectors.map.MapHelper.parseEntryFromInstance;
@@ -55,6 +57,16 @@ public class AnnotationsHelper {
         );
     }
 
+    public static List<Bson> getAggregation(List<String> ids){
+        List<Bson> aggregation = new ArrayList<>(ids.stream().map(
+                id -> eq(CoreConstants.TARGET_ID, id)
+        ).toList());
+        return List.of(
+                match(or(aggregation)),
+                mapFields()
+        );
+    }
+
     public static Document mapAnnotations(Document annotations, Document alignment){
         annotations.put(
                 SchemaConstants.Field.FEATURES,
@@ -78,10 +90,22 @@ public class AnnotationsHelper {
         return annotations.containsKey(SchemaConstants.Field.FEATURES) && !annotations.getList(SchemaConstants.Field.FEATURES, Document.class).isEmpty();
     }
 
+    public static String getTargetIdentifiersAttribute(){
+        return CoreConstants.TARGET_IDENTIFIERS;
+    }
+
     private static Bson annotationsFields() {
         return project(fields(
                 include(CoreConstants.TARGET_ID),
                 include(CoreConstants.FEATURES),
+                include(CoreConstants.TARGET_IDENTIFIERS),
+                excludeId()
+        ));
+    }
+
+    private static Bson mapFields() {
+        return project(fields(
+                include(CoreConstants.TARGET_ID),
                 include(CoreConstants.TARGET_IDENTIFIERS),
                 excludeId()
         ));

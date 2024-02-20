@@ -13,12 +13,12 @@ import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.mojave.CoreConstants;
 import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
 
+import static org.rcsb.collectors.alignments.AlignmentsHelper.getTargetIndex;
 import static org.rcsb.collectors.annotations.AnnotationsHelper.*;
 
 /**
@@ -106,7 +106,7 @@ public class AnnotationsCollector {
                 .get()
                 .flatMap(
                         alignment -> getAnnotations(
-                                alignment.getString(CoreConstants.TARGET_ID),
+                                alignment.getString(getTargetIndex()),
                                 groupReference.toSequenceReference(),
                                 annotationReference,
                                 annotationFilters
@@ -138,7 +138,7 @@ public class AnnotationsCollector {
     ) {
         AnnotationFilterOperator filter = AnnotationFilterOperator.build(annotationFilters);
         return Flux.from(MongoStream.getMongoDatabase().getCollection(getCollection(annotationReference)).aggregate(
-                       getAggregation(alignment.getString(CoreConstants.TARGET_ID), annotationReference)
+                       getAggregation(alignment.getString(getTargetIndex()), annotationReference)
                ))
                .map(annotations -> addSource(annotationReference, annotations))
                .filter(filter::targetCheck)
