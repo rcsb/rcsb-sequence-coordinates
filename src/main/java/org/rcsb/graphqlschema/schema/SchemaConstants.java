@@ -23,6 +23,7 @@ public class SchemaConstants {
     private final static String REFERENCE = "reference";
     private final static String SOURCES = "sources";
     private final static String SOURCE = "source";
+    private final static String RANGE_ID = "range_id";
     private final static String GROUP_ID = "groupId";
     private final static String GROUP = "group";
     private final static String FIRST = "first";
@@ -73,6 +74,8 @@ public class SchemaConstants {
     private final static String BEG_ORI_ID = CoreConstants.BEG_ORI_ID;
     private final static String END_ORI_ID = CoreConstants.END_ORI_ID;
     private final static String VALUES = CoreConstants.VALUES;
+    private final static String OPEN_BEGIN = CoreConstants.OPEN_BEGIN;
+    private final static String OPEN_END = CoreConstants.OPEN_END;
 
     public static class Query {
         public final static String ALIGNMENT = SchemaConstants.ALIGNMENT;
@@ -133,9 +136,12 @@ public class SchemaConstants {
         public final static String BEG_SEQ_ID = SchemaConstants.BEG_SEQ_ID;
         public final static String END_SEQ_ID = SchemaConstants.END_SEQ_ID;
         public final static String BEG_ORI_ID = SchemaConstants.BEG_ORI_ID;
+        public final static String OPEN_BEGIN = SchemaConstants.OPEN_BEGIN;
+        public final static String OPEN_END = SchemaConstants.OPEN_END;
         public final static String END_ORI_ID = SchemaConstants.END_ORI_ID;
         public final static String VALUES = SchemaConstants.VALUES;
         public final static String SOURCE = SchemaConstants.SOURCE;
+        public final static String RANGE_ID = SchemaConstants.RANGE_ID;
     }
 
 }

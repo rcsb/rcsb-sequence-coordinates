@@ -16,6 +16,7 @@ import org.rcsb.utils.Range;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Aggregates.project;
@@ -112,11 +113,16 @@ public class AnnotationsHelper {
     }
 
     private static Document mapFeature(Document feature, Document alignment){
+        AtomicInteger featurePositionId = new AtomicInteger(1);
         feature.put(
                 SchemaConstants.Field.FEATURE_POSITIONS,
-                feature.getList(CoreConstants.FEATURE_POSITIONS, Document.class).stream().flatMap(
-                        featurePosition-> featurePositionIntersection(featurePosition, alignment).stream()
-                ).toList()
+                feature.getList(CoreConstants.FEATURE_POSITIONS, Document.class).stream()
+                        .flatMap(featurePosition -> featurePositionIntersection(
+                                featurePosition,
+                                alignment,
+                                featurePositionId.getAndIncrement()
+                        ).stream())
+                        .toList()
         );
         feature.put(
                 SchemaConstants.Field.TYPE,
@@ -125,10 +131,12 @@ public class AnnotationsHelper {
         return feature;
     }
 
-    private static List<Document> featurePositionIntersection(Document featurePosition, Document alignment){
-        return alignment.getList(CoreConstants.ALIGNED_REGIONS, Document.class).stream().map(
-                alignmentRegion -> featureToAlignmentIntersection(featurePosition,alignmentRegion)
-        ).filter(d->!d.isEmpty()).toList();
+    private static List<Document> featurePositionIntersection(Document featurePosition, Document alignment, int rangeId){
+        return alignment.getList(CoreConstants.ALIGNED_REGIONS, Document.class).stream()
+                .map(alignmentRegion -> featureToAlignmentIntersection(featurePosition,alignmentRegion))
+                .filter(d->!d.isEmpty())
+                .peek(alignmentRegion -> alignmentRegion.put( SchemaConstants.Field.RANGE_ID, String.format("range-%s", rangeId)))
+                .toList();
     }
 
     private static Document featureToAlignmentIntersection(Document featurePosition, Document alignmentRegion){
@@ -161,7 +169,9 @@ public class AnnotationsHelper {
                 SchemaConstants.Field.VALUES, featureValues.subList(
                         intersection.bottom() - featureRange.bottom(),
                         intersection.bottom() - featureRange.bottom() + intersection.size()
-                )
+                ),
+                SchemaConstants.Field.OPEN_BEGIN, intersection.bottom() != featureRegion.getInteger(CoreConstants.BEG_SEQ_ID),
+                SchemaConstants.Field.OPEN_END, intersection.top() != featureRegion.getInteger(CoreConstants.BEG_SEQ_ID) + featureValues.size() - 1
         ));
     }
 
@@ -188,7 +198,9 @@ public class AnnotationsHelper {
                 SchemaConstants.Field.BEG_SEQ_ID, mapIndex(intersection.bottom(), targetRange, queryRange),
                 SchemaConstants.Field.END_SEQ_ID, mapIndex(intersection.top(), targetRange, queryRange),
                 SchemaConstants.Field.BEG_ORI_ID, intersection.bottom(),
-                SchemaConstants.Field.END_ORI_ID, intersection.top()
+                SchemaConstants.Field.END_ORI_ID, intersection.top(),
+                SchemaConstants.Field.OPEN_BEGIN, intersection.bottom() != featureRegion.getInteger(CoreConstants.BEG_SEQ_ID),
+                SchemaConstants.Field.OPEN_END, intersection.top() != featureRegion.getInteger(CoreConstants.END_SEQ_ID)
         ));
     }
 

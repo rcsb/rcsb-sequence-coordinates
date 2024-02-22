@@ -100,7 +100,7 @@ public class AnnotationFilterOperator {
                         f -> filterCheck(FieldName.TYPE, f) && filterCheck(annotationReference, f)
                 )
                 .allMatch(
-                        f -> valueCheck(feature.getString(SchemaConstants.Field.TYPE), f)
+                        f -> valueCheck(feature.getString(SchemaConstants.Field.TYPE).toUpperCase(), f)
                 );
     }
 
