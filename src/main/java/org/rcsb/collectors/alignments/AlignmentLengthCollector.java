@@ -17,7 +17,7 @@ import java.util.List;
 
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Filters.eq;
-import static org.rcsb.collectors.alignments.AlignmentsHelper.*;
+import static org.rcsb.collectors.alignments.AlignmentsMongoHelper.*;
 
 /**
  * @author : joan

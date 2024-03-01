@@ -21,6 +21,7 @@ public class TargetAlignment {
     private String targetId;
     private String targetSequence;
     private Coverage coverage;
+    private Integer orientation;
     private List<AlignedRegions> alignedRegions;
     @JsonProperty(SchemaConstants.Field.TARGET_ID)
     public String getTargetId(){
@@ -53,5 +54,13 @@ public class TargetAlignment {
     @JsonProperty(SchemaConstants.Field.ALIGNED_REGIONS)
     public void setAlignedRegions(List<AlignedRegions> alignedRegions){
         this.alignedRegions = alignedRegions;
+    }
+    @JsonProperty(SchemaConstants.Field.ORIENTATION)
+    public Integer getOrientation() {
+        return orientation;
+    }
+    @JsonProperty(SchemaConstants.Field.ORIENTATION)
+    public void setOrientation(Integer orientation) {
+        this.orientation = orientation;
     }
 }

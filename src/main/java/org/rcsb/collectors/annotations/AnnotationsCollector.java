@@ -5,7 +5,7 @@
 package org.rcsb.collectors.annotations;
 
 import org.bson.Document;
-import org.rcsb.collectors.alignments.AlignmentsCollector;
+import org.rcsb.collectors.alignments.SequenceAlignmentsCollector;
 import org.rcsb.collectors.utils.AnnotationFilterOperator;
 import org.rcsb.collectors.utils.AnnotationRangeIntersection;
 import org.rcsb.collectors.utils.RangeIntersectionOperator;
@@ -18,7 +18,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.List;
 
-import static org.rcsb.collectors.alignments.AlignmentsHelper.getTargetIndex;
+import static org.rcsb.collectors.alignments.AlignmentsMongoHelper.getTargetIndex;
 import static org.rcsb.collectors.annotations.AnnotationsHelper.*;
 
 /**
@@ -95,7 +95,7 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return AlignmentsCollector.build()
+        return SequenceAlignmentsCollector
                 .request(
                         groupId,
                         groupReference
@@ -120,7 +120,7 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return AlignmentsCollector.build()
+        return SequenceAlignmentsCollector
                 .request(
                     queryId,
                     sequenceReference,

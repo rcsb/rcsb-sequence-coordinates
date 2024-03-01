@@ -76,6 +76,8 @@ public class SchemaConstants {
     private final static String VALUES = CoreConstants.VALUES;
     private final static String OPEN_BEGIN = CoreConstants.OPEN_BEGIN;
     private final static String OPEN_END = CoreConstants.OPEN_END;
+    private final static String EXON_SHIFT = CoreConstants.EXON_SHIFT;
+    private final static String ORIENTATION = CoreConstants.ORIENTATION;
 
     public static class Query {
         public final static String ALIGNMENT = SchemaConstants.ALIGNMENT;
@@ -142,6 +144,8 @@ public class SchemaConstants {
         public final static String VALUES = SchemaConstants.VALUES;
         public final static String SOURCE = SchemaConstants.SOURCE;
         public final static String RANGE_ID = SchemaConstants.RANGE_ID;
+        public final static String EXON_SHIFT = SchemaConstants.EXON_SHIFT;
+        public final static String ORIENTATION = SchemaConstants.ORIENTATION;
     }
 
 }

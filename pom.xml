@@ -102,7 +102,7 @@
 			<artifactId>netty-all</artifactId>
 		</dependency>
 
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<resources>

@@ -5,7 +5,7 @@
 package org.rcsb.collectors.utils;
 
 import org.bson.Document;
-import org.rcsb.collectors.alignments.AlignmentsCollector;
+import org.rcsb.collectors.alignments.SequenceAlignmentsCollector;
 import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.params.AnnotationFilter.FieldName;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
@@ -70,7 +70,7 @@ public class AnnotationFilterOperator {
                 .collectList()
                 .filter(list-> !list.isEmpty())
                 .flatMapMany(
-                        ids -> AlignmentsCollector.mapIds(annotationReference.toSequenceReference(), sequenceReference, ids)
+                        ids -> SequenceAlignmentsCollector.mapIds(annotationReference.toSequenceReference(), sequenceReference, ids)
                 );
     }
 

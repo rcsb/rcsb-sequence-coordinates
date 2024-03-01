@@ -87,7 +87,7 @@ public class AlignmentRangeIntersection implements RangeIntersection {
 
     private int extracAlignmentLength(Document alignment){
         return alignment.getList(SchemaConstants.Field.ALIGNED_REGIONS, Document.class).stream()
-                .map(d->d.getInteger(SchemaConstants.Field.QUERY_END)-d.getInteger(SchemaConstants.Field.QUERY_BEGIN))
+                .map(d->d.getInteger(SchemaConstants.Field.QUERY_END) - d.getInteger(SchemaConstants.Field.QUERY_BEGIN) + 1)
                 .reduce(0, Integer::sum);
     }
 
