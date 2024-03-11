@@ -163,7 +163,7 @@ public class GenomeAlignmentsHelper {
         ));
     }
 
-    public static List<Integer> mapToGenomeIndex(int proteinIndex, Range proteinRange, Range genomeRange){
+    private static List<Integer> mapToGenomeIndex(int proteinIndex, Range proteinRange, Range genomeRange){
         if(!proteinRange.contains(proteinIndex))
             return List.of();
         int begin = 3 * (proteinIndex - proteinRange.bottom()) + genomeRange.bottom();
