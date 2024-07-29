@@ -26,6 +26,10 @@
 		<sequence.alignment.json.schema.name>sequence_alignments.json</sequence.alignment.json.schema.name>
 		<project.auto.package>org.rcsb.rcsbsequencecoordinates.auto</project.auto.package>
 
+		<!-- docker-related properties (for jib plugin)-->
+		<!-- By default we use username, override in CI script to use rcsb or similar -->
+		<jib.target.namespace>${env.USER}</jib.target.namespace>
+
 	</properties>
 	<dependencies>
 		<dependency>
@@ -146,6 +150,22 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<container>
+						<ports>
+							<port>8080</port>
+						</ports>
+					</container>
+					<to>
+						<image>harbor.devops.k8s.rcsb.org/${jib.target.namespace}/rcsb-sequence-coordinates</image>
+					</to>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
