@@ -9,5 +9,5 @@ jobs:
   push-to-master:
     uses: rcsb/devops-cicd-github-actions/.github/workflows/push-to-master.yaml@master
     with:
-      distribution: "production_shape"
+      distribution: "production_sequence_coordinates"
       type: "jar"

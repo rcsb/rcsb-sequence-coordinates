@@ -26,5 +26,5 @@ jobs:
       minor: ${{ inputs.minor }}
       patch: ${{ inputs.patch }}
       skip-tests: ${{ inputs.skip-tests }}
-      distribution: "production_shape"
+      distribution: "production_sequence_coordinates"
       type: "jar"
