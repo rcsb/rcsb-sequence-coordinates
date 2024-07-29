@@ -118,11 +118,21 @@
 			</resource>
 		</resources>
 		<plugins>
+			<!-- https://www.baeldung.com/executable-jar-with-maven -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<mainClass>org.rcsb.rcsbsequencecoordinates.RcsbSequenceCoordinatesApplication</mainClass>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
-
 			<!--
 				GraphQL Schema Generation
 			-->
