@@ -171,6 +171,7 @@
 						<ports>
 							<port>8080</port>
 						</ports>
+						<mainClass>org.rcsb.rcsbsequencecoordinates.RcsbSequenceCoordinatesApplication</mainClass>
 					</container>
 					<to>
 						<image>harbor.devops.k8s.rcsb.org/${jib.target.namespace}/rcsb-sequence-coordinates</image>
