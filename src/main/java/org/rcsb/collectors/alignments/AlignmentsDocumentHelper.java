@@ -7,7 +7,7 @@ package org.rcsb.collectors.alignments;
 import org.bson.Document;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
-import org.rcsb.mojave.CoreConstants;
+import org.rcsb.mojave.SequenceCoordinatesConstants;
 
 import java.util.List;
 import java.util.Map;
@@ -26,17 +26,17 @@ import static org.rcsb.collectors.alignments.AlignmentsMongoHelper.getIndex;
 public class AlignmentsDocumentHelper {
 
     public static Function<Document,Document> targetIdSelector(SequenceReference from, SequenceReference to){
-        if(getIndex(from, to).equals(CoreConstants.QUERY_ID))
+        if(getIndex(from, to).equals(SequenceCoordinatesConstants.QUERY_ID))
             return (d) -> new Document(Map.of(
-                    SchemaConstants.Field.TARGET_ID, d.get(CoreConstants.TARGET_ID),
-                    SchemaConstants.Field.COVERAGE, d.get(CoreConstants.COVERAGE),
-                    SchemaConstants.Field.ALIGNED_REGIONS, d.get(CoreConstants.ALIGNED_REGIONS)
+                    SchemaConstants.Field.TARGET_ID, d.get(SequenceCoordinatesConstants.TARGET_ID),
+                    SchemaConstants.Field.COVERAGE, d.get(SequenceCoordinatesConstants.COVERAGE),
+                    SchemaConstants.Field.ALIGNED_REGIONS, d.get(SequenceCoordinatesConstants.ALIGNED_REGIONS)
             ));
-        if(getIndex(from, to).equals(CoreConstants.TARGET_ID))
+        if(getIndex(from, to).equals(SequenceCoordinatesConstants.TARGET_ID))
             return (d) -> new Document(Map.of(
-                    SchemaConstants.Field.TARGET_ID, d.get(CoreConstants.QUERY_ID),
-                    SchemaConstants.Field.COVERAGE, switchCoverage(d.get(CoreConstants.COVERAGE, Document.class)),
-                    SchemaConstants.Field.ALIGNED_REGIONS, switchAlignedRegions(d.getList(CoreConstants.ALIGNED_REGIONS, Document.class))
+                    SchemaConstants.Field.TARGET_ID, d.get(SequenceCoordinatesConstants.QUERY_ID),
+                    SchemaConstants.Field.COVERAGE, switchCoverage(d.get(SequenceCoordinatesConstants.COVERAGE, Document.class)),
+                    SchemaConstants.Field.ALIGNED_REGIONS, switchAlignedRegions(d.getList(SequenceCoordinatesConstants.ALIGNED_REGIONS, Document.class))
             ));
         throw new RuntimeException(
                 String.format(
@@ -51,8 +51,8 @@ public class AlignmentsDocumentHelper {
         if(reference.equals(SequenceReference.PDB_INSTANCE))
             return (targetId, alignment) -> new Document(Map.of(
                     SchemaConstants.Field.TARGET_ID, targetId,
-                    SchemaConstants.Field.COVERAGE, alignment.get(CoreConstants.COVERAGE),
-                    SchemaConstants.Field.ALIGNED_REGIONS, alignment.get(CoreConstants.ALIGNED_REGIONS)
+                    SchemaConstants.Field.COVERAGE, alignment.get(SequenceCoordinatesConstants.COVERAGE),
+                    SchemaConstants.Field.ALIGNED_REGIONS, alignment.get(SequenceCoordinatesConstants.ALIGNED_REGIONS)
             ));
         return (targetId, alignment) -> alignment;
     }
@@ -80,33 +80,33 @@ public class AlignmentsDocumentHelper {
     public static Document switchAlignment(String targetId, Document alignment){
         Document reverseAlignment = new Document(Map.of(
                 SchemaConstants.Field.TARGET_ID, targetId,
-                SchemaConstants.Field.COVERAGE, switchCoverage(alignment.get(CoreConstants.COVERAGE, Document.class)),
-                SchemaConstants.Field.ALIGNED_REGIONS, switchAlignedRegions(alignment.getList(CoreConstants.ALIGNED_REGIONS, Document.class))
+                SchemaConstants.Field.COVERAGE, switchCoverage(alignment.get(SequenceCoordinatesConstants.COVERAGE, Document.class)),
+                SchemaConstants.Field.ALIGNED_REGIONS, switchAlignedRegions(alignment.getList(SequenceCoordinatesConstants.ALIGNED_REGIONS, Document.class))
         ));
-        if(alignment.containsKey(CoreConstants.ORIENTATION))
-            reverseAlignment.put(CoreConstants.ORIENTATION, alignment.get(CoreConstants.ORIENTATION));
+        if(alignment.containsKey(SequenceCoordinatesConstants.ORIENTATION))
+            reverseAlignment.put(SequenceCoordinatesConstants.ORIENTATION, alignment.get(SequenceCoordinatesConstants.ORIENTATION));
         return reverseAlignment;
     }
 
     private static Document switchCoverage(Document d){
         return new Document(Map.of(
-                SchemaConstants.Field.QUERY_COVERAGE, d.get(CoreConstants.TARGET_COVERAGE),
-                SchemaConstants.Field.QUERY_LENGTH, d.get(CoreConstants.TARGET_LENGTH),
-                SchemaConstants.Field.TARGET_COVERAGE, d.get(CoreConstants.QUERY_COVERAGE),
-                SchemaConstants.Field.TARGET_LENGTH, d.get(CoreConstants.QUERY_LENGTH)
+                SchemaConstants.Field.QUERY_COVERAGE, d.get(SequenceCoordinatesConstants.TARGET_COVERAGE),
+                SchemaConstants.Field.QUERY_LENGTH, d.get(SequenceCoordinatesConstants.TARGET_LENGTH),
+                SchemaConstants.Field.TARGET_COVERAGE, d.get(SequenceCoordinatesConstants.QUERY_COVERAGE),
+                SchemaConstants.Field.TARGET_LENGTH, d.get(SequenceCoordinatesConstants.QUERY_LENGTH)
         ));
     }
 
     private static List<Document> switchAlignedRegions(List<Document> documentList){
         return documentList.stream().map(d-> {
                 Document region = new Document( Map.of(
-                    SchemaConstants.Field.QUERY_BEGIN, d.get(CoreConstants.TARGET_BEGIN),
-                    SchemaConstants.Field.QUERY_END, d.get(CoreConstants.TARGET_END),
-                    SchemaConstants.Field.TARGET_BEGIN, d.get(CoreConstants.QUERY_BEGIN),
-                    SchemaConstants.Field.TARGET_END, d.get(CoreConstants.QUERY_END)
+                    SchemaConstants.Field.QUERY_BEGIN, d.get(SequenceCoordinatesConstants.TARGET_BEGIN),
+                    SchemaConstants.Field.QUERY_END, d.get(SequenceCoordinatesConstants.TARGET_END),
+                    SchemaConstants.Field.TARGET_BEGIN, d.get(SequenceCoordinatesConstants.QUERY_BEGIN),
+                    SchemaConstants.Field.TARGET_END, d.get(SequenceCoordinatesConstants.QUERY_END)
                 ));
-                if(d.containsKey(CoreConstants.EXON_SHIFT))
-                    region.put(SchemaConstants.Field.EXON_SHIFT, d.get(CoreConstants.EXON_SHIFT));
+                if(d.containsKey(SequenceCoordinatesConstants.EXON_SHIFT))
+                    region.put(SchemaConstants.Field.EXON_SHIFT, d.get(SequenceCoordinatesConstants.EXON_SHIFT));
                 return region;
         }).toList();
     }

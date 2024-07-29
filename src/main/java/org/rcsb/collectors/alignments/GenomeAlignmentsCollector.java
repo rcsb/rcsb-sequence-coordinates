@@ -6,6 +6,7 @@ package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.rcsb.collectors.map.MapCollector;
 import org.rcsb.collectors.utils.GenomeRangeIntersection;
 import org.rcsb.collectors.utils.RangeIntersectionOperator;
 import org.rcsb.graphqlschema.reference.SequenceReference;
@@ -107,7 +108,8 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
 
     private Flux<Document> getGenomeToProtein(String queryId, SequenceReference to){
         return mapNcbiGenomeToProtein(queryId)
-                .flatMap(map -> mapNcbiGenomeToReference(map, to))
+                .flatMap(map -> mapNcbiProteinToReference(map, to))
+                .flatMap(targetId-> MapCollector.getTargetIdMap(targetId, to))
                 .distinct()
                 .flatMap(
                         targetId -> getProteinToGenome(targetId, to).map(d -> switchAlignment(targetId, d))
@@ -132,7 +134,7 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
         );
     }
 
-    private Flux<String> mapNcbiGenomeToReference(Document genomeMap, SequenceReference to){
+    private Flux<String> mapNcbiProteinToReference(Document genomeMap, SequenceReference to){
         return SequenceAlignmentsCollector
                 .mapIds(SequenceReference.NCBI_PROTEIN, to, List.of(genomeMap.getString(SchemaConstants.Field.TARGET_ID)));
     }

@@ -6,7 +6,7 @@ package org.rcsb.collectors.sequence;
 
 import org.rcsb.common.constants.MongoCollections;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.mojave.CoreConstants;
+import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Mono;
 
@@ -36,10 +36,10 @@ public class SequenceCollector {
     public static Mono<String> request(String sequenceId){
         return Mono.from(MongoStream.getMongoDatabase().getCollection(MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCES)
                 .aggregate(List.of(
-                        match(eq(CoreConstants.SEQUENCE_ID, sequenceId)),
+                        match(eq(SequenceCoordinatesConstants.SEQUENCE_ID, sequenceId)),
                         project(fields(excludeId()))
                     )
-                )).map( d-> d.getString(CoreConstants.SEQUENCE));
+                )).map( d-> d.getString(SequenceCoordinatesConstants.SEQUENCE));
     }
 
 

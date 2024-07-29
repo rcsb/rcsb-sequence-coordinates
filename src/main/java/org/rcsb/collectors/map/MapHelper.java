@@ -7,7 +7,7 @@ package org.rcsb.collectors.map;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.rcsb.common.constants.MongoCollections;
-import org.rcsb.mojave.CoreConstants;
+import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.rcsb.utils.IdentifierSeparator;
 
 import java.util.Arrays;
@@ -29,23 +29,23 @@ public class MapHelper {
 
     public static Bson pdbInstanceMapFields() {
         return project(fields(
-                include(CoreConstants.ENTRY_ID),
-                include(CoreConstants.ENTITY_ID),
-                include(CoreConstants.ASYM_ID),
+                include(SequenceCoordinatesConstants.ENTRY_ID),
+                include(SequenceCoordinatesConstants.ENTITY_ID),
+                include(SequenceCoordinatesConstants.ASYM_ID),
                 excludeId()
         ));
     }
 
     public static String getEntryIdField(){
-        return CoreConstants.ENTRY_ID;
+        return SequenceCoordinatesConstants.ENTRY_ID;
     }
 
     public static String getEntityIdField(){
-        return CoreConstants.ENTITY_ID;
+        return SequenceCoordinatesConstants.ENTITY_ID;
     }
 
     public static String getAsymIdField(){
-        return CoreConstants.ASYM_ID;
+        return SequenceCoordinatesConstants.ASYM_ID;
     }
 
     public static String parseEntryFromInstance(String queryId){
@@ -76,16 +76,16 @@ public class MapHelper {
     public static String entityFromInstanceMap(Document map){
         return String.join(
                 IdentifierSeparator.ENTITY_SEPARATOR,
-                map.getString(CoreConstants.ENTRY_ID),
-                map.getString(CoreConstants.ENTITY_ID)
+                map.getString(SequenceCoordinatesConstants.ENTRY_ID),
+                map.getString(SequenceCoordinatesConstants.ENTITY_ID)
         );
     }
 
     public static String instanceFromInstanceMap(Document map){
         return String.join(
                 IdentifierSeparator.ENTITY_INSTANCE_SEPARATOR,
-                map.getString(CoreConstants.ENTRY_ID),
-                map.getString(CoreConstants.ASYM_ID)
+                map.getString(SequenceCoordinatesConstants.ENTRY_ID),
+                map.getString(SequenceCoordinatesConstants.ASYM_ID)
         );
     }
 

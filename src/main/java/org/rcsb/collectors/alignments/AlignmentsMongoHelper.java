@@ -7,7 +7,7 @@ package org.rcsb.collectors.alignments;
 import org.bson.conversions.Bson;
 import org.rcsb.common.constants.MongoCollections;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.mojave.CoreConstants;
+import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 
 import static com.mongodb.client.model.Aggregates.project;
@@ -47,19 +47,19 @@ public class AlignmentsMongoHelper {
 
     public static String getIndex(SequenceReference from, SequenceReference to){
         if(testGenome(from))
-            return CoreConstants.QUERY_ID;
+            return SequenceCoordinatesConstants.QUERY_ID;
         if(testGenome(to))
-            return CoreConstants.TARGET_ID;
+            return SequenceCoordinatesConstants.TARGET_ID;
         if(testNcbi(from))
-            return CoreConstants.QUERY_ID;
+            return SequenceCoordinatesConstants.QUERY_ID;
         if(testNcbi(to))
-            return CoreConstants.TARGET_ID;
+            return SequenceCoordinatesConstants.TARGET_ID;
         if(testUniprot(from))
-            return CoreConstants.QUERY_ID;
+            return SequenceCoordinatesConstants.QUERY_ID;
         if(testUniprot(to))
-            return CoreConstants.TARGET_ID;
+            return SequenceCoordinatesConstants.TARGET_ID;
         if(testPdb(from) && testPdb(to))
-            return CoreConstants.QUERY_ID;
+            return SequenceCoordinatesConstants.QUERY_ID;
         throw new RuntimeException(
                 String.format(
                         "Unknown index for references from %s to %s",
@@ -74,28 +74,28 @@ public class AlignmentsMongoHelper {
     }
 
     public static String getAltIndex(String attribute) {
-        if(attribute.equals(CoreConstants.QUERY_ID))
-            return CoreConstants.TARGET_ID;
-        return CoreConstants.QUERY_ID;
+        if(attribute.equals(SequenceCoordinatesConstants.QUERY_ID))
+            return SequenceCoordinatesConstants.TARGET_ID;
+        return SequenceCoordinatesConstants.QUERY_ID;
     }
 
     public static String getLengthAttribute(SequenceReference from, SequenceReference to){
         String index = getIndex(from, to);
-        if(index.equals(CoreConstants.QUERY_ID))
-            return CoreConstants.QUERY_LENGTH;
-        return CoreConstants.TARGET_LENGTH;
+        if(index.equals(SequenceCoordinatesConstants.QUERY_ID))
+            return SequenceCoordinatesConstants.QUERY_LENGTH;
+        return SequenceCoordinatesConstants.TARGET_LENGTH;
     }
 
 
     public static Bson getSortFields(SequenceReference from, SequenceReference to){
         if(from.equals(SequenceReference.NCBI_PROTEIN))
-            return sortAggregator(CoreConstants.QUERY_BEGIN, CoreConstants.QUERY_END);
+            return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END);
         if(to.equals(SequenceReference.NCBI_PROTEIN))
-            return sortAggregator(CoreConstants.TARGET_BEGIN, CoreConstants.TARGET_END);
+            return sortAggregator(SequenceCoordinatesConstants.TARGET_BEGIN, SequenceCoordinatesConstants.TARGET_END);
         if(from.equals(SequenceReference.UNIPROT))
-            return sortAggregator(CoreConstants.QUERY_BEGIN, CoreConstants.QUERY_END);
+            return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END);
         if(to.equals(SequenceReference.UNIPROT))
-            return sortAggregator(CoreConstants.TARGET_BEGIN, CoreConstants.TARGET_END);
+            return sortAggregator(SequenceCoordinatesConstants.TARGET_BEGIN, SequenceCoordinatesConstants.TARGET_END);
         throw new RuntimeException(
                 String.format(
                         "Unknown index for references from %s to %s",
@@ -110,71 +110,71 @@ public class AlignmentsMongoHelper {
     }
 
     public static String getGroupIndex(){
-        return CoreConstants.QUERY_ID;
+        return SequenceCoordinatesConstants.QUERY_ID;
     }
 
     public static String getGroupLengthAttribute(){
-        return CoreConstants.QUERY_LENGTH;
+        return SequenceCoordinatesConstants.QUERY_LENGTH;
     }
 
     public static String getQueryIndex(){
-        return CoreConstants.QUERY_ID;
+        return SequenceCoordinatesConstants.QUERY_ID;
     }
 
     public static String getQueryBegin(){
-        return CoreConstants.QUERY_BEGIN;
+        return SequenceCoordinatesConstants.QUERY_BEGIN;
     }
 
     public static String getQueryEnd(){
-        return CoreConstants.QUERY_END;
+        return SequenceCoordinatesConstants.QUERY_END;
     }
 
     public static String getTargetIndex(){
-        return CoreConstants.TARGET_ID;
+        return SequenceCoordinatesConstants.TARGET_ID;
     }
 
     public static String getTargetCoverage() {
-        return CoreConstants.COVERAGE + "." + CoreConstants.TARGET_COVERAGE;
+        return SequenceCoordinatesConstants.COVERAGE + "." + SequenceCoordinatesConstants.TARGET_COVERAGE;
     }
 
     public static Bson getGroupSortFields(){
-        return sortAggregator(CoreConstants.QUERY_BEGIN, CoreConstants.QUERY_END);
+        return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END);
     }
 
     public static Bson alignmentFields() {
         return project(fields(
-                include(CoreConstants.TARGET_ID),
-                include(CoreConstants.QUERY_ID),
-                include(CoreConstants.ALIGNED_REGIONS),
-                include(CoreConstants.COVERAGE),
+                include(SequenceCoordinatesConstants.TARGET_ID),
+                include(SequenceCoordinatesConstants.QUERY_ID),
+                include(SequenceCoordinatesConstants.ALIGNED_REGIONS),
+                include(SequenceCoordinatesConstants.COVERAGE),
                 excludeId()
         ));
     }
 
     public static Bson genomeFields() {
         return project(fields(
-                include(CoreConstants.TARGET_ID),
-                include(CoreConstants.QUERY_ID),
-                include(CoreConstants.ALIGNED_REGIONS),
-                include(CoreConstants.QUERY_BEGIN),
-                include(CoreConstants.QUERY_END),
-                include(CoreConstants.ORIENTATION),
-                include(CoreConstants.COVERAGE),
+                include(SequenceCoordinatesConstants.TARGET_ID),
+                include(SequenceCoordinatesConstants.QUERY_ID),
+                include(SequenceCoordinatesConstants.ALIGNED_REGIONS),
+                include(SequenceCoordinatesConstants.QUERY_BEGIN),
+                include(SequenceCoordinatesConstants.QUERY_END),
+                include(SequenceCoordinatesConstants.ORIENTATION),
+                include(SequenceCoordinatesConstants.COVERAGE),
                 excludeId()
         ));
     }
 
     public static Bson mapFields() {
         return project(fields(
-                include(CoreConstants.TARGET_ID),
-                include(CoreConstants.QUERY_ID),
+                include(SequenceCoordinatesConstants.TARGET_ID),
+                include(SequenceCoordinatesConstants.QUERY_ID),
                 excludeId()
         ));
     }
 
     public static Bson alignmentLengthFields() {
         return project(fields(
-                include(CoreConstants.COVERAGE),
+                include(SequenceCoordinatesConstants.COVERAGE),
                 excludeId()
         ));
     }

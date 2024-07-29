@@ -9,8 +9,8 @@ import org.bson.conversions.Bson;
 import org.rcsb.common.constants.MongoCollections;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
-import org.rcsb.mojave.CoreConstants;
-import org.rcsb.mojave.auto.Feature;
+import org.rcsb.mojave.SequenceCoordinatesConstants;
+import org.rcsb.mojave.auto.FeaturesType;
 import org.rcsb.utils.Range;
 
 import java.util.ArrayList;
@@ -48,19 +48,19 @@ public class AnnotationsHelper {
     public static List<Bson> getAggregation(String targetId, AnnotationReference annotationReference){
         if(annotationReference.equals(AnnotationReference.PDB_INTERFACE))
             return List.of(
-                    match(eq(CoreConstants.TARGET_IDENTIFIERS+"."+CoreConstants.ENTRY_ID, parseEntryFromInstance(targetId))),
-                    match(eq(CoreConstants.TARGET_IDENTIFIERS+"."+CoreConstants.ASYM_ID, parseAsymFromInstance(targetId))),
+                    match(eq(SequenceCoordinatesConstants.TARGET_IDENTIFIERS+"."+SequenceCoordinatesConstants.ENTRY_ID, parseEntryFromInstance(targetId))),
+                    match(eq(SequenceCoordinatesConstants.TARGET_IDENTIFIERS+"."+SequenceCoordinatesConstants.ASYM_ID, parseAsymFromInstance(targetId))),
                     annotationsFields()
             );
         return List.of(
-                match(eq(CoreConstants.TARGET_ID, targetId)),
+                match(eq(SequenceCoordinatesConstants.TARGET_ID, targetId)),
                 annotationsFields()
         );
     }
 
     public static List<Bson> getAggregation(List<String> ids){
         List<Bson> aggregation = new ArrayList<>(ids.stream().map(
-                id -> eq(CoreConstants.TARGET_ID, id)
+                id -> eq(SequenceCoordinatesConstants.TARGET_ID, id)
         ).toList());
         return List.of(
                 match(or(aggregation)),
@@ -71,9 +71,9 @@ public class AnnotationsHelper {
     public static Document mapAnnotations(Document annotations, Document alignment){
         annotations.put(
                 SchemaConstants.Field.FEATURES,
-                annotations.getList(CoreConstants.FEATURES, Document.class).stream()
+                annotations.getList(SequenceCoordinatesConstants.FEATURES, Document.class).stream()
                         .map(feature-> mapFeature(feature, alignment))
-                        .filter(d->!d.getList(CoreConstants.FEATURE_POSITIONS, Document.class).isEmpty())
+                        .filter(d->!d.getList(SequenceCoordinatesConstants.FEATURE_POSITIONS, Document.class).isEmpty())
                         .toList()
         );
         return annotations;
@@ -92,22 +92,22 @@ public class AnnotationsHelper {
     }
 
     public static String getTargetIdentifiersAttribute(){
-        return CoreConstants.TARGET_IDENTIFIERS;
+        return SequenceCoordinatesConstants.TARGET_IDENTIFIERS;
     }
 
     private static Bson annotationsFields() {
         return project(fields(
-                include(CoreConstants.TARGET_ID),
-                include(CoreConstants.FEATURES),
-                include(CoreConstants.TARGET_IDENTIFIERS),
+                include(SequenceCoordinatesConstants.TARGET_ID),
+                include(SequenceCoordinatesConstants.FEATURES),
+                include(SequenceCoordinatesConstants.TARGET_IDENTIFIERS),
                 excludeId()
         ));
     }
 
     private static Bson mapFields() {
         return project(fields(
-                include(CoreConstants.TARGET_ID),
-                include(CoreConstants.TARGET_IDENTIFIERS),
+                include(SequenceCoordinatesConstants.TARGET_ID),
+                include(SequenceCoordinatesConstants.TARGET_IDENTIFIERS),
                 excludeId()
         ));
     }
@@ -116,7 +116,7 @@ public class AnnotationsHelper {
         AtomicInteger featurePositionId = new AtomicInteger(1);
         feature.put(
                 SchemaConstants.Field.FEATURE_POSITIONS,
-                feature.getList(CoreConstants.FEATURE_POSITIONS, Document.class).stream()
+                feature.getList(SequenceCoordinatesConstants.FEATURE_POSITIONS, Document.class).stream()
                         .flatMap(featurePosition -> featurePositionIntersection(
                                 featurePosition,
                                 alignment,
@@ -126,13 +126,13 @@ public class AnnotationsHelper {
         );
         feature.put(
                 SchemaConstants.Field.TYPE,
-                Feature.Type.fromValue(feature.getString(CoreConstants.TYPE)).name()
+                FeaturesType.fromValue(feature.getString(SequenceCoordinatesConstants.TYPE)).name()
         );
         return feature;
     }
 
     private static List<Document> featurePositionIntersection(Document featurePosition, Document alignment, int rangeId){
-        return alignment.getList(CoreConstants.ALIGNED_REGIONS, Document.class).stream()
+        return alignment.getList(SequenceCoordinatesConstants.ALIGNED_REGIONS, Document.class).stream()
                 .map(alignmentRegion -> featureToAlignmentIntersection(featurePosition,alignmentRegion))
                 .filter(d->!d.isEmpty())
                 .peek(alignmentRegion -> alignmentRegion.put( SchemaConstants.Field.RANGE_ID, String.format("range-%s", rangeId)))
@@ -140,7 +140,7 @@ public class AnnotationsHelper {
     }
 
     private static Document featureToAlignmentIntersection(Document featurePosition, Document alignmentRegion){
-        if(featurePosition.containsKey(CoreConstants.VALUES))
+        if(featurePosition.containsKey(SequenceCoordinatesConstants.VALUES))
             return valuesIntersection(featurePosition, alignmentRegion);
         return regionIntersection(featurePosition, alignmentRegion);
 
@@ -148,20 +148,20 @@ public class AnnotationsHelper {
 
     private static Document valuesIntersection(Document featureRegion, Document alignmentRegion){
         Range targetRange = new Range(
-                alignmentRegion.getInteger(CoreConstants.TARGET_BEGIN),
-                alignmentRegion.getInteger(CoreConstants.TARGET_END)
+                alignmentRegion.getInteger(SequenceCoordinatesConstants.TARGET_BEGIN),
+                alignmentRegion.getInteger(SequenceCoordinatesConstants.TARGET_END)
         );
-        List<Double> featureValues = featureRegion.getList(CoreConstants.VALUES, Double.class);
+        List<Double> featureValues = featureRegion.getList(SequenceCoordinatesConstants.VALUES, Double.class);
         Range featureRange = new Range(
-                featureRegion.getInteger(CoreConstants.BEG_SEQ_ID),
-                featureRegion.getInteger(CoreConstants.BEG_SEQ_ID) + featureValues.size() - 1
+                featureRegion.getInteger(SequenceCoordinatesConstants.BEG_SEQ_ID),
+                featureRegion.getInteger(SequenceCoordinatesConstants.BEG_SEQ_ID) + featureValues.size() - 1
         );
         Range intersection = intersection(targetRange, featureRange);
         if(intersection.isEmpty())
             return new Document();
         Range queryRange = new Range(
-                alignmentRegion.getInteger(CoreConstants.QUERY_BEGIN),
-                alignmentRegion.getInteger(CoreConstants.QUERY_END)
+                alignmentRegion.getInteger(SequenceCoordinatesConstants.QUERY_BEGIN),
+                alignmentRegion.getInteger(SequenceCoordinatesConstants.QUERY_END)
         );
         return new Document(Map.of(
                 SchemaConstants.Field.BEG_SEQ_ID, mapIndex(intersection.bottom(), targetRange, queryRange),
@@ -170,37 +170,37 @@ public class AnnotationsHelper {
                         intersection.bottom() - featureRange.bottom(),
                         intersection.bottom() - featureRange.bottom() + intersection.size()
                 ),
-                SchemaConstants.Field.OPEN_BEGIN, intersection.bottom() != featureRegion.getInteger(CoreConstants.BEG_SEQ_ID),
-                SchemaConstants.Field.OPEN_END, intersection.top() != featureRegion.getInteger(CoreConstants.BEG_SEQ_ID) + featureValues.size() - 1
+                SchemaConstants.Field.OPEN_BEGIN, intersection.bottom() != featureRegion.getInteger(SequenceCoordinatesConstants.BEG_SEQ_ID),
+                SchemaConstants.Field.OPEN_END, intersection.top() != featureRegion.getInteger(SequenceCoordinatesConstants.BEG_SEQ_ID) + featureValues.size() - 1
         ));
     }
 
     private static Document regionIntersection(Document featureRegion, Document alignmentRegion){
         Range targetRange = new Range(
-                alignmentRegion.getInteger(CoreConstants.TARGET_BEGIN),
-                alignmentRegion.getInteger(CoreConstants.TARGET_END)
+                alignmentRegion.getInteger(SequenceCoordinatesConstants.TARGET_BEGIN),
+                alignmentRegion.getInteger(SequenceCoordinatesConstants.TARGET_END)
         );
-        if(!featureRegion.containsKey(CoreConstants.END_SEQ_ID))
-            featureRegion.put(CoreConstants.END_SEQ_ID, featureRegion.getInteger(CoreConstants.BEG_SEQ_ID));
+        if(!featureRegion.containsKey(SequenceCoordinatesConstants.END_SEQ_ID))
+            featureRegion.put(SequenceCoordinatesConstants.END_SEQ_ID, featureRegion.getInteger(SequenceCoordinatesConstants.BEG_SEQ_ID));
         Range featureRange = new Range(
-                featureRegion.getInteger(CoreConstants.BEG_SEQ_ID),
-                featureRegion.getInteger(CoreConstants.END_SEQ_ID)
+                featureRegion.getInteger(SequenceCoordinatesConstants.BEG_SEQ_ID),
+                featureRegion.getInteger(SequenceCoordinatesConstants.END_SEQ_ID)
         );
         Range intersection = intersection(targetRange, featureRange);
         if(intersection.isEmpty())
             return new Document();
 
         Range queryRange = new Range(
-                alignmentRegion.getInteger(CoreConstants.QUERY_BEGIN),
-                alignmentRegion.getInteger(CoreConstants.QUERY_END)
+                alignmentRegion.getInteger(SequenceCoordinatesConstants.QUERY_BEGIN),
+                alignmentRegion.getInteger(SequenceCoordinatesConstants.QUERY_END)
         );
         return new Document(Map.of(
                 SchemaConstants.Field.BEG_SEQ_ID, mapIndex(intersection.bottom(), targetRange, queryRange),
                 SchemaConstants.Field.END_SEQ_ID, mapIndex(intersection.top(), targetRange, queryRange),
                 SchemaConstants.Field.BEG_ORI_ID, intersection.bottom(),
                 SchemaConstants.Field.END_ORI_ID, intersection.top(),
-                SchemaConstants.Field.OPEN_BEGIN, intersection.bottom() != featureRegion.getInteger(CoreConstants.BEG_SEQ_ID),
-                SchemaConstants.Field.OPEN_END, intersection.top() != featureRegion.getInteger(CoreConstants.END_SEQ_ID)
+                SchemaConstants.Field.OPEN_BEGIN, intersection.bottom() != featureRegion.getInteger(SequenceCoordinatesConstants.BEG_SEQ_ID),
+                SchemaConstants.Field.OPEN_END, intersection.top() != featureRegion.getInteger(SequenceCoordinatesConstants.END_SEQ_ID)
         ));
     }
 

@@ -144,7 +144,7 @@ public class GenomeAlignmentsHelper {
     private static int getStartPosition(Document genomeAlignment){
         if(genomeAlignment.getInteger(SchemaConstants.Field.ORIENTATION).equals(1))
             return genomeAlignment.getInteger(SchemaConstants.Field.QUERY_BEGIN);
-        if(genomeAlignment.getInteger(SchemaConstants.Field.ORIENTATION).equals(2))
+        if(genomeAlignment.getInteger(SchemaConstants.Field.ORIENTATION).equals(-1))
             return genomeAlignment.getInteger(SchemaConstants.Field.QUERY_END);
         throw new RuntimeException(String.format(
                 "Unknown orientation value %s",
@@ -153,14 +153,7 @@ public class GenomeAlignmentsHelper {
     }
 
     private static int getIncrement(Document genomeAlignment){
-        if(genomeAlignment.getInteger(SchemaConstants.Field.ORIENTATION).equals(1))
-            return 1;
-        if(genomeAlignment.getInteger(SchemaConstants.Field.ORIENTATION).equals(2))
-            return -1;
-        throw new RuntimeException(String.format(
-                "Unknown orientation value %s",
-                genomeAlignment.getInteger(SchemaConstants.Field.ORIENTATION)
-        ));
+        return genomeAlignment.getInteger(SchemaConstants.Field.ORIENTATION);
     }
 
     private static List<Integer> mapToGenomeIndex(int proteinIndex, Range proteinRange, Range genomeRange){

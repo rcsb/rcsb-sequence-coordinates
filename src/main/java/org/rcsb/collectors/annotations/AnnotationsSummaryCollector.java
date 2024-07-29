@@ -11,7 +11,7 @@ import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
-import org.rcsb.mojave.auto.AdditionalProperty;
+import org.rcsb.mojave.auto.FeaturesAdditionalPropertiesPropertyName;
 import reactor.core.publisher.Flux;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +105,7 @@ public class AnnotationsSummaryCollector {
 
     private static List<Document> targetList(Set<String> targetIds){
         return List.of(new Document(Map.of(
-                SchemaConstants.Field.PROPERTY_NAME, AdditionalProperty.PropertyName.TARGET_ID,
+                SchemaConstants.Field.PROPERTY_NAME, FeaturesAdditionalPropertiesPropertyName.TARGET_ID,
                 SchemaConstants.Field.PROPERTY_VALUE, targetIds
         )));
     }

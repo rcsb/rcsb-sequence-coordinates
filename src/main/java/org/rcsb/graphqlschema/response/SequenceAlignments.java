@@ -16,6 +16,8 @@ import java.util.List;
  **/
 
 public class SequenceAlignments {
+
+    public static final String CLASS_NAME = "SequenceAlignments";
     private String querySequence;
     private List<TargetAlignment> targetAlignment;
     private Integer alignmentLength;

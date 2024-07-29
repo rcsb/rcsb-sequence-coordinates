@@ -18,6 +18,7 @@ import java.util.List;
  **/
 
 public class TargetAlignment {
+    public static final String CLASS_NAME = "TargetAlignment";
     private String targetId;
     private String targetSequence;
     private Coverage coverage;

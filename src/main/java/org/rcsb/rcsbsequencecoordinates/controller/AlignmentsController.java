@@ -9,12 +9,14 @@ import org.bson.Document;
 import org.rcsb.collectors.alignments.AlignmentLengthCollector;
 import org.rcsb.collectors.alignments.AlignmentLogoCollector;
 import org.rcsb.collectors.alignments.SequenceAlignmentsCollector;
+import org.rcsb.graphqlschema.response.SequenceAlignments;
+import org.rcsb.graphqlschema.response.TargetAlignment;
 import org.rcsb.graphqlschema.service.AlignmentsQuery;
 import org.rcsb.graphqlschema.service.AlignmentsSubscription;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.mojave.CoreConstants;
+import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.rcsb.rcsbsequencecoordinates.configuration.GraphqlSchemaMapping;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -87,7 +89,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
                 .get();
     }
 
-    @SchemaMapping(typeName = "SequenceAlignments", field = GraphqlSchemaMapping.TARGET_ALIGNMENT)
+    @SchemaMapping(typeName = SequenceAlignments.CLASS_NAME, field = GraphqlSchemaMapping.TARGET_ALIGNMENT)
     public Flux<Document> getTargetAlignments(
             DataFetchingEnvironment dataFetchingEnvironment,
             @Argument(name = SchemaConstants.Param.FIRST) Integer first,
@@ -115,18 +117,18 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
         throw new RuntimeException(String.format("Undefined end point query %s", getQueryName(dataFetchingEnvironment)));
     }
 
-    @SchemaMapping(typeName = "TargetAlignment", field = GraphqlSchemaMapping.TARGET_SEQUENCE)
+    @SchemaMapping(typeName = TargetAlignment.CLASS_NAME, field = GraphqlSchemaMapping.TARGET_SEQUENCE)
     public Mono<String> getTargetSequence(DataFetchingEnvironment dataFetchingEnvironment, Document targetAlignment){
         if(
                 getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENT) ||
                 getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Subscription.GROUP_ALIGNMENT_SUBSCRIPTION)
         )
             return request(
-                    targetAlignment.getString(CoreConstants.TARGET_ID),
+                    targetAlignment.getString(SequenceCoordinatesConstants.TARGET_ID),
                     SequenceReference.PDB_ENTITY
             );
         return request(
-                targetAlignment.getString(CoreConstants.TARGET_ID),
+                targetAlignment.getString(SequenceCoordinatesConstants.TARGET_ID),
                 SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
         );
     }

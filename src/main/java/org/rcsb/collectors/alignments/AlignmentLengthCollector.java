@@ -8,7 +8,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.mojave.CoreConstants;
+import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Mono;
 
@@ -32,7 +32,7 @@ public class AlignmentLengthCollector {
                 getIndex(from,to),
                 queryId
         ).map(
-                d->d.get(CoreConstants.COVERAGE, Document.class).getInteger(getLengthAttribute(from, to))
+                d->d.get(SequenceCoordinatesConstants.COVERAGE, Document.class).getInteger(getLengthAttribute(from, to))
         );
     }
 
@@ -44,7 +44,7 @@ public class AlignmentLengthCollector {
                 getGroupIndex(),
                 groupId
         ).map(
-                d->d.get(CoreConstants.COVERAGE, Document.class).getInteger(getGroupLengthAttribute())
+                d->d.get(SequenceCoordinatesConstants.COVERAGE, Document.class).getInteger(getGroupLengthAttribute())
         );
     }
 

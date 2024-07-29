@@ -4,7 +4,7 @@
 
 package org.rcsb.graphqlschema.schema;
 
-import org.rcsb.mojave.CoreConstants;
+import org.rcsb.mojave.SequenceCoordinatesConstants;
 
 /**
  * @author : joan
@@ -51,33 +51,33 @@ public class SchemaConstants {
     * Why next attributes are not defined quoting strings ?
     * The main difference is that these attributes (getters and setters) are defined in mojave models classes:
     * org.rcsb.mojave.auto.Coverage and org.rcsb.mojave.auto.AlignedRegions.
-    * For that reason, we use the same DW schema attribute names accessible from org.rcsb.mojave.CoreConstants
+    * For that reason, we use the same DW schema attribute names accessible from org.rcsb.mojave.SequenceCoordinatesConstants
     * instead of defining them here.
     * */
-    private final static String QUERY_COVERAGE = CoreConstants.QUERY_COVERAGE;
-    private final static String TARGET_COVERAGE = CoreConstants.TARGET_COVERAGE;
-    private final static String QUERY_LENGTH = CoreConstants.QUERY_LENGTH;
-    private final static String TARGET_LENGTH = CoreConstants.TARGET_LENGTH;
-    private final static String QUERY_BEGIN = CoreConstants.QUERY_BEGIN;
-    private final static String QUERY_END = CoreConstants.QUERY_END;
-    private final static String TARGET_BEGIN = CoreConstants.TARGET_BEGIN;
-    private final static String TARGET_END = CoreConstants.TARGET_END;
-    private final static String FEATURES = CoreConstants.FEATURES;
-    private final static String FEATURE_POSITIONS = CoreConstants.FEATURE_POSITIONS;
-    private final static String ADDITIONAL_PROPERTIES = CoreConstants.ADDITIONAL_PROPERTIES;
-    private final static String PROPERTY_NAME = CoreConstants.PROPERTY_NAME;
-    private final static String PROPERTY_VALUE = CoreConstants.PROPERTY_VALUE;
-    private final static String TYPE = CoreConstants.TYPE;
-    private final static String NAME = CoreConstants.NAME;
-    private final static String BEG_SEQ_ID = CoreConstants.BEG_SEQ_ID;
-    private final static String END_SEQ_ID = CoreConstants.END_SEQ_ID;
-    private final static String BEG_ORI_ID = CoreConstants.BEG_ORI_ID;
-    private final static String END_ORI_ID = CoreConstants.END_ORI_ID;
-    private final static String VALUES = CoreConstants.VALUES;
-    private final static String OPEN_BEGIN = CoreConstants.OPEN_BEGIN;
-    private final static String OPEN_END = CoreConstants.OPEN_END;
-    private final static String EXON_SHIFT = CoreConstants.EXON_SHIFT;
-    private final static String ORIENTATION = CoreConstants.ORIENTATION;
+    private final static String QUERY_COVERAGE = SequenceCoordinatesConstants.QUERY_COVERAGE;
+    private final static String TARGET_COVERAGE = SequenceCoordinatesConstants.TARGET_COVERAGE;
+    private final static String QUERY_LENGTH = SequenceCoordinatesConstants.QUERY_LENGTH;
+    private final static String TARGET_LENGTH = SequenceCoordinatesConstants.TARGET_LENGTH;
+    private final static String QUERY_BEGIN = SequenceCoordinatesConstants.QUERY_BEGIN;
+    private final static String QUERY_END = SequenceCoordinatesConstants.QUERY_END;
+    private final static String TARGET_BEGIN = SequenceCoordinatesConstants.TARGET_BEGIN;
+    private final static String TARGET_END = SequenceCoordinatesConstants.TARGET_END;
+    private final static String FEATURES = SequenceCoordinatesConstants.FEATURES;
+    private final static String FEATURE_POSITIONS = SequenceCoordinatesConstants.FEATURE_POSITIONS;
+    private final static String ADDITIONAL_PROPERTIES = SequenceCoordinatesConstants.ADDITIONAL_PROPERTIES;
+    private final static String PROPERTY_NAME = SequenceCoordinatesConstants.PROPERTY_NAME;
+    private final static String PROPERTY_VALUE = SequenceCoordinatesConstants.PROPERTY_VALUE;
+    private final static String TYPE = SequenceCoordinatesConstants.TYPE;
+    private final static String NAME = SequenceCoordinatesConstants.NAME;
+    private final static String BEG_SEQ_ID = SequenceCoordinatesConstants.BEG_SEQ_ID;
+    private final static String END_SEQ_ID = SequenceCoordinatesConstants.END_SEQ_ID;
+    private final static String BEG_ORI_ID = SequenceCoordinatesConstants.BEG_ORI_ID;
+    private final static String END_ORI_ID = SequenceCoordinatesConstants.END_ORI_ID;
+    private final static String VALUES = SequenceCoordinatesConstants.VALUES;
+    private final static String OPEN_BEGIN = SequenceCoordinatesConstants.OPEN_BEGIN;
+    private final static String OPEN_END = SequenceCoordinatesConstants.OPEN_END;
+    private final static String EXON_SHIFT = SequenceCoordinatesConstants.EXON_SHIFT;
+    private final static String ORIENTATION = SequenceCoordinatesConstants.ORIENTATION;
 
     public static class Query {
         public final static String ALIGNMENT = SchemaConstants.ALIGNMENT;
