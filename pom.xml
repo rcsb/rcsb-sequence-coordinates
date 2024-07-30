@@ -109,6 +109,8 @@
     </dependencies>
 
 	<build>
+		<finalName>rcsb-sequence-coordinates</finalName>
+
 		<resources>
 			<resource>
 				<directory>${basedir}/src/main/resources</directory>
