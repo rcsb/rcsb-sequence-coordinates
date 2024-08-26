@@ -28,18 +28,18 @@ public class SchemaConstants {
     private final static String GROUP = "group";
     private final static String FIRST = "first";
     private final static String OFFSET = "offset";
-    private final static String ALIGNMENT = "alignment";
-    private final static String GROUP_ALIGNMENT = "group_alignment";
+    private final static String ALIGNMENTS = "alignments";
+    private final static String GROUP_ALIGNMENTS = "group_alignments";
     private final static String ANNOTATIONS = "annotations";
     private final static String GROUP_ANNOTATIONS = "group_annotations";
     private final static String GROUP_ANNOTATIONS_SUMMARY = "group_annotations_summary";
-    private final static String ALIGNMENT_SUBSCRIPTION = "alignment_subscription";
-    private final static String GROUP_ALIGNMENT_SUBSCRIPTION = "group_alignment_subscription";
+    private final static String ALIGNMENTS_SUBSCRIPTION = "alignments_subscription";
+    private final static String GROUP_ALIGNMENTS_SUBSCRIPTION = "group_alignments_subscription";
     private final static String ANNOTATIONS_SUBSCRIPTION = "annotations_subscription";
     private final static String GROUP_ANNOTATIONS_SUBSCRIPTION = "group_annotations_subscription";
     private final static String QUERY_SEQUENCE = "query_sequence";
     private final static String ALIGNMENT_LENGTH = "alignment_length";
-    private final static String TARGET_ALIGNMENT = "target_alignment";
+    private final static String TARGET_ALIGNMENTS = "target_alignments";
     private final static String TARGET_ID = "target_id";
     private final static String TARGET_SEQUENCE = "target_sequence";
     private final static String COVERAGE = "coverage";
@@ -80,16 +80,16 @@ public class SchemaConstants {
     private final static String ORIENTATION = SequenceCoordinatesConstants.ORIENTATION;
 
     public static class Query {
-        public final static String ALIGNMENT = SchemaConstants.ALIGNMENT;
-        public final static String GROUP_ALIGNMENT = SchemaConstants.GROUP_ALIGNMENT;
+        public final static String ALIGNMENTS = SchemaConstants.ALIGNMENTS;
+        public final static String GROUP_ALIGNMENTS = SchemaConstants.GROUP_ALIGNMENTS;
         public final static String ANNOTATIONS = SchemaConstants.ANNOTATIONS;
         public final static String GROUP_ANNOTATIONS = SchemaConstants.GROUP_ANNOTATIONS;
         public final static String GROUP_ANNOTATIONS_SUMMARY = SchemaConstants.GROUP_ANNOTATIONS_SUMMARY;
     }
 
     public static class Subscription {
-        public final static String ALIGNMENT_SUBSCRIPTION = SchemaConstants.ALIGNMENT_SUBSCRIPTION;
-        public final static String GROUP_ALIGNMENT_SUBSCRIPTION = SchemaConstants.GROUP_ALIGNMENT_SUBSCRIPTION;
+        public final static String ALIGNMENTS_SUBSCRIPTION = SchemaConstants.ALIGNMENTS_SUBSCRIPTION;
+        public final static String GROUP_ALIGNMENTS_SUBSCRIPTION = SchemaConstants.GROUP_ALIGNMENTS_SUBSCRIPTION;
         public final static String ANNOTATIONS_SUBSCRIPTION = SchemaConstants.ANNOTATIONS_SUBSCRIPTION;
         public final static String GROUP_ANNOTATIONS_SUBSCRIPTION = SchemaConstants.GROUP_ANNOTATIONS_SUBSCRIPTION;
     }
@@ -112,7 +112,7 @@ public class SchemaConstants {
     public static  class Field {
         public final static String QUERY_SEQUENCE = SchemaConstants.QUERY_SEQUENCE;
         public final static String ALIGNMENT_LENGTH = SchemaConstants.ALIGNMENT_LENGTH;
-        public final static String TARGET_ALIGNMENT = SchemaConstants.TARGET_ALIGNMENT;
+        public final static String TARGET_ALIGNMENTS = SchemaConstants.TARGET_ALIGNMENTS;
         public final static String TARGET_ID = SchemaConstants.TARGET_ID;
         public final static String TARGET_SEQUENCE = SchemaConstants.TARGET_SEQUENCE;
         public final static String COVERAGE = SchemaConstants.COVERAGE;

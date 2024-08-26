@@ -1,0 +1,19 @@
+https://1d-coordinates.rcsb.org/graphql?query=query Genome2PDB{
+  alignments(
+    from: NCBI_GENOME,
+    to: PDB_ENTITY,
+    queryId: "NC_000001"
+  ){
+    target_alignments {
+      target_id
+      orientation
+      aligned_regions {
+        query_begin
+        query_end
+        target_begin
+        target_end
+        exon_shift
+      }
+    }
+  }
+}

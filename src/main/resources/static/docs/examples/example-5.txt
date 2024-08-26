@@ -1,0 +1,25 @@
+https://1d-coordinates.rcsb.org/graphql?query=query PDB2NCBI{
+  alignments(
+    from:PDB_INSTANCE
+    to:NCBI_PROTEIN
+    queryId:"4Z36.A"
+  ){
+    query_sequence
+    target_alignments {
+      target_id
+      target_sequence
+      coverage{
+        query_coverage
+        query_length
+        target_coverage
+        target_length
+      }
+      aligned_regions {
+        query_begin
+        query_end
+        target_begin
+        target_end
+      }
+    }
+  }
+}

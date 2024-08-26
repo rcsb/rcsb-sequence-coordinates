@@ -1,0 +1,7 @@
+interface TargetAlignment {
+  target_id: String,
+  target_sequence: String,
+  aligned_regions: [AlignedRegion],
+  coverage: Coverage,
+  orientation: Int
+}

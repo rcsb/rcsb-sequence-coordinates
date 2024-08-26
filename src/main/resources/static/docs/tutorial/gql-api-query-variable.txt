@@ -1,0 +1,5 @@
+{
+  "dbFrom": "NCBI_PROTEIN",
+  "dbTo": "PDB_ENTITY",
+  "id": "XP_642496"
+}

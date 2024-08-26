@@ -1,0 +1,1 @@
+https://1d-coordinates.rcsb.org/graphql?query={alignment(from:NCBI_PROTEIN,to:PDB_ENTITY,queryId:"XP_642496"){target_alignment{target_id}}}

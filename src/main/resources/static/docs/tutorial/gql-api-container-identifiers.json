@@ -1,0 +1,8 @@
+{
+  "rcsb_entry_container_identifiers": {
+    "entry_id": "3PQR",
+    "polymer_entity_ids": ["1", "2"],
+    "branched_entity_ids": ["3", "4"],
+    "non_polymer_entity_ids": ["5", "6", "7", "8", "9", "10"]
+  }
+}

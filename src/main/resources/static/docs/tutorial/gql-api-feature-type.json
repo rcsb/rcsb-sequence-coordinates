@@ -1,0 +1,188 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Feature types controlled vocabulary",
+  "oneOf": [{
+    "const" : "artifact",
+    "description" : "Cloning artifact, expression tag, linker"
+  }, {
+    "const" : "modified_monomer",
+    "description" : "Modified chemical component"
+  }, {
+    "const" : "mutation",
+    "description" : "Engineered mutations and chemical modifications"
+  }, {
+    "const" : "ANGLE_OUTLIER",
+    "description" : "Molprobity bond angle outlier"
+  }, {
+    "const" : "BINDING_SITE",
+    "description" : "Macromolecular target for ligand binding"
+  }, {
+    "const" : "BOND_OUTLIER",
+    "description" : "Molprobity bond distance outlier"
+  }, {
+    "const" : "CATH",
+    "description" : "CATH - Class, Architecture, Topology, and Homology Protein Structure Database"
+  }, {
+    "const" : "CIS-PEPTIDE",
+    "description" : "Peptide linkages with CIS configurations"
+  }, {
+    "const" : "HELIX_P",
+    "description" : "Protein helices"
+  }, {
+    "const" : "MOGUL_ANGLE_OUTLIER",
+    "description" : "Mogul bond angle outlier"
+  }, {
+    "const" : "MOGUL_BOND_OUTLIER",
+    "description" : "Mogul bond distance outlier"
+  }, {
+    "const" : "RAMACHANDRAN_OUTLIER",
+    "description" : "Molprobity Ramachandran outlier"
+  }, {
+    "const" : "ROTAMER_OUTLIER",
+    "description" : "Molprobity rotamer outlier"
+  }, {
+    "const" : "RSRCC_OUTLIER",
+    "description" : "Real space density correlation const < 0.65"
+  }, {
+    "const" : "RSRZ_OUTLIER",
+    "description" : "Real space R-const Z score > 2"
+  }, {
+    "const" : "SCOP",
+    "description" : "SCOP - Structural Classification of Proteins"
+  }, {
+    "const" : "SHEET",
+    "description" : "Beta-sheets"
+  }, {
+    "const" : "UNASSIGNED_SEC_STRUCT",
+    "description" : "Unassigned secondary structure"
+  }, {
+    "const" : "UNOBSERVED_ATOM_XYZ",
+    "description" : "Unobserved atom coordinates"
+  }, {
+    "const" : "UNOBSERVED_RESIDUE_XYZ",
+    "description" : "Unobserved residue coordinates"
+  }, {
+    "const" : "ZERO_OCCUPANCY_ATOM_XYZ",
+    "description" : "Atom coordinates with zero occupancy"
+  }, {
+    "const" : "ZERO_OCCUPANCY_RESIDUE_XYZ",
+    "description" : "Residue coordinates with zero occupancy"
+  }, {
+    "const" : "ACTIVE_SITE",
+    "description" : "Indicates the residues directly involved in catalysis"
+  }, {
+    "const" : "BINDING_SITE",
+    "description" : "Interaction between a single amino acid and another chemical entity"
+  }, {
+    "const" : "CALCIUM_BINDING_REGION",
+    "description" : "Specifies the position(s) of the calcium-binding region(s) within the protein"
+  }, {
+    "const" : "CHAIN",
+    "description" : "Describes the extent of a polypeptide chain in the mature protein following processing or proteolytic cleavage"
+  }, {
+    "const" : "COMPOSITIONALLY_BIASED_REGION",
+    "description" : "Regions of compositional bias within the protein and the particular amino acids that are over-represented within those regions"
+  }, {
+    "const" : "CROSS_LINK",
+    "description" : "Covalent linkages of various types formed between two proteins (interchain cross-links) or between two parts of the same protein (intrachain cross-links), except the disulfide bonds"
+  }, {
+    "const" : "DNA_BINDING_REGION",
+    "description" : "Position and type of each DNA-binding domain present within the protein"
+  }, {
+    "const" : "DOMAIN",
+    "description" : "Position and type of a domain, which is defined as a specific combination of secondary structures organized into a characteristic three-dimensional structure or fold"
+  }, {
+    "const" : "GLYCOSYLATION_SITE",
+    "description" : "Position and type of each covalently attached glycan group (mono-, di-, or polysaccharide)"
+  }, {
+    "const" : "INITIATOR_METHIONINE",
+    "description" : "Indicates that the initiator methionine is cleaved from the mature protein"
+  }, {
+    "const" : "LIPID_MOIETY_BINDING_REGION",
+    "description" : "Position(s) and the type of covalently attached lipid group(s)"
+  }, {
+    "const" : "METAL_ION_BINDING_SITE",
+    "description" : "Position the protein binds a given metal ion"
+  }, {
+    "const" : "MODIFIED_RESIDUE",
+    "description" : "Specifies the position and type of each modified residue excluding lipids, glycans and protein cross-links. Common modifications include phosphorylation, methylation, acetylation, amidation, formation of pyrrolidone carboxylic acid, isomerization, hydroxylation, sulfation, flavin-binding, cysteine oxidation and nitrosylation."
+  }, {
+    "const" : "MUTAGENESIS_SITE",
+    "description" : "Effect of the experimental mutation of one or more amino acid(s) on the biological properties of the protein"
+  }, {
+    "const" : "NON_CONSECUTIVE_RESIDUES",
+    "description" : "Indicates that two residues in a sequence are not consecutive and that there is an undetermined number of unsequenced residues between them"
+  }, {
+    "const" : "NON_TERMINAL_RESIDUE",
+    "description" : "Indicates that the residue at the extremity of the sequence is not the actual terminal residue in the complete protein sequence"
+  }, {
+    "const" : "NUCLEOTIDE_PHOSPHATE_BINDING_REGION",
+    "description" : "Region in the protein which binds nucleotide phosphates"
+  }, {
+    "const" : "PEPTIDE",
+    "description" : "Describes the position and length of an active peptide in the mature protein. An active peptide is defined as a small polypeptide (<= 40 to 50 amino acid long) that is processed (e.g. by proteolytic cleavage) from a larger precursor protein and has a well defined biological activity on its own"
+  }, {
+    "const" : "PROPEPTIDE",
+    "description" : "Part of a protein that is cleaved during maturation or activation. Once cleaved, a propeptide generally has no independent biological function"
+  }, {
+    "const" : "REGION_OF_INTEREST",
+    "description" : "Region of interest that cannot be described in other categories. It may be used to describe characteristics of a region that have been experimentally defined, such as the role of a region in mediating protein-protein interactions or some other biological process, to describe the different regions in multifunctional enzymes or fusion proteins, or to fully describe the characteristics of a region containing repeats"
+  }, {
+    "const" : "REPEAT",
+    "description" : "Positions and types of repeated sequence motifs or repeated domains within the protein"
+  }, {
+    "const" : "NON_STANDARD_AMINO_ACID",
+    "description" : "Occurrence of non-standard amino acids selenocysteine (Sec) or pyrrolysine (Pyl) in the protein sequence"
+  }, {
+    "const" : "SEQUENCE_CONFLICT",
+    "description" : "Difference(s) between the canonical sequence (displayed by default in the entry) and the different sequence submissions merged in the entry. These various submissions may originate from different sequencing projects, different types of experiments, or different biological samples. Sequence conflicts are usually of unknown origin."
+  }, {
+    "const" : "SEQUENCE_VARIANT",
+    "description" : "Natural variant(s) of the protein sequence, including polymorphisms, variations between strains, isolates or cultivars, disease-associated mutations and RNA editing events"
+  }, {
+    "const" : "SHORT_SEQUENCE_MOTIF",
+    "description" : "Short (usually not more than 20 amino acids) conserved sequence motif of biological significance"
+  }, {
+    "const" : "SIGNAL_PEPTIDE",
+    "description" : "Presence of an N-terminal signal peptide"
+  }, {
+    "const" : "SITE",
+    "description" : "Interesting single amino acid sites on the sequence that are not defined in any other category"
+  }, {
+    "const" : "SPLICE_VARIANT",
+    "description" : "Sequence of naturally occurring alternative protein isoform(s). The changes in the amino acid sequence may be due to alternative splicing, alternative promoter usage, alternative initiation, or ribosomal frameshifting"
+  }, {
+    "const" : "TOPOLOGICAL_DOMAIN",
+    "description" : "Subcellular compartment where each non-membrane region of a membrane-spanning protein is found"
+  }, {
+    "const" : "TRANSIT_PEPTIDE",
+    "description" : "Describes the extent of a transit peptide. Transit peptides are responsible for the transport of a protein encoded by a nuclear gene to a particular organelle"
+  }, {
+    "const" : "TRANSMEMBRANE_REGION",
+    "description" : "Extent of a membrane-spanning region of the protein. It denotes the presence of both alpha-helical transmembrane regions and the membrane spanning regions of beta-barrel transmembrane proteins"
+  }, {
+    "const" : "UNSURE_RESIDUE",
+    "description" : "Describes region(s) of a sequence for which the authors are unsure about the sequence assignment"
+  }, {
+    "const" : "ZINC_FINGER_REGION",
+    "description" : "Position(s) and type(s) of zinc fingers within the protein"
+  }, {
+    "const" : "INTRAMEMBRANE_REGION",
+    "description" : "Describes the extent of a region that is buried within a membrane, but does not cross it"
+  }, {
+    "const" : "covalent bond",
+    "description" : "Covalent bond between two residues or residue and ligand"
+  }, {
+    "const" : "disulfide bridge",
+    "description" : "Disulfide bond between two residues"
+  }, {
+    "const" : "hydrogen bond",
+    "description" : "Hydrogen bond between two residues or residue and ligand"
+  }, {
+    "const" : "ionic interaction",
+    "description" : "Ionic interaction between two residues or residue and ligand"
+  }, {
+    "const" : "metal coordination",
+    "description" : "Coordination complex involving residues and a metal"
+  }]
+}

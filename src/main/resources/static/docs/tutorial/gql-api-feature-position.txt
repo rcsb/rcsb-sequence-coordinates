@@ -1,0 +1,7 @@
+interface FeaturePosition {
+  beg_seq_id: Int,
+  end_seq_id: Int,
+  beg_ori_id: Int,
+  end_ori_id: Int,
+  value: Float
+}

@@ -11,7 +11,7 @@ import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.response.SequenceAlignments;
 import org.rcsb.graphqlschema.response.SequenceAnnotations;
-import org.rcsb.graphqlschema.response.TargetAlignment;
+import org.rcsb.graphqlschema.response.TargetAlignments;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 
 import java.util.ArrayList;
@@ -25,13 +25,13 @@ import java.util.List;
 
 public class ServiceQueries implements
         AlignmentsQuery<SequenceAlignments>,
-        AlignmentsSubscription<List<TargetAlignment>>,
+        AlignmentsSubscription<List<TargetAlignments>>,
         AnnotationsQuery<List<SequenceAnnotations>>,
         AnnotationsSubscription<List<SequenceAnnotations>> {
 
     @Override
-    @GraphQLQuery(name = SchemaConstants.Query.ALIGNMENT, description = "Get sequence alignments")
-    public SequenceAlignments alignment(
+    @GraphQLQuery(name = SchemaConstants.Query.ALIGNMENTS, description = "Get sequence alignments")
+    public SequenceAlignments alignments(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.FROM, description = "Query sequence database") @GraphQLNonNull SequenceReference from,
             @GraphQLArgument(name = SchemaConstants.Param.TO, description = "Target Sequence database") @GraphQLNonNull SequenceReference to,
@@ -41,8 +41,8 @@ public class ServiceQueries implements
     }
 
     @Override
-    @GraphQLQuery(name = SchemaConstants.Query.GROUP_ALIGNMENT, description = "Get group alignments")
-    public SequenceAlignments groupAlignment(
+    @GraphQLQuery(name = SchemaConstants.Query.GROUP_ALIGNMENTS, description = "Get group alignments")
+    public SequenceAlignments groupAlignments(
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_ID, description = "Database group identifier") @GraphQLNonNull String groupId,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP, description = "Target Sequence database") @GraphQLNonNull GroupReference to,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_FILTER, description = "Optional string list of allowed group member identifiers") List<@GraphQLNonNull String> filter
@@ -50,8 +50,8 @@ public class ServiceQueries implements
         return new SequenceAlignments();
     }
 
-    @GraphQLQuery(name = SchemaConstants.Field.TARGET_ALIGNMENT, description = "Multiple sequence alignment of group members.")
-    public List<TargetAlignment> targetAlignments(
+    @GraphQLQuery(name = SchemaConstants.Field.TARGET_ALIGNMENTS, description = "Multiple sequence alignment of group members.")
+    public List<TargetAlignments> targetAlignments(
             @GraphQLContext SequenceAlignments alignments,
             @GraphQLArgument(name = SchemaConstants.Param.FIRST) Integer first,
             @GraphQLArgument(name = SchemaConstants.Param.OFFSET) Integer offset
@@ -60,8 +60,8 @@ public class ServiceQueries implements
     }
 
     @Override
-    @GraphQLSubscription(name = SchemaConstants.Subscription.ALIGNMENT_SUBSCRIPTION, description = "Get sequence alignments")
-    public List<TargetAlignment> alignmentSubscription(
+    @GraphQLSubscription(name = SchemaConstants.Subscription.ALIGNMENTS_SUBSCRIPTION, description = "Get sequence alignments")
+    public List<TargetAlignments> alignmentsSubscription(
             @GraphQLArgument(name = SchemaConstants.Param.QUERY_ID, description = "Database sequence identifier") @GraphQLNonNull String queryId,
             @GraphQLArgument(name = SchemaConstants.Param.FROM, description = "Query sequence database") @GraphQLNonNull SequenceReference from,
             @GraphQLArgument(name = SchemaConstants.Param.TO, description = "Target Sequence database") @GraphQLNonNull SequenceReference to,
@@ -71,8 +71,8 @@ public class ServiceQueries implements
     }
 
     @Override
-    @GraphQLSubscription(name = SchemaConstants.Subscription.GROUP_ALIGNMENT_SUBSCRIPTION, description = "Get group alignments")
-    public List<TargetAlignment> groupAlignmentSubscription(
+    @GraphQLSubscription(name = SchemaConstants.Subscription.GROUP_ALIGNMENTS_SUBSCRIPTION, description = "Get group alignments")
+    public List<TargetAlignments> groupAlignmentsSubscription(
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_ID, description = "Database group identifier") @GraphQLNonNull String groupId,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP, description = "Target Sequence database") @GraphQLNonNull GroupReference to,
             @GraphQLArgument(name = SchemaConstants.Param.GROUP_FILTER, description = "Optional string list of allowed group member identifiers") List<@GraphQLNonNull String> filter

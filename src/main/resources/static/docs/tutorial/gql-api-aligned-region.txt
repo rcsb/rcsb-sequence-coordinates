@@ -1,0 +1,7 @@
+interface AlignedRegion {
+  query_begin: Int,
+  query_end: Int,
+  target_begin: Int,
+  target_end: Int,
+  exon_shift: [Int]
+}

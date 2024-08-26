@@ -1,0 +1,4 @@
+{
+  "query": "query($dbFrom: SequenceReference!, $dbTo: SequenceReference!, $id: String!){alignment(from:$dbFrom,to:$dbTo,queryId:$id){target_alignment{target_id}}}",
+  "variables": {"dbFrom":NCBI_PROTEIN,"dbTo":PDB_ENTITY,"id":"XP_642496"}
+}

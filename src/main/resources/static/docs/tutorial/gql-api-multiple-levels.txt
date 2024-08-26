@@ -1,0 +1,12 @@
+https://data.rcsb.org/graphql?query={
+  polymer_entity(entry_id: "4HHB", entity_id:"1") {
+    rcsb_entity_source_organism {
+      ncbi_scientific_name
+    }
+    entry {
+      exptl {
+        method
+      }
+    }
+  }
+}

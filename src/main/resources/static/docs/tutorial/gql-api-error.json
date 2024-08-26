@@ -1,0 +1,26 @@
+
+{
+  "data": null,
+  "errors": [
+    {
+      "message": "Validation error of type FieldUndefined: Field 'foo' in type 'TargetAlignment' is undefined @ 'alignment/target_alignment/foo'",
+      "locations": [
+        {
+          "line": 5,
+          "column": 7,
+          "sourceName": null
+        }
+      ],
+      "description": "Field 'foo' in type 'TargetAlignment' is undefined",
+      "validationErrorType": "FieldUndefined",
+      "queryPath": [
+        "alignment",
+        "target_alignment",
+        "foo"
+      ],
+      "errorType": "ValidationError",
+      "path": null,
+      "extensions": null
+    }
+  ]
+}

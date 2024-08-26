@@ -1,0 +1,10 @@
+{
+  query db_map($dbFrom: SequenceReference!, $dbTo: SequenceReference!, $id: String!){
+    alignment(from: $dbFrom, to: $dbTo, queryId: $id) {
+      target_alignment {
+        target_id
+      }
+    }
+  }
+}
+

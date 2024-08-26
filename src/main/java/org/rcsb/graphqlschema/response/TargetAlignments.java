@@ -17,8 +17,8 @@ import java.util.List;
  * @created : 2/5/24, Monday
  **/
 
-public class TargetAlignment {
-    public static final String CLASS_NAME = "TargetAlignment";
+public class TargetAlignments {
+    public static final String CLASS_NAME = "TargetAlignments";
     private String targetId;
     private String targetSequence;
     private Coverage coverage;

@@ -1,0 +1,7 @@
+enum SequenceReference {
+  NCBI_GENOME
+  NCBI_PROTEIN
+  UNIPROT
+  PDB_ENTITY
+  PDB_INSTANCE
+}

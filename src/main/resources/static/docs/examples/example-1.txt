@@ -1,0 +1,25 @@
+https://1d-coordinates.rcsb.org/graphql?query=query UniProt2PDB{
+  alignments(
+    from:UNIPROT,
+    to:PDB_ENTITY,
+    queryId:"P01112"
+  ){
+    query_sequence
+    target_alignments {
+      target_id
+      target_sequence
+      coverage{
+        query_coverage
+        query_length
+        target_coverage
+        target_length
+      }
+      aligned_regions {
+        query_begin
+        query_end
+        target_begin
+        target_end
+      }
+    }
+  }
+}

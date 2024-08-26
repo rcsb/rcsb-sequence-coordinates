@@ -1,0 +1,7 @@
+https://data.rcsb.org/graphql?query={
+  entries(entry_ids: ["4HHB", "12CA", "3PQR"]) {
+    exptl {
+      method
+    }
+  }
+}

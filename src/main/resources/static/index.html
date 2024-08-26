@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>RCSB PDB 1D Coordinate Server API: Understanding and Using</title>
+
+    <link href="./docs/assets/screen.css" rel="stylesheet" media="screen">
+    <link href="./docs/assets/print.css" rel="stylesheet" media="print">
+
+    <script src="./docs/assets/helpers.js"></script>
+</head>
+
+<body data-languages="[&quot;shell&quot;]">
+
+<div class="docs-header">
+    <p class="docs-title">RCSB PDB: 1D Coordinate Server API Documentation</p>
+</div>
+
+<div class="toc-wrapper">
+    <div class="toc-header">
+        <div class="search">
+            <label for="input-search"></label><input type="text" class="search" id="input-search" placeholder="Search documentation">
+        </div>
+        <ul class="search-results">
+            <li><a href="#1d-coordinates-api">1D Coordinate Server API Basics</a></li>
+            <li><a href="#gql-api">GraphQL-based API</a></li>
+            <li><a href="#gql-use">Using GraphQL</a></li>
+            <li><a href="#gql-alignment">Alignment Query</a></li>
+            <li><a href="#gql-alignment">Annotations Query</a></li>
+            <li><a href="#data-organization">Data Organization</a></li>
+            <li><a href="#data-schema">Data Schema</a></li>
+            <li><a href="#gql-schema">GraphQL Schema</a></li>
+            <li><a href="#examples">Examples</a></li>
+            <li><a href="#gql-example-1">PDB - UniProt Alignments</a></li>
+            <li><a href="#gql-example-6">CSM - NCBI Protein Alignment</a></li>
+            <li><a href="#gql-example-2">PDB Instance Features</a></li>
+            <li><a href="#gql-example-3">Genome PDB Alignments</a></li>
+            <li><a href="#gql-example-4">Genome PDB Features</a></li>
+            <li><a href="#gql-example-5">PDB NCBI RefSeq Alignments</a></li>
+            <li><a href="#license">License</a></li>
+            <li><a href="#acknowledgements">Acknowledgements</a></li>
+            <li><a href="#contact-us">Contact Us</a></li>
+        </ul>
+    </div>
+    <div id="toc" class="toc-list-h1">
+        <li>
+            <a href="#1d-coordinates-api" class="toc-h1 toc-link" data-title="1d-coordinates-api">1D Coordinate Server API Basics</a>
+            <ul class="toc-list-h2 active" style="display: block;">
+                <li>
+                    <a href="#gql-api" class="toc-h2 toc-link" data-title="gql-api">GraphQL-based API</a>
+                </li>
+                <li>
+                    <a href="#gql-use" class="toc-h2 toc-link" data-title="gql-use">Using GraphQL</a>
+                </li>
+                <li>
+                    <a href="#gql-alignment" class="toc-h2 toc-link" data-title="gql-alignment">Alignment Query</a>
+                </li>
+                <li>
+                    <a href="#gql-annotations" class="toc-h2 toc-link" data-title="gql-annotations">Annotations Query</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#data-organization" class="toc-h1 toc-link" data-title="data-organization">Data Organization</a>
+            <ul class="toc-list-h2 active" style="display: block;">
+                <li>
+                    <a href="#data-schema" class="toc-h2 toc-link" data-title="data-schema">Data Schema</a>
+                </li>
+                <li>
+                    <a href="#gql-schema" class="toc-h2 toc-link" data-title="gql-schema">GraphQL Schema</a>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <a href="#examples" class="toc-h1 toc-link" data-title="examples">Examples</a>
+            <ul class="toc-list-h2" style="display: none;">
+                <li>
+                    <a href="#gql-example-1" class="toc-h2 toc-link" data-title="gql-example-1">PDB - UniProt Alignments</a>
+                </li>
+                <li>
+                    <a href="#gql-example-6" class="toc-h2 toc-link" data-title="gql-example-6">CSM - NCBI Protein Alignment</a>
+                </li>
+                <li>
+                    <a href="#gql-example-2" class="toc-h2 toc-link" data-title="gql-example-2">PDB Instance Features</a>
+                </li>
+                <li>
+                    <a href="#gql-example-3" class="toc-h2 toc-link" data-title="gql-example-3">Genome PDB Alignments</a>
+                </li>
+                <li>
+                    <a href="#gql-example-4" class="toc-h2 toc-link" data-title="gql-example-4">Genome PDB Features</a>
+                </li>
+                <li>
+                    <a href="#gql-example-5" class="toc-h2 toc-link" data-title="gql-example-5">PDB NCBI RefSeq Alignments</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#license"class="toc-h1 toc-link" data-title="data-attributes">License</a>
+        </li>
+        <li>
+            <a href="#acknowledgements" class="toc-h1 toc-link" data-title="acknowledgements">Acknowledgements</a>
+        </li>
+        <li>
+            <a href="#contact-us" class="toc-h1 toc-link" data-title="contact-us">Contact Us</a>
+        </li>
+    </div>
+</div>
+
+<div class="main-page-wrapper">
+
+    <div class="content">
+        <h1 id="1d-coordinates-api">RCSB PDB 1D Coordinate Server API</h1>
+        <aside>
+            Alignments and positional features provided by this API include Experimental Structures from the <a href="https://www.rcsb.org/">PDB</a> and
+            <a href="https://www.rcsb.org/docs/general-help/computed-structure-models-and-rcsborg#what-csms-are-available">select Computed Structure Models (CSMs)</a>.
+            Alignments and positional features for CSMs can be requested using the same parameters as Experimental Structures providing CSM Ids (<a href="#gql-alignment">see</a>).
+        </aside>
+        <p>
+            The RCSB PDB 1D Coordinate Server compiles alignments between structural and sequence databases and integrates protein positional features from multiple resources.
+            Alignment data is available for NCBI <a href="https://www.ncbi.nlm.nih.gov/refseq/" target="_blank">RefSeq</a> (including protein and genomic sequences), <a href="https://www.uniprot.org" target="_blank">UniProt</a> and <a href="https://www.rcsb.org/" target="_blank">PDB</a> sequences.
+            Protein positional features are integrated from <a href="https://www.uniprot.org" target="_blank">UniProt</a>, <a href="https://www.cathdb.info/">CATH</a>, <a href="https://scop.berkeley.edu" target="_blank">SCOPe</a> and <a href="https://www.rcsb.org/" target="_blank">RCSB PDB</a>
+            and collected from the <a href="https://data.rcsb.org" target="_blank">RCSB PDB Data Warehouse</a>.
+            The server offers a GraphQL-based application programming interface (API) to access the integrated content.
+        </p>
+        <ul>
+            <li>
+                GraphQL-based API: use in-browser <a href="/graphiql?path=/graphql" target="_blank">Graph<i>i</i>QL tool</a>
+                to refer to the full schema documentation
+            </li>
+        </ul>
+
+
+        <h2 id="gql-api">GraphQL-based API</h2>
+        <p>
+            GraphQL server operates on a single URL/endpoint, <code>https://1d-coordinates.rcsb.org/graphql</code>, and all
+            GraphQL requests for this service should be directed at this endpoint. GraphQL HTTP server handles POST method.
+        </p>
+
+        <h5 id="gql-api-request">POST request</h5>
+        <p>
+            Requests must use HTTP POST with "application/json" as content type and GraphQL request details included as JSON in the request body,
+            as defined in the proposed <a href="https://github.com/graphql/graphql-over-http/blob/main/spec/GraphQLOverHTTP.md">GraphQL over HTTP</a> specification.
+        </p>
+        <div id="gql-api-query-example"></div>
+        <h5 id="gql-api-variables">Variables</h5>
+        <p>
+            In the example above, the query arguments are written inside the query string. The query
+            arguments can also be passed as dynamic values that are called <i>variables</i>. The variable
+            definition looks like ($id: String!) in the example below. It lists a variable, prefixed by <code>$</code>,
+            followed by its type, in this case String (<code>!</code> indicates that a non-null argument is required).
+        </p>
+        <p>
+            The following is equivalent to the previous query:
+        </p>
+        <div id="gql-api-query-with-variable"></div>
+        <p>
+            Where:
+        </p>
+        <div id="gql-api-sequence-reference-enum"></div>
+        <p>
+            With variable defined like so:
+        </p>
+        <div id="gql-api-query-variable"></div>
+        <p>
+            Query variables, should be sent as part of the POST request in an additional parameter
+            called <code>variables</code>.
+        </p>
+        <div id="gql-api-query-example-with-vars"></div>
+        <br/>
+        <br/>
+        <p>
+            A valid GraphQL POST request should use the <i>application/json</i> content type,
+            must include <code>query</code>, and may include <code>variables</code> encoded as a JSON document in the request body.
+            Here's an example for a valid body of a POST request:
+        </p>
+        <div id="gql-api-query-post"></div>
+
+        <h5 id="gql-response">Response</h5>
+        <p>
+            Regardless of the method by which the query and variables were sent, the response is returned in JSON format.
+            A query might result in some data and some errors. The successful response will be returned in the form of:
+        </p>
+        <div id="gql-api-response"></div>
+
+        <h5 id="gql-error-handling">Error Handling</h5>
+        <p>
+            Error handling in REST is pretty straightforward, we simply check the HTTP headers to get the status of a
+            response. Depending on the HTTP status code we get ( <code>200</code> or <code>404</code>), we can easily
+            tell what the error is and how to go about resolving it. GraphQL server, on the other hand, will always
+            respond with a <code>200 OK</code> status code. When an error occurs while processing GraphQL queries, the
+            complete error message is sent to the client with the response. Below is a sample of a typical GraphQL error
+            message when requesting a field that is not defined in the <a href="#gql-schema">GraphQL schema</a>:
+        </p>
+        <div id="gql-api-error"></div>
+
+        <h2 id="gql-use">Using GraphQL</h2>
+        <p>
+            GraphQL enables declarative data fetching and gives power to request exactly the data that is needed.
+            The GraphQL end point defines two different queries for sequence alignments and positional features:
+        </p>
+        <ul>
+            <li>
+                <code>alignment</code>
+            </li>
+            <li>
+                <code>annotations</code>
+            </li>
+        </ul>
+
+        <h2 id="gql-alignment">Alignment Query</h2>
+
+        <h5><code>alignment(from: SequenceReference!, to: SequenceReference!, queryId: String!, range:[Int!])</code></h5>
+
+        <ul>
+            <li><code>from</code> and <code>to</code> parameters codify the origin and target sequence databases, respectively, through a set of enumerated values</li>
+        </ul>
+        <div id="gql-api-sequence-reference-enum-bis"></div>
+        <p>
+            Next table describes the type of database identifiers used for each <code>SequenceReference</code> value
+        </p>
+        <table>
+            <thead>
+            <tr>
+                <th><code>SequenceReference</code></th>
+                <th>Database Identifier</th>
+                <th>Example</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><code>NCBI_GENOME</code></td>
+                <td>NCBI RefSeq Chromosome Accession</td>
+                <td>NC_000001</td>
+            </tr>
+            <tr>
+                <td><code>NCBI_PROTEIN</code></td>
+                <td>NCBI RefSeq Protein Accession</td>
+                <td>NP_789765</td>
+            </tr>
+            <tr>
+                <td><code>UNIPROT</code></td>
+                <td>UniProt Accession</td>
+                <td>P01112</td>
+            </tr>
+            <tr>
+                <td><code>PDB_ENTITY</code></td>
+                <td>RCSB PDB Entity Id / CSM Entity Id</td>
+                <td>2UZI_3 / AF_AFP68871F1_1</td>
+            </tr>
+            <tr>
+                <td><code>PDB_INSTANCE</code></td>
+                <td>RCSB PDB Instance Id / CSM Instance Id</td>
+                <td>2UZI.C / AF_AFP68871F1.A</td>
+            </tr>
+            </tbody>
+        </table>
+        <ul>
+            <li><code>queryId</code> is a valid identifier in the sequence database defined by <code>from</code></li>
+        </ul>
+        <ul>
+            <li><code>range</code> is an optional integer list (2-tuple) to filter the alignment to a particular region</li>
+        </ul>
+
+
+        <h2 id="gql-annotations">Annotations Query</h2>
+
+        <h5><code>annotations(reference: SequenceReference!, queryId: String!, sources: [Source!]!, range:[Int!], filters:[FilterInput!])</code></h5>
+
+        <ul>
+            <li><code>reference</code> and <code>queryId</code> indicate the sequence over which annotations will be mapped</li>
+            <ul>
+                <li><code>reference</code> is a defined by the same enumerated values defined in the <a href="#gql-alignment"><code>alignment</code> <code>queryId</code></a> parameter</li>
+                <li><code>queryId</code> parameter is a valid identifier of the <code>reference</code> database for whom the annotations will be requested</li>
+            </ul>
+        </ul>
+        <ul>
+            <li><code>sources</code> array is an enumerated list defining the annotation collections to be requested</li>
+        </ul>
+        <div id="gql-api-source-enum"></div>
+        <ul>
+            <li><code>range</code> is an optional integer list (2-tuple) to filter annotations that fall in a particular region</li>
+        </ul>
+        <ul>
+            <li><code>filters</code> is an optional array of <code>FilterInput</code> that can be used to select what annotations will be retrieved</li>
+        </ul>
+        <div id="gql-api-filter-input"></div>
+        <ul>
+            <ul>
+                <li>
+                    <code>operation</code> is an enumerated value (<code>OperationType = contains|equals</code>) that defines the comparison method
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <code>field</code> is an enumerated value (<code>FieldName = <a href="#gql-api-annotation-features">target_id</a>|<a href="#gql-api-feature">type</a></code>) that defines the field to be compared
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <code>values</code> list of allowed values
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <code>source</code> only features with the same <code>Source</code> will be filtered
+                </li>
+            </ul>
+        </ul>
+
+        <h1 id="data-organization">Data Organization</h1>
+        <p>
+            Schemas used to encode sequence alignments and positional features are extensions of the data schemas used in the <a href="https://data.rcsb.org" target="_blank">RCSB PDB Data API</a>.
+            The following definitions and structures are relevant to the way that alignments and annotations are encoded:
+        </p>
+        <h5>Alignments</h5>
+        <ul>
+            <li>
+                <code>AlignmentResponse</code> is the root document used to encode alignments
+            </li>
+        </ul>
+        <div id="gql-api-alignment-response"></div>
+        <ul>
+            <ul>
+                <li>
+                    <code>query_sequence</code> contains the sequence of the database entry defined by defined by <code>from</code> and <code>queryId</code> parameters (<a href="#gql-alignment">ref</a>).
+                    This field is <code>null</code> when genome scale alignments are requested (<i>i.e.</i> <code>from</code> value is <code>NCBI_GENOME</code>)
+                </li>
+                <li>
+                    <code>target_alignment</code> is a list of <a href="#gql-api-target-alignment"><code>TargetAlignment</code></a> documents that describes the different alignments between the sequence identified by the <code>from</code> and <code>queryId</code> parameters (<a href="#gql-alignment">ref</a>)
+                    and the database defined by <a href="#gql-alignment"><code>to</code></a>
+                </li>
+
+            </ul>
+        </ul>
+        <ul>
+            <li>
+                <code>TargetAlignment</code> is the document structure that describes a sequence alignment between the database entry defined by <code>from</code> and <code>queryId</code> parameters (<a href="#gql-alignment">ref</a>)
+                and the entry defined by <a href="#gql-alignment"><code>to</code></a> and <code>target_id</code> (see next set of bullet points)
+            </li>
+        </ul>
+        <div id="gql-api-target-alignment"></div>
+        <ul>
+            <ul>
+                <li>
+                    <code>target_id</code> identifies the entry from the database defined by the parameter <a href="#gql-alignment"><code>to</code></a> that is being aligned with the query (defined by <code>from</code> and <code>queryId</code> parameters <a href="#gql-alignment">ref</a>)
+                </li>
+                <li>
+                    <code>target_sequence</code> contains the sequence of the database entry defined by defined by <a href="#gql-alignment"><code>to</code></a> and <code>target_id</code>
+                </li>
+                <li>
+                    <code>aligned_regions</code> is a list of <a href="#gql-api-aligned-region"><code>AlignedRegion</code></a> documents that defines the sequence alignment through a collection of regions
+                </li>
+                <li>
+                    <code>coverage</code> document object that contains different scores related to the sequence alignment (see <a href="#gql-api-coverage"><code>Coverage</code></a>)
+                </li>
+                <li>
+                    <code>orientation</code> integer that identifies the DNA strand of genome alignments (1 positive strand / -1 negative strand)
+                </li>
+            </ul>
+        </ul>
+
+        <ul>
+            <li>
+                <code>AlignedRegion</code> sequence alignments are defined by a list of regions that identify the beginning and end positions in the query and target sequences.
+                When alignment data maps residues between protein sequences indexes are aligned one to one from the starting to ending position incrementally (see next <a href="#gql-api-protein-alignment">Figure</a>).
+                When alignments involve genome sequences 3 consecutive nucleotide indexes are paired with a protein residue with the possible addition of 1 or 2 nucleotide indexes stored in a separte array
+                <code>exon_shift</code> to complete the final nucleotide triad (see <a href="#gql-api-genome-alignment">Figure</a>).
+            </li>
+        </ul>
+        <div id="gql-api-protein-alignment" style="border: 1px solid #ddd;">
+            <img width="60%" style="display:block; margin: auto;" src="docs/images/protein_alignment.png" alt="GraphiQL">
+        </div>
+        <span>
+            <b>Protein-Protein Alignment</b> diagram of a sequence alignment between a NCBI protein and PDB Entity.
+            Residues are mapped one by one from starting to end positions within two different regions.
+        </span>
+        <br/>
+
+        <div id="gql-api-aligned-region"></div>
+        <ul>
+            <ul>
+                <li>
+                    <code>query_begin</code> and <code>query_end</code> identify the start and end positions of the alignment in the query sequence
+                    (defined by <code>from</code> and <code>queryId</code> parameters <a href="#gql-alignment">ref</a>)
+                </li>
+                <li>
+                    <code>target_begin</code> and <code>target_end</code> identify the start and end positions of the alignment in the target sequence
+                    (defined by <a href="#gql-alignment"><code>to</code></a> and <a href="#gql-api-target-alignment"><code>target_id</code></a> parameters)
+                </li>
+                <li>
+                    <code>exon_shift</code> list of genomic indexes that are needed to complete the last nucleotide triad of a genome-protein sequence alignment (see next <a href="#gql-api-genome-alignment">Figure</a>)
+                </li>
+            </ul>
+        </ul>
+        <div id="gql-api-genome-alignment" style="border: 1px solid #ddd;">
+            <img width="60%" style="display:block; margin: auto;" src="docs/images/genome_alignment.png" alt="GraphiQL">
+        </div>
+        <span>
+            <b>Genome-Protein Alignment</b> diagram of a sequence alignment between a NCBI genome region and a PDB Entity.
+            Protein residues are mapped to 3 consecutive genome indexes from the starting to the end position.
+            In those cases where the last nucleotide triad indexes would surpass the ending position then, the missing nucleotides are stored in <code>exon_shift</code>.
+            In this example this situation occurs in the first <code>AlignedRegion</code> where PDB Entity residue index 7 is mapped to genome nucleotide indexes [8,13,14].
+        </span>
+        <br/>
+
+        <ul>
+            <li>
+                <code>Coverage</code> object that contains different scores related to the sequence alignments
+            </li>
+        </ul>
+        <div id="gql-api-coverage"></div>
+        <ul>
+            <ul>
+                <li>
+                    <code>query_coverage</code> and <code>query_length</code> contain the percentage of the query sequence that has been aligned and its length
+                    (the query sequence is defined by <code>from</code> and <code>queryId</code> parameters <a href="#gql-alignment">ref</a>)
+                </li>
+                <li>
+                    <code>target_coverage</code> and <code>target_length</code> contain the percentage of the target sequence that has been aligned and its length
+                    (the target sequence is defined by by <a href="#gql-alignment"><code>to</code></a> and <a href="#gql-api-target-alignment"><code>target_id</code></a> parameters)
+                </li>
+            </ul>
+        </ul>
+        <h5>Annotations</h5>
+        <ul>
+            <li>
+                <code>[AnnotationFeatures]</code> is the root list of objects that contains the requested annotations
+            </li>
+        </ul>
+        <div id="gql-api-annotation-features"></div>
+        <ul>
+            <ul>
+                <li>
+                    <code>Feature</code> list of documents that desribe positional features
+                </li>
+                <li>
+                    <code>source</code> enumerated value that identifies the provenance type of the positional features (<a href="#gql-annotations">ref</a>)
+                </li>
+                <li>
+                    <code>target_id</code> source entry identifier associated to the positional features
+                </li>
+            </ul>
+        </ul>
+        <ul>
+            <li>
+                <code>Feature</code> document that describes a positional feature
+            </li>
+        </ul>
+        <div id="gql-api-feature"></div>
+        <ul>
+            <ul>
+                <li>
+                    <code>feature_id</code> Identifier of the feature. When available the same Id as in the <code>provenance_source</code> is used
+                </li>
+                <li>
+                    <code>description</code> Free-form text describing the feature
+                </li>
+                <li>
+                    <code>type</code> Feature category identifier (see  <a href="/feature-type.html">Feature Type controlled vocabulary</a>)
+                </li>
+                <li>
+                    <code>feature_positions</code> List of <code>FeaturePosition</code> documents that describes the location of the feature
+                </li>
+                <li>
+                    <code>provenance_source</code> Original database or software name used to obtain the feature
+                </li>
+                <li>
+                    <code>name</code> Name associated to the feature (<i>e.g.</i> protein domain name)
+                </li>
+                <li>
+                    <code>value</code> Numerical value associated to the feature
+                </li>
+            </ul>
+        </ul>
+        <ul>
+            <li>
+                <code>FeaturePosition</code> document that describes a segment where a feature occurs
+            </li>
+        </ul>
+        <div id="gql-api-feature-position"></div>
+        <ul>
+            <ul>
+                <li>
+                    <code>beg_seq_id</code> Index at which this segment of the feature begins
+                </li>
+                <li>
+                    <code>end_seq_id</code> Index at which this segment of the feature ends.
+                    If the positional feature maps to a single residue this field will be <code>null</code>
+                </li>
+                <li>
+                    <code>beg_ori_id</code> Index at which this segment of the feature begins on the original <code>provenance_source</code>.
+                    When <a href="#gql-annotations"><code>reference</code></a> and <a href="#gql-api-annotation-features"><code>source</code></a> point to the same reference system this file will be <code>null</code>
+                </li>
+                <li>
+                    <code>end_ori_id</code> Index at which this segment of the feature ends on the original <code>provenance_source</code>.
+                    If the positional feature maps to a single residue this field will be <code>null</code>.
+                    When <a href="#gql-annotations"><code>reference</code></a> and <a href="#gql-api-annotation-features"><code>source</code></a> point to the same reference system this file will be <code>null</code>
+                </li>
+                <li>
+                    <code>value</code> A numerical value of the feature for this segment
+                </li>
+            </ul>
+        </ul>
+
+        <h2 id="data-schema">Data Schema</h2>
+        <p>
+            JSON schemas for <code>alignment</code> and <code>annotations</code> services are built through references to the <a href="https://data.rcsb.org" target="_blank">RCSB PDB Data API schemas</a>
+            and extended following the same conventions.
+        </p>
+        <ul>
+            <li><a href="/rest/v1/schema/alignment" target="_blank">Alignment Schema</a></li>
+            <li><a href="/rest/v1/schema/annotations" target="_blank">Annotations Schema</a></li>
+            <ul>
+                <li><a href="/rest/v1/schema/annotations/feature/type" target="_blank">Feature Type Schema</a></li>
+            </ul>
+        </ul>
+
+        <h2 id="gql-schema">GraphQL Schema</h2>
+        <p>
+            All GraphQL queries are validated and executed against the GraphQL schema. The GraphQL schema contains
+            the elements that define <a href="#data-organization">sequence alignments and positional features</a>.
+        <p>
+            You can use <a href="https://1d-coordinates.rcsb.org/graphql/index.html" target="_blank">Graph<i>i</i>QL</a>, which is a "graphical
+            interactive in-browser GraphQL IDE", to explore GraphQL schema. It lets you try different queries, helps
+            with auto completion and built-in validation. The collapsible <b>Docs</b> panel (Documentation Explorer)
+            on the right side of the page allows you to navigate through the schema definitions. Click on the root
+            <span style="color:darkorange"> Query</span> link to start exploring the GraphQL schema.
+        </p>
+        <img style="border: 1px solid #ddd;" src="docs/images/graphiql.png" alt="GraphiQL">
+
+        <h1 id="examples">Examples</h1>
+        <p>
+            This section contains additional examples for using the GraphQL-based RCSB PDB 1D Coordinate Server API.
+        </p>
+
+        <h2 id="gql-example-1">UniProt - PDB Entity alignment</h2>
+        <p>
+            Fetch alignments between a UniProt Accession and PDB Entities:
+        </p>
+        <div id="example-1"></div>
+
+        <h2 id="gql-example-6">Computed Structure Model - NCBI protein alignment</h2>
+        <p>
+            Fetch alignments between a Computed Structure Model and NCBI proteins:
+        </p>
+        <div id="example-6"></div>
+
+        <h2 id="gql-example-2">Mapping UniProt annotations to a PDB Instance</h2>
+        <p>
+            Fetch all positional features for a particular PDB Instance:
+        </p>
+        <div id="example-2"></div>
+
+        <h2 id="gql-example-3">Human Chromosome 1 - PDB Entity alignment</h2>
+        <p>
+            Map all PDB Entities that fall in Human Chromosome 1:
+        </p>
+        <div id="example-3"></div>
+
+        <h2 id="gql-example-4">Mapping PDB Instance ligands binding sites to Human Chromosome 1</h2>
+        <p>
+            Fetch protein-ligand binding sites for PDB Instances that fall within Human Chromosome 1:
+        </p>
+        <div id="example-4"></div>
+
+        <p style="margin-top: 60px">
+            Note, that <code>label_asym_id</code> is used to identify polymer entity instances.
+        </p>
+
+        <h2 id="gql-example-5">Mapping a PDB Instance to NCBI RefSeq proteins</h2>
+        <p>
+            Fetch alignments between a PDB Instance and NCB RefSeq proteins:
+        </p>
+        <div id="example-5"></div>
+
+
+        <h1 id="license">License</h1>
+        <p>
+            1D Coordinate Server usage is available under the same terms and condition as RCSB PDB (see <a href="https://www.rcsb.org/pages/policies">usage policies</a>)
+        </p>
+
+        <h1 id="acknowledgements">Acknowledgements</h1>
+        <p>
+            To cite this service, please reference:
+        </p>
+        <ul>
+            <li>
+                Joan Segura, Yana Rose, John Westbrook, Stephen K Burley, Jose M Duarte,
+                RCSB Protein Data Bank 1D tools and services, Bioinformatics, Volume 36, Issue 22-23, 1 December 2020, Pages 5526–5527.
+                doi: 10.1093/bioinformatics/btaa1012
+            </li>
+        </ul>
+
+        <h1 id="contact-us">Contact Us</h1>
+        <p>
+            Contact <a href="mailto:info@rcsb.org?subject=RCSB PDB 1D Coordinate Server API: Questions and Feedback">info@rcsb.org</a>
+            with questions or feedback about this service.
+        </p>
+    </div>
+
+</div>
+
+<script>
+
+    document.body.onload = render_dynamic_parts;
+
+    function render_dynamic_parts() {
+
+        load("gql-api-query-example", "./docs/tutorial/gql-api-query-example.txt", render_get_query);
+        load("gql-api-query-example-with-vars", "./docs/tutorial/gql-api-query-example-with-vars.txt", render_get_query);
+        load("gql-api-query-with-variable", "./docs/tutorial/gql-api-query-with-variable.txt", render_get_query);
+        load("gql-api-sequence-reference-enum", "./docs/tutorial/gql-api-sequence-reference-enum.txt", render_txt);
+        load("gql-api-sequence-reference-enum-bis", "./docs/tutorial/gql-api-sequence-reference-enum.txt", render_txt);
+        load("gql-api-source-enum", "./docs/tutorial/gql-api-source-enum.txt", render_txt);
+        load("gql-api-aligned-region", "./docs/tutorial/gql-api-aligned-region.txt", render_txt);
+        load("gql-api-coverage", "./docs/tutorial/gql-api-coverage.txt", render_txt);
+        load("gql-api-filter-input", "./docs/tutorial/gql-api-filter-input.txt", render_txt);
+        load("gql-api-alignment-response", "./docs/tutorial/gql-api-alignment-response.txt", render_txt);
+        load("gql-api-target-alignment", "./docs/tutorial/gql-api-target-alignment.txt", render_txt);
+        load("gql-api-annotation-features", "./docs/tutorial/gql-api-annotation-features.txt", render_txt);
+        load("gql-api-feature", "./docs/tutorial/gql-api-feature.txt", render_txt);
+        load("gql-api-feature-position", "./docs/tutorial/gql-api-feature-position.txt", render_txt);
+        load("gql-api-query-variable", "./docs/tutorial/gql-api-query-variable.txt", render_txt);
+        load("gql-api-response", "./docs/tutorial/gql-api-response.json", render_json);
+        load("gql-api-error", "./docs/tutorial/gql-api-error.json", render_json);
+        load("gql-api-query-post", "./docs/tutorial/gql-api-query-post.json", render_json);
+        load("example-1", "./docs/examples/example-1.txt", render_get_query);
+        load("example-2", "./docs/examples/example-2.txt", render_get_query);
+        load("example-3", "./docs/examples/example-3.txt", render_get_query);
+        load("example-4", "./docs/examples/example-4.txt", render_get_query);
+        load("example-5", "./docs/examples/example-5.txt", render_get_query);
+        load("example-6", "./docs/examples/example-6.txt", render_get_query);
+
+        var script = document.createElement("script");
+        script.src = "./docs/assets/lib.js";
+        document.body.appendChild(script);
+    }
+
+</script>
+
+</body>

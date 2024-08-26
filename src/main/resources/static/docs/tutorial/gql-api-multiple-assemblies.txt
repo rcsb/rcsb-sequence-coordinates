@@ -1,0 +1,9 @@
+https://data.rcsb.org/graphql?query={
+  assemblies(assembly_ids: ["4HHB-1", "12CA-1", "3PQR-1"]) {
+    rcsb_assembly_info {
+      entry_id
+      assembly_id
+      polymer_entity_instance_count
+    }
+  }
+}

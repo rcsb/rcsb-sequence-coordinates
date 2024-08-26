@@ -36,6 +36,7 @@ public class SchemaGenerator {
 
         AbstractResolverBuilder customBean = new BeanResolverBuilder("org.rcsb.graphqlschema.response")
                 .withFilters(member -> member.getDeclaringClass().getName().contains("org.rcsb.graphqlschema.response"))
+                .withFilters(member -> !member.getName().equals("CLASS_NAME"))
                 .withOperationInfoGenerator(new CustomOperationNameGenerator());
 
         ServiceQueries serviceQueries = new ServiceQueries();

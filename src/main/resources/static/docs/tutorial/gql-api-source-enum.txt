@@ -1,0 +1,5 @@
+enum Source {
+  UNIPROT
+  PDB_ENTITY
+  PDB_INSTANCE
+}

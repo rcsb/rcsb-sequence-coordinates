@@ -1,0 +1,4 @@
+interface AlignmentResponse {
+  query_sequence: String,
+  target_alignment: [TargetAlignment]
+}

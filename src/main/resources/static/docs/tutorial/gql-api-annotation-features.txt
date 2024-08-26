@@ -1,0 +1,5 @@
+interface AnnotationFeatures {
+  features: [Feature],
+  source: [Source],
+  target_id: String
+}

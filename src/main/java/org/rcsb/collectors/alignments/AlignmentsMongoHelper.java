@@ -18,7 +18,6 @@ import static com.mongodb.client.model.Projections.*;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Sorts.orderBy;
 import static org.rcsb.collectors.alignments.AlignmentsReferenceHelper.*;
-import static org.rcsb.collectors.alignments.AlignmentsReferenceHelper.testPdb;
 
 /**
  * @author : joan
@@ -96,6 +95,8 @@ public class AlignmentsMongoHelper {
             return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END);
         if(to.equals(SequenceReference.UNIPROT))
             return sortAggregator(SequenceCoordinatesConstants.TARGET_BEGIN, SequenceCoordinatesConstants.TARGET_END);
+        if(equivalentReferences(from, to))
+            return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END);
         throw new RuntimeException(
                 String.format(
                         "Unknown index for references from %s to %s",

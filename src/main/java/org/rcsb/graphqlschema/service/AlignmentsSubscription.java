@@ -16,13 +16,13 @@ import java.util.List;
  **/
 
 public interface AlignmentsSubscription<X> {
-    X alignmentSubscription(
+    X alignmentsSubscription(
             String queryId,
             SequenceReference from,
             SequenceReference to,
             List<Integer> range
     );
-    X groupAlignmentSubscription(
+    X groupAlignmentsSubscription(
             String groupId,
             GroupReference group,
             List<String> filter

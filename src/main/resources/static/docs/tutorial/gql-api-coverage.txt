@@ -1,0 +1,6 @@
+interface Coverage {
+  query_coverage: Int,
+  query_length: Int,
+  target_coverage: Int,
+  target_length: Int
+}

@@ -1,0 +1,9 @@
+interface Feature {
+  feature_id: String,
+  description: String,
+  feature_positions:[FeaturePositions],
+  provenance_source: String,
+  name: String,
+  type: String,
+  value: Float
+}

@@ -16,14 +16,14 @@ import java.util.List;
  **/
 
 public interface AlignmentsQuery<X> {
-    X alignment(
+    X alignments(
             String queryId,
             SequenceReference from,
             SequenceReference to,
             List<Integer> range
     );
 
-    X groupAlignment(
+    X groupAlignments(
             String groupId,
             GroupReference group,
             List<String> filter

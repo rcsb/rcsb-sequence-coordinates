@@ -15,6 +15,8 @@ import org.rcsb.graphqlschema.schema.SchemaConstants;
  **/
 public class SequenceAnnotations extends org.rcsb.mojave.auto.SequenceAnnotations {
 
+    public static final String CLASS_NAME = "SequenceAnnotations";
+
     private AnnotationReference source;
 
     @JsonProperty(SchemaConstants.Field.SOURCE)

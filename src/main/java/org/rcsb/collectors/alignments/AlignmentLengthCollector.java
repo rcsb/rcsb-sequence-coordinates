@@ -6,10 +6,12 @@ package org.rcsb.collectors.alignments;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.rcsb.collectors.sequence.SequenceCollector;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.rcsb.utils.MongoStream;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.List;
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Filters.eq;
 import static org.rcsb.collectors.alignments.AlignmentsMongoHelper.*;
+import static org.rcsb.collectors.alignments.AlignmentsReferenceHelper.equivalentReferences;
 
 /**
  * @author : joan
@@ -27,6 +30,8 @@ import static org.rcsb.collectors.alignments.AlignmentsMongoHelper.*;
 public class AlignmentLengthCollector {
 
     public static Mono<Integer> request(String queryId, SequenceReference from, SequenceReference to){
+        if(equivalentReferences(from,to))
+            return getIdentityLength(queryId);
         return getAlignmentDocument(
                 getCollection(from, to),
                 getIndex(from,to),
@@ -54,6 +59,10 @@ public class AlignmentLengthCollector {
                 alignmentLengthFields()
         ));
         return Mono.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation).first());
+    }
+
+    private static Mono<Integer> getIdentityLength(String queryId){
+        return Mono.from(SequenceCollector.request(queryId).map(String::length));
     }
 
 }

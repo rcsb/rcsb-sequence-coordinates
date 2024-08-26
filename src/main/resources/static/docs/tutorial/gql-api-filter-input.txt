@@ -1,0 +1,6 @@
+interface FilterInput {
+  operation: OperationType,
+  field: FieldName,
+  vales:[String],
+  source: Source
+}
