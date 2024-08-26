@@ -1,0 +1,103 @@
+<!--
+  ~  Copyright (c) 2024 - now, RCSB PDB and contributors, licensed under MIT, See LICENSE file for more info.
+  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>GraphiQL</title>
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        #graphiql {
+            height: 100vh;
+        }
+    </style>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/graphiql/graphiql.min.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="https://unpkg.com/graphiql/graphiql.min.css" />
+    <script src="https://unpkg.com/@graphiql/plugin-explorer/dist/index.umd.js" crossorigin></script>
+    <link rel="stylesheet" href="https://unpkg.com/@graphiql/plugin-explorer/dist/style.css"/>
+</head>
+<body>
+<div id="graphiql">Loading...</div>
+<script>
+    const search = window.location.search;
+    const parameters = {};
+    search.substr(1).split('&').forEach(function (entry) {
+        var eq = entry.indexOf('=');
+        if (eq >= 0) {
+            parameters[decodeURIComponent(entry.slice(0, eq))] =
+                decodeURIComponent(entry.slice(eq + 1));
+        }
+    });
+    // if variables was provided, try to format it.
+    if (parameters.variables) {
+        try {
+            parameters.variables =
+                JSON.stringify(JSON.parse(parameters.variables), null, 2);
+        } catch (e) {
+            // Do nothing, we want to display the invalid JSON as a string, rather
+            // than present an error.
+        }
+    }
+    // When the query and variables string is edited, update the URL bar so
+    // that it can be easily shared
+    function onEditQuery(newQuery) {
+        parameters.query = newQuery;
+        updateURL();
+    }
+    function onEditVariables(newVariables) {
+        parameters.variables = newVariables;
+        updateURL();
+    }
+    function onEditOperationName(newOperationName) {
+        parameters.operationName = newOperationName;
+        updateURL();
+    }
+    function updateURL() {
+        const newSearch = '?' + Object.keys(parameters).filter(function (key) {
+            return Boolean(parameters[key]);
+        }).map(function (key) {
+            return encodeURIComponent(key) + '=' +
+                encodeURIComponent(parameters[key]);
+        }).join('&');
+        history.replaceState(null, null, newSearch);
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const path = params.get("path") || "/graphql";
+    const url = `${location.protocol}//${location.host}${path}`;
+    const wsPath = params.get("wsPath") || "/graphql";
+    const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const subscriptionUrl = `${wsProtocol}//${location.host}${wsPath}`;
+    const gqlFetcher = GraphiQL.createFetcher({'url': url, 'subscriptionUrl': subscriptionUrl});
+    const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
+    const xsrfToken = document.cookie.match(new RegExp('(?:^| )XSRF-TOKEN=([^;]+)'));
+    const headers = xsrfToken ? `{ "X-XSRF-TOKEN" : "${ xsrfToken[1] }" }` : `{}`;
+
+    ReactDOM.render(
+        React.createElement(GraphiQL, {
+            fetcher: gqlFetcher,
+            query: parameters.query,
+            variables: parameters.variables,
+            defaultVariableEditorOpen: true,
+            headerEditorEnabled: true,
+            shouldPersistHeaders: true,
+            headers: headers,
+            plugins: [explorerPlugin],
+            onEditQuery: onEditQuery,
+            onEditVariables: onEditVariables,
+            onEditOperationName: onEditOperationName
+        }),
+        document.getElementById('graphiql'),
+    );
+</script>
+</body>
+</html>

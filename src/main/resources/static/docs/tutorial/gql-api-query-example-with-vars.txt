@@ -1,0 +1,15 @@
+https://1d-coordinates.rcsb.org/graphql?query=query NCBI2PDB($dbFrom: SequenceReference!, $dbTo: SequenceReference!, $id: String!){
+  alignments(
+    from:$dbFrom,
+    to: $dbTo,
+    queryId:$id
+  ) {
+    target_alignments {
+      target_id
+    }
+  }
+}&vars={
+  "dbFrom": "NCBI_PROTEIN",
+  "dbTo": "PDB_ENTITY",
+  "id": "XP_642496"
+}
