@@ -58,7 +58,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-messaging</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>
@@ -68,6 +67,10 @@
 			<groupId>org.springframework.graphql</groupId>
 			<artifactId>spring-graphql-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
 		<!--Schema Generation-->
