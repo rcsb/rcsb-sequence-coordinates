@@ -29,6 +29,8 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 import static org.rcsb.collectors.sequence.SequenceCollector.request;
+import static org.rcsb.graphqlschema.reference.GroupReference.MATCHING_UNIPROT_ACCESSION;
+import static org.rcsb.graphqlschema.reference.GroupReference.SEQUENCE_IDENTITY;
 import static org.rcsb.utils.GraphqlMethods.getArgument;
 import static org.rcsb.utils.GraphqlMethods.getQueryName;
 
@@ -135,8 +137,21 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
 
     @SchemaMapping(typeName = SequenceAlignments.CLASS_NAME, field = GraphqlSchemaMapping.QUERY_SEQUENCE)
     public Mono<String> getQuerySequence(DataFetchingEnvironment dataFetchingEnvironment){
-        if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS))
+        if(
+                getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS) &&
+                getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP).equals(SEQUENCE_IDENTITY)
+        )
             return null;
+
+        if(
+                getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS) &&
+                getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP).equals(MATCHING_UNIPROT_ACCESSION.toString())
+        )
+            return request(
+                    getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
+                    SequenceReference.UNIPROT
+            );
+
         return request(
                 getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
                 SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM))
