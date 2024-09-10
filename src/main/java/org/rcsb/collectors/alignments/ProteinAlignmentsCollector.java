@@ -108,12 +108,13 @@ public class ProteinAlignmentsCollector implements AlignmentsCollector {
         ).map(
                 d -> targetIdSelector(from, to).apply(d)
         ).flatMap(
-                d -> getTargetIdMap(d, to)
+                d -> getTargetIdMap(d, queryId, from, to)
         );
     }
 
-    private Flux<Document> getTargetIdMap( Document alignment, SequenceReference to){
+    private Flux<Document> getTargetIdMap( Document alignment,String queryId, SequenceReference from, SequenceReference to){
         return MapCollector.getTargetIdMap(alignment.getString(getTargetIndex()), to)
+                .filter(t->!(to.equals(SequenceReference.PDB_INSTANCE) && from.equals(SequenceReference.PDB_INSTANCE) && !queryId.equals(t)))
                 .map(t -> targetIdSubstitutor(to).apply(t,alignment));
     }
 
