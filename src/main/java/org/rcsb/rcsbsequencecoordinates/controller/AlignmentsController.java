@@ -139,7 +139,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     public Mono<String> getQuerySequence(DataFetchingEnvironment dataFetchingEnvironment){
         if(
                 getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS) &&
-                getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP).equals(SEQUENCE_IDENTITY)
+                getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP).equals(SEQUENCE_IDENTITY.toString())
         )
             return null;
 
