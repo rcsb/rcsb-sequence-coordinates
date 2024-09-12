@@ -13,6 +13,7 @@ import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
+import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Flux;
 
@@ -105,12 +106,10 @@ public class AnnotationsCollector {
                 )
                 .get()
                 .flatMap(
-                        alignment -> getAnnotations(
-                                alignment.getString(getTargetIndex()),
-                                groupReference.toSequenceReference(),
-                                annotationReference,
-                                annotationFilters
-                        )
+                    groupAlignment -> switchAlignmentEntityIdToReference(groupAlignment, annotationReference.toSequenceReference())
+                )
+                .flatMap(
+                    alignment -> getAnnotations(annotationReference, annotationFilters, alignment)
                 );
     }
 
@@ -145,6 +144,23 @@ public class AnnotationsCollector {
                .map(filter::applyFilterToFeatures)
                .map(annotations -> mapAnnotations(annotations, alignment))
                .filter(AnnotationsHelper::hasFeatures);
+    }
+
+    private static Flux<Document> switchAlignmentEntityIdToReference(Document alignment, SequenceReference reference){
+        return SequenceAlignmentsCollector
+            .request(
+                    alignment.getString(getTargetIndex()),
+                    SequenceReference.PDB_ENTITY,
+                    reference
+            )
+            .get()
+            .map(entityAlignment->{
+                alignment.put(
+                        SchemaConstants.Field.TARGET_ID,
+                        entityAlignment.getString(getTargetIndex())
+                );
+                return alignment;
+            });
     }
 
 }
