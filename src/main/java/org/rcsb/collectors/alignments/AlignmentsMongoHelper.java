@@ -139,7 +139,11 @@ public class AlignmentsMongoHelper {
     }
 
     public static Bson getGroupSortFields(){
-        return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END);
+        return sortAggregator(
+                SequenceCoordinatesConstants.QUERY_BEGIN,
+                SequenceCoordinatesConstants.QUERY_END,
+                SequenceCoordinatesConstants.TARGET_ID
+        );
     }
 
     public static Bson alignmentFields() {
@@ -184,6 +188,14 @@ public class AlignmentsMongoHelper {
         return sort(orderBy(
                 ascending(fieldA),
                 descending(fieldB)
+        ));
+    }
+
+    public static Bson sortAggregator(String fieldA, String fieldB, String fieldC) {
+        return sort(orderBy(
+                ascending(fieldA),
+                descending(fieldB),
+                ascending(fieldC)
         ));
     }
 
