@@ -23,6 +23,7 @@
       <li><a href="#end-points">End Points</a></li>
       <li><a href="#end-points-arguments">End Points Arguments</a></li>
       <li><a href="#query-fields">Query Fields</a></li>
+      <li><a href="#type-names">Type Names</a></li>
       <li><a href="#contact-us">Contact Us</a></li>
     </ul>
   </div>
@@ -42,6 +43,9 @@
           </li>
           <li>
             <a href="#query-fields" class="toc-h2 toc-link" data-title="query-fields">Query Fields</a>
+          </li>
+          <li>
+            <a href="#type-names" class="toc-h2 toc-link" data-title="type-names">Type Names</a>
           </li>
         </ul>
       </li>
@@ -172,8 +176,7 @@
     </script>
 
 
-
-    <h1 id="Query Fields">Query Fields</h1>
+    <h1 id="query-fields">Query Fields</h1>
     <p>
       Field <code>target_alignment</code> has been renamed to <code>target_alignments</code>.
     </p>
@@ -220,6 +223,22 @@
       load("target-alignments-subset-old", "examples/alignments-subset-old.txt", add_json_to_cell);
       load("target-alignments-subset-new", "examples/alignments-subset-new.txt", add_json_to_cell);
     </script>
+
+    <h1 id="type-names">Type Names</h1>
+    <p>
+      GraphQL type name changes. This only affects programmatic users that build types from GraphQL schema
+    </p>
+    <ul>
+      <li><code>FilterInput</code> type has been renamed to <code>AnnotationFilterInput</code></li>
+      <li><code>Source</code> type has been renamed to <code>AnnotationReference</code></li>
+      <li><code>AlignmentResponse</code> type has been renamed to <code>SequenceAlignments</code></li>
+      <li><code>AnnotationFeatures</code> type has been renamed to <code>SequenceAnnotations</code></li>
+      <li><code>AdditionalProperties</code> type has been renamed to <code>FeaturesAdditionalProperties</code></li>
+      <li><code>Type</code> type has been renamed to <code>FeaturesType</code></li>
+      <li><code>FeaturePositions</code> type has been renamed to <code>FeaturesFeaturePositions</code></li>
+      <li><code>AlignedRegion</code> type has been renamed to <code>AlignedRegions</code></li>
+      <li><code>Feature</code> type has been renamed to <code>Features</code></li>
+    </ul>
 
     <h1 id="contact-us">Contact Us</h1>
     <p>
