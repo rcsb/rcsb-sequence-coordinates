@@ -1,0 +1,10 @@
+query NCBI2PDB{
+  group_alignments(
+    group: MATCHING_UNIPROT_ACCESSION
+    groupId: "P01112"
+  ) {
+    target_alignments {
+      target_id
+    }
+  }
+}

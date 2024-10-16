@@ -66,7 +66,7 @@
       The Sequence Coordinates Service API only support HTTP POST requests.
     </p>
 
-    <h1 id="end-points">HTTP Request</h1>
+    <h1 id="end-points">End Points</h1>
     <p>
       Endpoint <code>alignment</code> has been renamed to <code>alignments</code>.
     </p>
@@ -81,6 +81,28 @@
       <tr>
         <td id="alignments-old"></td>
         <td id="alignments-new"></td>
+      </tr>
+      </tbody>
+    </table>
+    <script>
+      load("alignments-old", "examples/alignments-old.txt", add_json_to_cell);
+      load("alignments-new", "examples/alignments-new.txt", add_json_to_cell);
+    </script>
+
+    <p>
+      Endpoint <code>group_alignment</code> has been renamed to <code>group_alignments</code>.
+    </p>
+    <table>
+      <thead>
+      <tr>
+        <th>1D Coordinates Service</th>
+        <th>Sequence Coordinates Service</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td id="group-alignments-old"></td>
+        <td id="group-alignments-new"></td>
       </tr>
       </tbody>
     </table>
