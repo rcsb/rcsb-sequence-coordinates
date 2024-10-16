@@ -1,0 +1,21 @@
+query UP_GROUP{
+  group_alignment(
+    group: matching_uniprot_accession
+    groupId: "P01112"
+  ) {
+    target_alignment {
+      target_id
+    }
+  }
+}
+
+query SEQ_GROUP{
+  group_alignment(
+    group: sequence_identity
+    groupId: "507_30"
+  ) {
+    target_alignment {
+      target_id
+    }
+  }
+}

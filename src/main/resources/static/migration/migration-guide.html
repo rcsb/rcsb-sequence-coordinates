@@ -22,6 +22,7 @@
       <li><a href="#http-request">HTTP Request</a></li>
       <li><a href="#end-points">End Points</a></li>
       <li><a href="#end-points-arguments">End Points Arguments</a></li>
+      <li><a href="#query-fields">Query Fields</a></li>
       <li><a href="#contact-us">Contact Us</a></li>
     </ul>
   </div>
@@ -38,6 +39,9 @@
           </li>
           <li>
             <a href="#end-points-arguments" class="toc-h2 toc-link" data-title="end-points-arguments">End Points Arguments</a>
+          </li>
+          <li>
+            <a href="#query-fields" class="toc-h2 toc-link" data-title="query-fields">Query Fields</a>
           </li>
         </ul>
       </li>
@@ -139,6 +143,40 @@
       load("group-annotations-histogram-old", "examples/group-annotations-histogram-old.txt", add_json_to_cell);
       load("group-annotations-histogram-new", "examples/group-annotations-histogram-new.txt", add_json_to_cell);
     </script>
+
+    <p>
+      Enumerated values of GroupReference are now screaming snake case
+    </p>>
+    <ul>
+      <li>MATCHING_UNIPROT_ACCESSION</li>
+      <li>SEQUENCE_IDENTITY</li>
+    </ul>
+
+    <table>
+      <thead>
+      <tr>
+        <th>1D Coordinates Service</th>
+        <th>Sequence Coordinates Service</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td id="group-reference-enumerated-old"></td>
+        <td id="group-reference-enumerated-new"></td>
+      </tr>
+      </tbody>
+    </table>
+    <script>
+      load("group-reference-enumerated-old", "examples/group-reference-enumerated-old.txt", add_json_to_cell);
+      load("group-reference-enumerated-new", "examples/group-reference-enumerated-new.txt", add_json_to_cell);
+    </script>
+
+
+
+    <h1 id="Query Fields">Query Fields</h1>
+    <p>
+      Field <code>target_alignment</code> has been renamed to <code>target_alignments</code>.
+    </p>
 
     <h1 id="contact-us">Contact Us</h1>
     <p>
