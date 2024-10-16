@@ -40,37 +40,37 @@
   </div>
 </div>
 <div class="main-page-wrapper">
-
-  <h1 id="migration-mapping">RCSB PDB Sequence Coordinates API changes</h1>
-  <p>
-    Migrating from the 1D Coordinates Service to the Sequence Coordinate Service involves updating your endpoint URLs to call the new service and modifying
-    your applications to account for breaking changes introduced in the new API.
-  </p>
-  <aside class="error">
-    The RCSB PDB 1D Coordinates Service API was deprecated on <b>November 23, 2024</b>.
-    The final removal of this service will occur on <b>April 30, 2025</b> at which point queries
-    to <code>https://1d-coordinates.rcsb.org/graphql</code> will no longer work. Programmatic users must
-    adapt queries to be compatible with the Sequence Coordinates Service <code>https://sequence-coordinates.rcsb.org/graphql</code>
-    and use the new API in the requests URLs by <b>April 30, 2025</b>.
-  </aside>
-
-
   <div class="content">
+
+    <h1 id="migration-mapping">RCSB PDB Sequence Coordinates API changes</h1>
+    <p>
+      Migrating from the 1D Coordinates Service to the Sequence Coordinate Service involves updating your endpoint URLs to call the new service and modifying
+      your applications to account for breaking changes introduced in the new API.
+    </p>
+    <aside class="error">
+      The RCSB PDB 1D Coordinates Service API was deprecated on <b>November 23, 2024</b>.
+      The final removal of this service will occur on <b>April 30, 2025</b> at which point queries
+      to <code>https://1d-coordinates.rcsb.org/graphql</code> will no longer work. Programmatic users must
+      adapt queries to be compatible with the Sequence Coordinates Service <code>https://sequence-coordinates.rcsb.org/graphql</code>
+      and use the new API in the requests URLs by <b>April 30, 2025</b>.
+    </aside>
+
+
+
     <h1 id="http-request">HTTP Request</h1>
     <p>
       The Sequence Coordinates Service does not support HTTP GET requests.
       Only HTTP POSt requests are allowed to fetch data from the API.
     </p>
-  </div>
-  <div class="content">
+
+
     <h1 id="contact-us">Contact Us</h1>
     <p>
       Contact <a href="mailto:info@rcsb.org?subject=RCSB PDB Sequence Coordinates Service API: Questions and Feedback">info@rcsb.org</a>
       with questions or feedback about this service.
     </p>
+
   </div>
-
-
 </div>
 </body>
 </html>
