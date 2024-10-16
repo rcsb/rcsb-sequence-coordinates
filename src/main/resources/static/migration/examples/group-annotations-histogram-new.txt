@@ -1,0 +1,12 @@
+query UP_GROUP_FEATURES{
+  group_annotations_summary(
+    group: MATCHING_UNIPROT_ACCESSION
+    groupId: "P01112"
+    sources: [PDB_INSTANCE]
+  ) {
+    target_id
+    features{
+      type
+    }
+  }
+}

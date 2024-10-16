@@ -1,0 +1,13 @@
+query UP_GROUP_FEATURES{
+  group_annotations(
+    group: matching_uniprot_accession
+    groupId: "P01112"
+    sources: [PDB_INSTANCE]
+    histogram: true
+  ) {
+    target_id
+    features{
+      type
+    }
+  }
+}

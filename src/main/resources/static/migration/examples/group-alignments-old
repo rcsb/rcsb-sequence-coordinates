@@ -1,4 +1,4 @@
-query NCBI2PDB{
+query UP_GROUP{
   group_alignment(
     group: matching_uniprot_accession
     groupId: "P01112"
