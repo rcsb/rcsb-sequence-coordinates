@@ -102,3 +102,8 @@ function render_data_attributes(index, input) {
         table.appendChild(row);
     }
 }
+
+function add_json_to_cell(index, data) {
+    const cell = document.getElementById(index);
+    cell.innerHTML = "<pre style='background-color: transparent;'>" + syntax_highlight(data) + "</pre>";
+}

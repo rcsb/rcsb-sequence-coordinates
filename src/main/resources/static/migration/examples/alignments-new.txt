@@ -1,0 +1,12 @@
+query UniProt2PDB{
+  alignments(
+    from:UNIPROT,
+    to:PDB_ENTITY,
+    queryId:"P01112"
+  ){
+    query_sequence
+    target_alignments {
+      target_id
+    }
+  }
+}

@@ -20,6 +20,7 @@
     <ul class="search-results">
       <li><a href="#migration-mapping">Sequence Coordinates Service API changes</a></li>
       <li><a href="#http-request">HTTP Request</a></li>
+      <li><a href="#end-points">End Points</a></li>
       <li><a href="#contact-us">Contact Us</a></li>
     </ul>
   </div>
@@ -30,6 +31,9 @@
         <ul class="toc-list-h2 active" style="display: block;">
           <li>
             <a href="#http-request" class="toc-h2 toc-link" data-title="http-request">HTTP Request</a>
+          </li>
+          <li>
+            <a href="#end-points" class="toc-h2 toc-link" data-title="end-points">End Points</a>
           </li>
         </ul>
       </li>
@@ -59,9 +63,31 @@
 
     <h1 id="http-request">HTTP Request</h1>
     <p>
-      The Sequence Coordinates Service does not support HTTP GET requests.
-      Only HTTP POSt requests are allowed to fetch data from the API.
+      The Sequence Coordinates Service API only support HTTP POST requests.
     </p>
+
+    <h1 id="end-points">HTTP Request</h1>
+    <p>
+      Endpoint <code>alignment</code> has been renamed to <code>alignments</code>.
+    </p>
+    <table>
+      <thead>
+      <tr>
+        <th>1D Coordinates Service</th>
+        <th>Sequence Coordinates Service</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td id="alignments-old"></td>
+        <td id="alignments-new"></td>
+      </tr>
+      </tbody>
+    </table>
+    <script>
+      load("alignments-old", "examples/alignments-old.txt", add_json_to_cell);
+      load("alignments-new", "examples/alignments-new.txt", add_json_to_cell);
+    </script>
 
 
     <h1 id="contact-us">Contact Us</h1>
