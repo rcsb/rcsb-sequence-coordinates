@@ -1,0 +1,14 @@
+query UP_GROUP{
+  group_alignment(
+    group: matching_uniprot_accession
+    groupId: "P01112"
+  ) {
+    target_alignment_subset(after: "5", first:3) {
+      edges {
+        node {
+          target_id
+        }
+      }
+    }
+  }
+}

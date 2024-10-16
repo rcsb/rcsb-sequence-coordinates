@@ -1,0 +1,10 @@
+query UP_GROUP{
+  group_alignments(
+    group: MATCHING_UNIPROT_ACCESSION
+    groupId: "P01112"
+  ) {
+    target_alignments(offset:5, first:3) {
+      target_id
+    }
+  }
+}
