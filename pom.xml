@@ -16,7 +16,7 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<rcsb.mojave.model.version>1.47.6</rcsb.mojave.model.version>
+		<rcsb.mojave.model.version>1.47.7</rcsb.mojave.model.version>
 		<rcsb.common.version>2.8.0</rcsb.common.version>
 
 		<schema.location>src/main/resources/schema</schema.location>
