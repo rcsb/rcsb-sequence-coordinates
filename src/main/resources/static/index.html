@@ -24,7 +24,7 @@
             <label for="input-search"></label><input type="text" class="search" id="input-search" placeholder="Search documentation">
         </div>
         <ul class="search-results">
-            <li><a href="#1d-coordinates-api">Sequence Coordinates Server API Basics</a></li>
+            <li><a href="#sequence-coordinates-api">Sequence Coordinates Server API Basics</a></li>
             <li><a href="#gql-api">GraphQL-based API</a></li>
             <li><a href="#gql-use">Using GraphQL</a></li>
             <li><a href="#gql-alignment">Alignment Query</a></li>
@@ -47,7 +47,7 @@
     </div>
     <div id="toc" class="toc-list-h1">
         <li>
-            <a href="#1d-coordinates-api" class="toc-h1 toc-link" data-title="1d-coordinates-api">Sequence Coordinates Server API Basics</a>
+            <a href="#sequence-coordinates-api" class="toc-h1 toc-link" data-title="sequence-coordinates-api">Sequence Coordinates Server API Basics</a>
             <ul class="toc-list-h2 active" style="display: block;">
                 <li>
                     <a href="#gql-api" class="toc-h2 toc-link" data-title="gql-api">GraphQL-based API</a>
@@ -121,7 +121,7 @@
 <div class="main-page-wrapper">
 
     <div class="content">
-        <h1 id="1d-coordinates-api">RCSB PDB Sequence Coordinates Server API</h1>
+        <h1 id="sequence-coordinates-api">RCSB PDB Sequence Coordinates Server API</h1>
         <aside>
             Alignments and positional features provided by this API include Experimental Structures from the <a href="https://www.rcsb.org/">PDB</a> and
             <a href="https://www.rcsb.org/docs/general-help/computed-structure-models-and-rcsborg#what-csms-are-available">select Computed Structure Models (CSMs)</a>.
@@ -144,7 +144,7 @@
 
         <h2 id="gql-api">GraphQL-based API</h2>
         <p>
-            GraphQL server operates on a single URL/endpoint, <code>https://1d-coordinates.rcsb.org/graphql</code>, and all
+            GraphQL server operates on a single URL/endpoint, <code>https://sequence-coordinates.rcsb.org/graphql</code>, and all
             GraphQL requests for this service should be directed at this endpoint. GraphQL HTTP server handles POST method.
         </p>
 
@@ -532,7 +532,7 @@
             All GraphQL queries are validated and executed against the GraphQL schema. The GraphQL schema contains
             the elements that define <a href="#data-organization">sequence alignments and positional features</a>.
         <p>
-            You can use <a href="https://1d-coordinates.rcsb.org/graphql/index.html" target="_blank">Graph<i>i</i>QL</a>, which is a "graphical
+            You can use <a href="https://sequence-coordinates.rcsb.org/graphiql/index.html" target="_blank">Graph<i>i</i>QL</a>, which is a "graphical
             interactive in-browser GraphQL IDE", to explore GraphQL schema. It lets you try different queries, helps
             with auto completion and built-in validation. The collapsible <b>Docs</b> panel (Documentation Explorer)
             on the right side of the page allows you to navigate through the schema definitions. Click on the root
