@@ -1,0 +1,81 @@
+{{- range tuple "a" "b" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm_chart.fullname" $ }}-{{ . }}
+  labels:
+    {{- include "helm_chart.labels" $ | nindent 4 }}
+    rcsb.org/path: {{ . | quote }}
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "helm_chart.selectorLabels" $ | nindent 6 }}
+      rcsb.org/path: {{ . | quote }}
+  template:
+    metadata:
+      {{- with $.Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "helm_chart.selectorLabels" $ | nindent 8 }}
+        rcsb.org/path: {{ . | quote }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    {{- include "helm_charto.selectorLabels" $ | nindent 20 }}
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      imagePullSecrets:
+        - name: {{ $.Values.imagePullSecrets }}
+      securityContext:
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: elastic-java-agent
+          image: {{ $.Values.elasticAPM.elasticAPMImage }}
+          volumeMounts:
+            - mountPath: /elastic/apm/agent
+              name: elastic-apm-agent
+          command: [ 'cp', '-v', '/usr/agent/elastic-apm-agent.jar', '/elastic/apm/agent' ]
+      containers:
+        - name: {{ $.Chart.Name }}
+          securityContext:
+            {{- toYaml $.Values.securityContext | nindent 12 }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $.Values.service.containerPort }}
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: {{ $.Values.initialLivenessDelaySeconds }}
+            failureThreshold: {{ $.Values.livenessProbe.failureThreshold }}
+            periodSeconds: {{ $.Values.livenessProbe.periodSeconds }}
+            httpGet:
+              path: {{ $.Values.livenessProbe.http.path }}
+              port: {{ $.Values.service.containerPort }}
+          readinessProbe:
+            initialDelaySeconds: {{ $.Values.initialReadinessDelaySeconds }}
+            failureThreshold: {{ $.Values.readinessProbe.failureThreshold }}
+            periodSeconds: {{ $.Values.readinessProbe.periodSeconds }}
+            httpGet:
+              path: {{ $.Values.readinessProbe.http.path }}
+              port: {{ $.Values.service.containerPort }}
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
+          # env:
+          #   - name: ELASTIC_APM_SECRET_TOKEN
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: {{ include "rcsb-borrego.fullname" $ }}-secret
+          #         key: apm_secret_token
+      volumes:
+        - name: elastic-apm-agent
+          emptyDir: { }
+{{- end }}
