@@ -75,7 +75,7 @@ spec:
           #       secretKeyRef:
           #         name: {{ include "rcsb-borrego.fullname" $ }}-secret
           #         key: apm_secret_token
-      volumes:
-        - name: elastic-apm-agent
-          emptyDir: { }
+      # volumes:
+      #   - name: elastic-apm-agent
+      #     emptyDir: { }
 {{- end }}
