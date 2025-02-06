@@ -36,13 +36,13 @@ spec:
         - name: {{ $.Values.imagePullSecrets }}
       securityContext:
         {{- toYaml $.Values.podSecurityContext | nindent 8 }}
-      initContainers:
-        - name: elastic-java-agent
-          image: {{ $.Values.elasticAPM.elasticAPMImage }}
-          volumeMounts:
-            - mountPath: /elastic/apm/agent
-              name: elastic-apm-agent
-          command: [ 'cp', '-v', '/usr/agent/elastic-apm-agent.jar', '/elastic/apm/agent' ]
+      # initContainers:
+      #   - name: elastic-java-agent
+      #     image: {{ $.Values.elasticAPM.elasticAPMImage }}
+      #     volumeMounts:
+      #       - mountPath: /elastic/apm/agent
+      #         name: elastic-apm-agent
+      #     command: [ 'cp', '-v', '/usr/agent/elastic-apm-agent.jar', '/elastic/apm/agent' ]
       containers:
         - name: {{ $.Chart.Name }}
           securityContext:
