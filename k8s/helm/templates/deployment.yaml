@@ -29,7 +29,7 @@ spec:
             - podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    {{- include "helm_charto.selectorLabels" $ | nindent 20 }}
+                    {{- include "helm_chart.selectorLabels" $ | nindent 20 }}
                 topologyKey: kubernetes.io/hostname
               weight: 1
       imagePullSecrets:
