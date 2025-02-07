@@ -13,6 +13,13 @@ spec:
     matchLabels:
       {{- include "helm_chart.selectorLabels" $ | nindent 6 }}
       rcsb.org/path: {{ . | quote }}
+  strategy:
+    type: {{ $.Values.deploymentStrategy.type }}
+    {{- if eq $.Values.deploymentStrategy.type "RollingUpdate" }}
+    rollingUpdate:
+      maxSurge: {{ $.Values.deploymentStrategy.maxSurge }}
+      maxUnavailable: {{ $.Values.deploymentStrategy.maxUnavailable }}
+    {{- end }}
   template:
     metadata:
       {{- with $.Values.podAnnotations }}
@@ -46,6 +53,22 @@ spec:
             - name: http
               containerPort: {{ $.Values.service.containerPort }}
               protocol: TCP
+          volumeMounts:
+            - mountPath: /var/www/log4j2.xml
+              subPath: log4j2.xml
+              name: {{ include "helm_chart.fullname" $ }}-config
+            # - mountPath: /elastic/apm/agent
+            #   name: elastic-apm-agent
+            # - mountPath: /usr/local/tomcat/conf/log4j2.xml
+            #   subPath: log4j2.xml
+            #   name: {{ include "helm_chart.fullname" $ }}-config
+            # - mountPath: /var/www/seqcoordAppProperties.app.properties
+            #   subPath: seqcoordAppProperties.{{ . }}.app.properties
+            #   name: {{ include "helm_chart.fullname" $ }}-secret
+          volumes:
+            - name: {{ include "helm_chart.fullname" $ }}-config
+              configMap:
+                name: {{ include "helm_chart.fullname" $ }}-config
           # livenessProbe:
           #   initialDelaySeconds: {{ $.Values.initialLivenessDelaySeconds }}
           #   failureThreshold: {{ $.Values.livenessProbe.failureThreshold }}

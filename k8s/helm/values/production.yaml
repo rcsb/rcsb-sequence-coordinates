@@ -33,9 +33,6 @@ image:
 
 imagePullSecrets: "harbor-docker-registry-conf"
 
-
-
-
 deploymentStrategy:
   #https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
   #Type is either RollingUpdate or Recreate
@@ -73,3 +70,31 @@ resources:
   requests:
     cpu: 4
     memory: 64Gi
+
+# App specific configurations
+seqcoordAppProperties:
+  log4j2.xml: |-
+    <configuration status="WARN" monitorInterval="30">
+      <Properties>
+          <Property name="PATTERN">%d{yyy-MM-dd HH:mm:ss.SSS Z} [%t] %-5level %logger{36} - %msg%n</Property>
+      </Properties>
+      <appenders>
+          <Console name="stdout" target="SYSTEM_OUT" follow="true">
+              <PatternLayout pattern="${PATTERN}"/>
+          </Console>
+      </appenders>
+      <loggers>
+          <root level="info">
+              <appender-ref ref="stdout"/>
+          </root>
+          <!--  Setting special levels for some packages  -->
+          <Logger name="org.mongodb.driver" level="warn" additivity="false">
+              <appender-ref ref="stdout"/>
+          </Logger>
+      </loggers>
+    </configuration>
+  
+
+
+
+# javaOptions: "-Xmx20g -server -DrcsbConfigProfile=file:///location to the file "absolute"
