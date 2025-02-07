@@ -65,10 +65,10 @@ spec:
             # - mountPath: /var/www/seqcoordAppProperties.app.properties
             #   subPath: seqcoordAppProperties.{{ . }}.app.properties
             #   name: {{ include "helm_chart.fullname" $ }}-secret
-          volumes:
-            - name: {{ include "helm_chart.fullname" $ }}-config
-              configMap:
-                name: {{ include "helm_chart.fullname" $ }}-config
+      volumes:
+        - name: {{ include "helm_chart.fullname" $ }}-config
+          configMap:
+            name: {{ include "helm_chart.fullname" $ }}-config
           # livenessProbe:
           #   initialDelaySeconds: {{ $.Values.initialLivenessDelaySeconds }}
           #   failureThreshold: {{ $.Values.livenessProbe.failureThreshold }}
@@ -83,6 +83,6 @@ spec:
           #   httpGet:
           #     path: {{ $.Values.readinessProbe.http.path }}
           #     port: {{ $.Values.service.containerPort }}
-          resources:
-            {{- toYaml $.Values.resources | nindent 12 }}
+          # resources:
+          #   {{- toYaml $.Values.resources | nindent 12 }}
 {{- end }}
