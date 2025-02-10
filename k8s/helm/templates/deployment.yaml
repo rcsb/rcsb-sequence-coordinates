@@ -69,9 +69,9 @@ spec:
         - name: {{ include "helm_chart.fullname" $ }}-config
           configMap:
             name: {{ include "helm_chart.fullname" $ }}-config
-        - name: {{ include "rcsb-borrego.fullname" $ }}-secret
+        - name: {{ include "helm_chart.fullname" $ }}-secret
           secret:
-            secretName: {{ include "rcsb-borrego.fullname" $ }}-secret
+            secretName: {{ include "helm_chart.fullname" $ }}-secret
           # livenessProbe:
           #   initialDelaySeconds: {{ $.Values.initialLivenessDelaySeconds }}
           #   failureThreshold: {{ $.Values.livenessProbe.failureThreshold }}
