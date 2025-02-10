@@ -57,10 +57,8 @@ spec:
             - mountPath: /var/www/log4j2.xml
               subPath: log4j2.xml
               name: {{ include "helm_chart.fullname" $ }}-config
-            # - mountPath: /elastic/apm/agent
-            #   name: elastic-apm-agent
             - mountPath: /var/www/seqcoordAppProperties.app.properties
-              subPath: seqcoordAppProperties.{{ . }}.app.properties
+              subPath: seqcoordinates.{{ . }}.app.properties
               name: {{ include "helm_chart.fullname" $ }}-secret
           env:
             - name: JDK_JAVA_OPTIONS
@@ -72,20 +70,4 @@ spec:
         - name: {{ include "helm_chart.fullname" $ }}-secret
           secret:
             secretName: {{ include "helm_chart.fullname" $ }}-secret
-          # livenessProbe:
-          #   initialDelaySeconds: {{ $.Values.initialLivenessDelaySeconds }}
-          #   failureThreshold: {{ $.Values.livenessProbe.failureThreshold }}
-          #   periodSeconds: {{ $.Values.livenessProbe.periodSeconds }}
-          #   httpGet:
-          #     path: {{ $.Values.livenessProbe.http.path }}
-          #     port: {{ $.Values.service.containerPort }}
-          # readinessProbe:
-          #   initialDelaySeconds: {{ $.Values.initialReadinessDelaySeconds }}
-          #   failureThreshold: {{ $.Values.readinessProbe.failureThreshold }}
-          #   periodSeconds: {{ $.Values.readinessProbe.periodSeconds }}
-          #   httpGet:
-          #     path: {{ $.Values.readinessProbe.http.path }}
-          #     port: {{ $.Values.service.containerPort }}
-          # resources:
-          #   {{- toYaml $.Values.resources | nindent 12 }}
 {{- end }}
