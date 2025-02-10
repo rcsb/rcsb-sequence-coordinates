@@ -95,6 +95,4 @@ seqcoordAppProperties:
     </configuration>
   
 
-
-
-# javaOptions: "-Xmx20g -server -DrcsbConfigProfile=file:///location to the file "absolute"
+javaOptions: "-Xmx20g  -server -DrcsbConfigProfile=file:///var/www -Dlog4j.configurationFile=/var/www/log4j2.xml"
