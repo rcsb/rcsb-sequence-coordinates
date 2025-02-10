@@ -71,6 +71,33 @@ resources:
     cpu: 4
     memory: 64Gi
 
+ingress:
+  enabled: true
+  className: "haproxy"
+  annotations:
+    cert-manager.io/cluster-issuer: rutgers-acme
+    kubernetes.io/tls-acme: "true"
+    haproxy.org/allow-list: "132.249.210.0/24,128.6.150.0/25,132.249.213.0/24,128.6.158.0/23"
+  hosts:
+    - host: seqcoordinates.k8s.rcsb.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: seqcoordinates.east.k8s.rcsb.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: seqcoordinates.west.k8s.rcsb.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - seqcoordinates.k8s.rcsb.org
+        - seqcoordinates.east.k8s.rcsb.org
+        - seqcoordinates.west.k8s.rcsb.org
+      secretName: seqcoordinates.k8s.rcsb.org-tls
+
 # App specific configurations
 seqcoordAppProperties:
   log4j2.xml: |-
