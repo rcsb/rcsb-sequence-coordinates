@@ -59,12 +59,12 @@ spec:
               name: {{ include "helm_chart.fullname" $ }}-config
             # - mountPath: /elastic/apm/agent
             #   name: elastic-apm-agent
-            # - mountPath: /usr/local/tomcat/conf/log4j2.xml
-            #   subPath: log4j2.xml
-            #   name: {{ include "helm_chart.fullname" $ }}-config
-            # - mountPath: /var/www/seqcoordAppProperties.app.properties
-            #   subPath: seqcoordAppProperties.{{ . }}.app.properties
-            #   name: {{ include "helm_chart.fullname" $ }}-secret
+            - mountPath: /usr/local/tomcat/conf/log4j2.xml
+              subPath: log4j2.xml
+              name: {{ include "helm_chart.fullname" $ }}-config
+            - mountPath: /var/www/seqcoordAppProperties.app.properties
+              subPath: seqcoordAppProperties.{{ . }}.app.properties
+              name: {{ include "helm_chart.fullname" $ }}-secret
       volumes:
         - name: {{ include "helm_chart.fullname" $ }}-config
           configMap:
