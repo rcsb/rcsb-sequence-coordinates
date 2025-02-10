@@ -57,7 +57,7 @@ spec:
             - mountPath: /var/www/log4j2.xml
               subPath: log4j2.xml
               name: {{ include "helm_chart.fullname" $ }}-config
-            - mountPath: /var/www/seqcoordAppProperties.app.properties
+            - mountPath: /var/www/borrego.app.properties
               subPath: seqcoordinates.{{ . }}.app.properties
               name: {{ include "helm_chart.fullname" $ }}-secret
           env:
