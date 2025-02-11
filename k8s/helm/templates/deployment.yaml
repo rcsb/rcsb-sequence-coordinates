@@ -43,6 +43,13 @@ spec:
         - name: {{ $.Values.imagePullSecrets }}
       securityContext:
         {{- toYaml $.Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: elastic-java-agent
+          image: {{ $.Values.elasticAPM.elasticAPMImage }}
+          volumeMounts:
+            - mountPath: /elastic/apm/agent
+              name: elastic-apm-agent
+          command: [ 'cp', '-v', '/usr/agent/elastic-apm-agent.jar', '/elastic/apm/agent' ]
       containers:
         - name: {{ $.Chart.Name }}
           securityContext:
@@ -60,9 +67,28 @@ spec:
             - mountPath: /var/www/borrego.app.properties
               subPath: seqcoordinates.{{ . }}.app.properties
               name: {{ include "helm_chart.fullname" $ }}-secret
+            - mountPath: /elastic/apm/agent
+              name: elastic-apm-agent
           env:
             - name: JDK_JAVA_OPTIONS
               value: {{ $.Values.javaOptions }}
+            - name: JAVA_TOOL_OPTIONS
+              value: -javaagent:/elastic/apm/agent/elastic-apm-agent.jar
+            - name: ELASTIC_APM_SERVER_URL
+              value: {{ $.Values.elasticAPM.elasticAPMServerUrl }}
+            - name: ELASTIC_APM_SERVICE_NAME
+              value: seqcoord
+            - name: ELASTIC_APM_APPLICATION_PACKAGES
+              value: org.rcsb
+            - name: ELASTIC_APM_ENVIRONMENT
+              value: {{ $.Values.elasticAPM.elasticAPMEnvironment }}
+            - name: ELASTIC_APM_CAPTURE_BODY
+              value: transactions
+            - name: ELASTIC_APM_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "helm_chart.fullname" $ }}-secret
+                  key: apm_secret_token
       volumes:
         - name: {{ include "helm_chart.fullname" $ }}-config
           configMap:
@@ -70,4 +96,6 @@ spec:
         - name: {{ include "helm_chart.fullname" $ }}-secret
           secret:
             secretName: {{ include "helm_chart.fullname" $ }}-secret
+        - name: elastic-apm-agent
+          emptyDir: { }
 {{- end }}

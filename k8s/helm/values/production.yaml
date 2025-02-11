@@ -123,3 +123,9 @@ seqcoordAppProperties:
   
 
 javaOptions: "-Xmx20g  -server -DrcsbConfigProfile=file:///var/www -Dlog4j.configurationFile=/var/www/log4j2.xml"
+
+elasticAPM:
+  elasticAPMEnabled: false
+  elasticAPMImage: docker.elastic.co/observability/apm-agent-java:1.51.0
+  elasticAPMServerUrl: http://apm.devops:8200
+  elasticAPMEnvironment: k8s-production
