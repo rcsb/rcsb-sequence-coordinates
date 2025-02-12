@@ -69,6 +69,8 @@ spec:
               name: {{ include "helm_chart.fullname" $ }}-secret
             - mountPath: /elastic/apm/agent
               name: elastic-apm-agent
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
           env:
             - name: JDK_JAVA_OPTIONS
               value: {{ $.Values.javaOptions }}
