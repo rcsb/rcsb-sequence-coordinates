@@ -9,6 +9,7 @@ metadata:
     rcsb.org/path: {{ . | quote }}
 spec:
   replicas: {{ $.Values.replicaCount }}
+  revisionHistoryLimit: {{ $.Values.revisionHistoryLimit}}
   selector:
     matchLabels:
       {{- include "helm_chart.selectorLabels" $ | nindent 6 }}
