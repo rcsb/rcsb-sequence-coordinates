@@ -29,7 +29,7 @@ image:
   repository: harbor.devops.k8s.rcsb.org/rcsb/rcsb-sequence-coordinates
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "k8s-staging"
+  tag: "production"
 
 imagePullSecrets: "harbor-docker-registry-conf"
 
