@@ -1,0 +1,119 @@
+{{- range tuple "a" "b" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm_chart.fullname" $ }}-{{ . }}
+  labels:
+    {{- include "helm_chart.labels" $ | nindent 4 }}
+    rcsb.org/path: {{ . | quote }}
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  revisionHistoryLimit: {{ $.Values.revisionHistoryLimit}}
+  selector:
+    matchLabels:
+      {{- include "helm_chart.selectorLabels" $ | nindent 6 }}
+      rcsb.org/path: {{ . | quote }}
+  strategy:
+    type: {{ $.Values.deploymentStrategy.type }}
+    {{- if eq $.Values.deploymentStrategy.type "RollingUpdate" }}
+    rollingUpdate:
+      maxSurge: {{ $.Values.deploymentStrategy.maxSurge }}
+      maxUnavailable: {{ $.Values.deploymentStrategy.maxUnavailable }}
+    {{- end }}
+  template:
+    metadata:
+      {{- with $.Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "helm_chart.selectorLabels" $ | nindent 8 }}
+        rcsb.org/path: {{ . | quote }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    {{- include "helm_chart.selectorLabels" $ | nindent 20 }}
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      imagePullSecrets:
+        - name: {{ $.Values.imagePullSecrets }}
+      securityContext:
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: elastic-java-agent
+          image: {{ $.Values.elasticAPM.elasticAPMImage }}
+          volumeMounts:
+            - mountPath: /elastic/apm/agent
+              name: elastic-apm-agent
+          command: [ 'cp', '-v', '/usr/agent/elastic-apm-agent.jar', '/elastic/apm/agent' ]
+      containers:
+        - name: {{ $.Chart.Name }}
+          securityContext:
+            {{- toYaml $.Values.securityContext | nindent 12 }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $.Values.service.containerPort }}
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: {{ $.Values.livenessProbe.initialDelaySeconds }}
+            failureThreshold: {{ $.Values.livenessProbe.failureThreshold }}
+            periodSeconds: {{ $.Values.livenessProbe.periodSeconds }}
+            httpGet:
+              path: {{ $.Values.livenessProbe.http.path }}
+              port: http
+          readinessProbe:
+            initialDelaySeconds: {{ $.Values.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ $.Values.readinessProbe.initialDelaySeconds }}
+            failureThreshold: {{ $.Values.readinessProbe.failureThreshold }}
+            periodSeconds: {{ $.Values.readinessProbe.periodSeconds }}
+            httpGet:
+              path: {{ $.Values.readinessProbe.http.path }}
+              port: http
+          volumeMounts:
+            - mountPath: /var/www/log4j2.xml
+              subPath: log4j2.xml
+              name: {{ include "helm_chart.fullname" $ }}-config
+            - mountPath: /var/www/borrego.app.properties
+              subPath: seqcoordinates.{{ . }}.app.properties
+              name: {{ include "helm_chart.fullname" $ }}-secret
+            - mountPath: /elastic/apm/agent
+              name: elastic-apm-agent
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
+          env:
+            - name: JDK_JAVA_OPTIONS
+              value: {{ $.Values.javaOptions }}
+            - name: JAVA_TOOL_OPTIONS
+              value: -javaagent:/elastic/apm/agent/elastic-apm-agent.jar
+            - name: ELASTIC_APM_SERVER_URL
+              value: {{ $.Values.elasticAPM.elasticAPMServerUrl }}
+            - name: ELASTIC_APM_SERVICE_NAME
+              value: seqcoord
+            - name: ELASTIC_APM_APPLICATION_PACKAGES
+              value: org.rcsb
+            - name: ELASTIC_APM_ENVIRONMENT
+              value: {{ $.Values.elasticAPM.elasticAPMEnvironment }}
+            - name: ELASTIC_APM_CAPTURE_BODY
+              value: transactions
+            - name: ELASTIC_APM_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "helm_chart.fullname" $ }}-secret
+                  key: apm_secret_token
+      volumes:
+        - name: {{ include "helm_chart.fullname" $ }}-config
+          configMap:
+            name: {{ include "helm_chart.fullname" $ }}-config
+        - name: {{ include "helm_chart.fullname" $ }}-secret
+          secret:
+            secretName: {{ include "helm_chart.fullname" $ }}-secret
+        - name: elastic-apm-agent
+          emptyDir: { }
+{{- end }}
