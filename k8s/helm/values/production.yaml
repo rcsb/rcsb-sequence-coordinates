@@ -21,7 +21,7 @@ livenessProbe:
 initialReadinessDelaySeconds: 120
 readinessProbe:
   http:
-    path: /api/alive
+    path: /actuator/health
   failureThreshold: 6
   periodSeconds: 30
 
