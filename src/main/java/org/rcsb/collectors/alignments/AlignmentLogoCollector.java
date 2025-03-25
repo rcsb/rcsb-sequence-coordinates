@@ -32,40 +32,42 @@ public class AlignmentLogoCollector {
         return new AlignmentLogoCollector();
     }
 
-    public Mono<List<List<Document>>> request(String groupId, GroupReference group){
-        return buildAlignmentLogo(groupId, group)
+    public Mono<List<List<Document>>> request(String groupId, GroupReference group, List<String> filter){
+        return buildAlignmentLogo(groupId, group, filter)
                 .reduce(this::mergeLogo)
                 .map(this::formatLogo);
     }
 
-    public Mono<List<List<Document>>> request(String queryId, SequenceReference from, SequenceReference to){
-        return buildAlignmentLogo(queryId, from, to)
+    public Mono<List<List<Document>>> request(String queryId, SequenceReference from, SequenceReference to, List<String> filter){
+        return buildAlignmentLogo(queryId, from, to, filter)
                 .reduce(this::mergeLogo)
                 .map(this::formatLogo);
     }
 
-    private Flux<int[][]> buildAlignmentLogo(String groupId, GroupReference group){
+    private Flux<int[][]> buildAlignmentLogo(String groupId, GroupReference group, List<String> filter){
         return AlignmentLengthCollector.request(groupId, group)
                 .doOnNext(this::setAlignmentLength)
-                .thenMany(processAlignments(groupId, group));
+                .thenMany(processAlignments(groupId, group, filter));
     }
 
-    private Flux<int[][]> buildAlignmentLogo(String queryId, SequenceReference from, SequenceReference to){
+    private Flux<int[][]> buildAlignmentLogo(String queryId, SequenceReference from, SequenceReference to, List<String> filter){
         return AlignmentLengthCollector.request(queryId, from, to)
                 .doOnNext(this::setAlignmentLength)
-                .thenMany(processAlignments(queryId, from, to));
+                .thenMany(processAlignments(queryId, from, to, filter));
     }
 
-    private Flux<int[][]> processAlignments(String groupId, GroupReference group){
+    private Flux<int[][]> processAlignments(String groupId, GroupReference group, List<String> filter){
         return SequenceAlignmentsCollector
                 .request(groupId, group)
+                .filter(filter)
                 .get()
                 .flatMap(this::buildAlignmentLogo);
     }
 
-    private Flux<int[][]> processAlignments(String queryId, SequenceReference from, SequenceReference to){
+    private Flux<int[][]> processAlignments(String queryId, SequenceReference from, SequenceReference to, List<String> filter){
         return SequenceAlignmentsCollector
                 .request(queryId, from, to)
+                .filter(filter)
                 .get()
                 .flatMap(this::buildAlignmentLogo);
     }
@@ -76,24 +78,20 @@ public class AlignmentLogoCollector {
     }
 
     private Mono<int[][]> buildAlignmentLogo(Document alignment, String sequence){
-        return Flux.fromIterable(alignment.getList(SchemaConstants.Field.ALIGNED_REGIONS, Document.class))
-                .map(region-> buildRegionLogo(region, sequence))
-                .reduce(initLogo(), this::mergeLogo);
-    }
-
-    private int[][] buildRegionLogo(Document region, String sequence){
-        int[][] logo = zeroLogo();
+        int[][] logo = initLogo();
         char[] seq = sequence.toCharArray();
-        int queryBegin = region.getInteger(SchemaConstants.Field.QUERY_BEGIN)-1;
-        int targetBegin = region.getInteger(SchemaConstants.Field.TARGET_BEGIN)-1;
-        int targetEnd = region.getInteger(SchemaConstants.Field.TARGET_END);
-        int qi = queryBegin;
-        for(int ti = targetBegin; ti < targetEnd; ti++){
-            logo[qi][SequenceSymbol.getIndex(seq[ti])]++;
-            logo[qi][SequenceSymbol.getLength()-1]--;
-            qi++;
-        }
-        return logo;
+        alignment.getList(SchemaConstants.Field.ALIGNED_REGIONS, Document.class).forEach(region->{
+            int queryBegin = region.getInteger(SchemaConstants.Field.QUERY_BEGIN)-1;
+            int targetBegin = region.getInteger(SchemaConstants.Field.TARGET_BEGIN)-1;
+            int targetEnd = region.getInteger(SchemaConstants.Field.TARGET_END);
+            int qi = queryBegin;
+            for(int ti = targetBegin; ti < targetEnd; ti++){
+                logo[qi][SequenceSymbol.getIndex(seq[ti])]++;
+                logo[qi][SequenceSymbol.getLength()-1]--;
+                qi++;
+            }
+        });
+        return Mono.just(logo);
     }
 
     private List<List<Document>> formatLogo(int[][] logo){

@@ -178,13 +178,15 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             return AlignmentLogoCollector.build()
                     .request(
                             getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
-                            GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP))
+                            GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP)),
+                            getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_FILTER)
                     );
         return AlignmentLogoCollector.build()
                 .request(
                         getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
                         SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
-                        SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
+                        SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO)),
+                        getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_FILTER)
                 );
     }
 
