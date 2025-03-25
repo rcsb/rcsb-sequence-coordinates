@@ -10,13 +10,13 @@
 	</parent>
 	<groupId>org.rcsb</groupId>
 	<artifactId>rcsb-sequence-coordinates</artifactId>
-	<version>0.0.44-SNAPSHOT</version>
+	<version>0.0.46-SNAPSHOT</version>
 	<name>rcsb-sequence-coordinates</name>
 	<description>RCSB PDB Sequence Alignment Map Service</description>
 	<properties>
 		<java.version>17</java.version>
 
-		<rcsb.mojave.model.version>1.49.0</rcsb.mojave.model.version>
+		<rcsb.mojave.model.version>1.49.1</rcsb.mojave.model.version>
 		<rcsb.common.version>2.8.0</rcsb.common.version>
 
 		<schema.location>src/main/resources/schema</schema.location>
