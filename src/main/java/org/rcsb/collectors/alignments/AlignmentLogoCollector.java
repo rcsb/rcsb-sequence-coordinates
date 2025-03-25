@@ -122,22 +122,16 @@ public class AlignmentLogoCollector {
     }
 
     private int[][] mergeLogo(int[][] logoA, int[][] logoB) {
-        int[][] logo = zeroLogo();
         for (int i = 0; i< logoA.length; i++){
             for (int j = 0; j< logoA[i].length; j++){
-                logo[i][j] = logoA[i][j] + logoB[i][j];
+                logoA[i][j] += logoB[i][j];
             }
         }
-        return logo;
+        return logoA;
     }
 
     private int[][] zeroLogo(){
-        int length = alignmentLength;
-        int[][] logo = new int[length][SequenceSymbol.getLength()];
-        for(int i=0; i<length; i++){
-            Arrays.fill(logo[i], 0);
-        }
-        return logo;
+        return new int[alignmentLength][SequenceSymbol.getLength()];
     }
 
 }
