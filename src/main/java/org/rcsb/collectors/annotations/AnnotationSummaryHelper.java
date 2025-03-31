@@ -20,13 +20,14 @@ import java.util.stream.IntStream;
 public class AnnotationSummaryHelper {
 
     public static List<Document> mergeFeaturePositions(int alignmentLength, List<Document> features){
-        return formatSummary(features.stream()
-                .map(feature -> mapFeatureToSummary(alignmentLength, feature))
-                .reduce( zeroSummary(alignmentLength), AnnotationSummaryHelper::mergeSummary)
+        return formatSummary(
+                features.stream()
+                    .map(feature -> mapFeatureToSummary(alignmentLength, feature))
+                    .reduce( zeroSummary(alignmentLength), AnnotationSummaryHelper::mergeSummary)
         );
     }
 
-    private static List<Document> formatSummary(Double[] summary){
+    private static List<Document> formatSummary(double[] summary){
         return IntStream.range(0, summary.length)
                 .filter(i -> summary[i] != 0.0)
                 .boxed()
@@ -51,16 +52,16 @@ public class AnnotationSummaryHelper {
                 .collect(Collectors.toList());
     }
 
-    private static Double[] mapFeatureToSummary(int alignmentLength, Document feature){
+    private static double[] mapFeatureToSummary(int alignmentLength, Document feature){
         return feature.getList(SchemaConstants.Field.FEATURE_POSITIONS, Document.class).stream()
                 .map(region -> mapRegionToSummary(alignmentLength, region))
                 .reduce(zeroSummary(alignmentLength), AnnotationSummaryHelper::mergeSummary);
     }
 
-    private static Double[] mapRegionToSummary(int alignmentLength, Document region){
+    private static double[] mapRegionToSummary(int alignmentLength, Document region){
         if(region.containsKey(SchemaConstants.Field.VALUES))
             return mapValuesToSummary(alignmentLength, region);
-        Double[] summary = zeroSummary(alignmentLength);
+        double[] summary = zeroSummary(alignmentLength);
         int begin = region.getInteger(SchemaConstants.Field.BEG_SEQ_ID);
         int end = region.getInteger(SchemaConstants.Field.END_SEQ_ID);
         for(int i=begin; i<=end; i++){
@@ -69,15 +70,14 @@ public class AnnotationSummaryHelper {
         return summary;
     }
 
-    private static Double[] mergeSummary(Double[] summaryA, Double[] summaryB){
-        Double[] summary = zeroSummary(summaryA.length);
+    private static double[] mergeSummary(double[] summaryA, double[] summaryB){
         for (int i=0; i<summaryA.length; i++)
-            summary[i] = summaryA[i] + summaryB[i];
-        return summary;
+            summaryA[i] +=  summaryB[i];
+        return summaryA;
     }
 
-    private static Double[] mapValuesToSummary(int alignmentLength, Document region){
-        Double[] summary = zeroSummary(alignmentLength);
+    private static double[] mapValuesToSummary(int alignmentLength, Document region){
+        double[] summary = zeroSummary(alignmentLength);
         AtomicInteger begin = new AtomicInteger(region.getInteger(SchemaConstants.Field.BEG_SEQ_ID) - 1);
         region.getList(SchemaConstants.Field.VALUES, Double.class).forEach(
                 value -> summary[ begin.getAndIncrement() ] = value
@@ -85,10 +85,8 @@ public class AnnotationSummaryHelper {
         return summary;
     }
 
-    private static Double[] zeroSummary(int length){
-        Double[] summary = new Double[length];
-        Arrays.fill(summary, 0.);
-        return summary;
+    private static double[] zeroSummary(int length){
+        return new double[length];
     }
 
 }
