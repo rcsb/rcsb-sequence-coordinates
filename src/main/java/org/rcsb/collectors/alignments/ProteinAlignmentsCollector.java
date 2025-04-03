@@ -156,9 +156,9 @@ public class ProteinAlignmentsCollector implements AlignmentsCollector {
                 sortAggregator,
                 alignmentFields()
         ));
-        aggregation.addAll(aggregationPage());
         aggregation.addAll(aggregationFilter(attribute));
         aggregation.addAll(limitRequest());
+        aggregation.addAll(aggregationPage());
         return Flux.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation));
     }
 
@@ -173,9 +173,7 @@ public class ProteinAlignmentsCollector implements AlignmentsCollector {
 
     private List<Bson> aggregationFilter(String attribute){
         if(!filterTarget.isEmpty())
-            return List.of(match(or(filterTarget.stream().map(
-                    targetId -> eq(getAltIndex(attribute), targetId)
-            ).toList())));
+            return List.of(match(in(getAltIndex(attribute), filterTarget)));
         return List.of();
     }
 
