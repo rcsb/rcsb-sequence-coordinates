@@ -4,10 +4,14 @@
 
 package org.rcsb.rcsbsequencecoordinates.component;
 
+import org.bson.Document;
+import org.rcsb.utils.MongoStream;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+
 
 /**
  * @author : joan
@@ -25,10 +29,12 @@ public class MyReactiveHealthIndicator implements ReactiveHealthIndicator {
     }
 
     private Mono<Health> doHealthCheck() {
-        // perform some specific health check
-        return Mono.just(Health
-                .up()
-                .build()
+        return Mono.from(MongoStream.getMongoDatabase().runCommand(new Document("ping", 1))).map(
+                pinDoc -> {
+                    if(pinDoc.getDouble("ok").equals(1.0))
+                        return Health.up().build();
+                    return Health.down().build();
+                }
         );
     }
 
