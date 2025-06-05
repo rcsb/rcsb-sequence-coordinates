@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.rcsb</groupId>
 	<artifactId>rcsb-sequence-coordinates</artifactId>
-	<version>0.0.54-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>rcsb-sequence-coordinates</name>
 	<description>RCSB PDB Sequence Alignment Map Service</description>
 	<properties>
@@ -52,6 +52,34 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.mongodb</groupId>
+					<artifactId>mongodb-driver-reactivestreams</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.mongodb</groupId>
+					<artifactId>mongodb-driver-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-reactivestreams</artifactId>
+			<version>5.2.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.mongodb</groupId>
+					<artifactId>mongodb-driver-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-core</artifactId>
+			<version>5.2.0</version>
 		</dependency>
 
 		<dependency>
