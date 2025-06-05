@@ -142,8 +142,8 @@ public class AnnotationsCollector {
                .map(annotations -> addSource(annotationReference, annotations))
                .filter(filter::targetCheck)
                .map(filter::applyFilterToFeatures)
-               .map(annotations -> mapAnnotations(annotations, alignment))
-               .filter(AnnotationsHelper::hasFeatures);
+               .filter(AnnotationsHelper::hasFeatures)
+               .map(annotations -> mapAnnotations(annotations, alignment));
     }
 
     private static Flux<Document> switchAlignmentEntityIdToReference(Document alignment, SequenceReference reference){

@@ -1,0 +1,18 @@
+name: Run CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - '*'
+    paths-ignore:
+      - "k8s/**"
+
+jobs:
+  run-workflow:
+    name: "Run automated workflow"
+    uses: rcsb/devops-cicd-github-actions/.github/workflows/workflow-java.yaml@master
+    with:
+      mainline_branch: master
+      # TODO remove these 2 parameters when we are out of OpenStack and build-locker artifacts are not needed anymore
+      distribution: "production_sequence_coordinates"
+      type: "jar"

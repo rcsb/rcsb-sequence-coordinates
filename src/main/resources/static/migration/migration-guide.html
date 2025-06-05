@@ -60,15 +60,15 @@
 
     <h1 id="migration-mapping">RCSB PDB Sequence Coordinates API changes</h1>
     <p>
-      Migrating from the 1D Coordinates Service to the Sequence Coordinate Service involves updating your endpoint URLs to call the new service and modifying
+      Migrating from the 1D Coordinates Service to the <a href="https://sequence-coordinates.rcsb.org">Sequence Coordinate Service</a> involves updating your endpoint URLs to call the new service and modifying
       your applications to account for breaking changes introduced in the new API.
     </p>
     <aside class="error">
-      The RCSB PDB 1D Coordinates Service API was deprecated on <b>November 23, 2024</b>.
-      The final removal of this service will occur on <b>April 30, 2025</b> at which point queries
+      The RCSB PDB 1D Coordinates Service API will be deprecated on <b>November 23, 2024</b>.
+      The final removal of this service will occur on <b>May 31, 2025</b> at which point queries
       to <code>https://1d-coordinates.rcsb.org/graphql</code> will no longer work. Programmatic users must
       adapt queries to be compatible with the Sequence Coordinates Service available at <code>https://sequence-coordinates.rcsb.org/graphql</code>
-      and use the new API in the requests URLs by <b>April 30, 2025</b>.
+      and use the new API in the requests URLs by <b>May 31, 2025</b>.
     </aside>
 
 
@@ -220,8 +220,8 @@
       </tbody>
     </table>
     <script>
-      load("target-alignments-subset-old", "examples/alignments-subset-old.txt", add_json_to_cell);
-      load("target-alignments-subset-new", "examples/alignments-subset-new.txt", add_json_to_cell);
+      load("target-alignments-subset-old", "examples/target-alignments-subset-old.txt", add_json_to_cell);
+      load("target-alignments-subset-new", "examples/target-alignments-subset-new.txt", add_json_to_cell);
     </script>
 
     <h2 id="type-names">Type Names</h2>

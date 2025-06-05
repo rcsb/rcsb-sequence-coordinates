@@ -1,0 +1,131 @@
+# Default values for prerelease.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+revisionHistoryLimit: 3
+
+# vaultSecretStoreName is the name of the ClusterSecretStore resource to pull secret credentials
+vaultSecretStoreName: "rcsb-vault"
+
+# Define container liveness and readiness checks
+# A Pod is considered "live" when it is able to respond to client requests.
+# A Pod is considered "ready" when it has completed initialization and should be one of the backends for a K8s Service resource.
+initialLivenessDelaySeconds: 120
+livenessProbe:
+  http:
+    path: /
+  failureThreshold: 4
+  periodSeconds: 30
+
+initialReadinessDelaySeconds: 120
+readinessProbe:
+  http:
+    path: /actuator/health
+  failureThreshold: 6
+  periodSeconds: 30
+
+image:
+  repository: harbor.devops.k8s.rcsb.org/rcsb/rcsb-sequence-coordinates
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "production"
+
+imagePullSecrets: "harbor-docker-registry-conf"
+
+deploymentStrategy:
+  #https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+  #Type is either RollingUpdate or Recreate
+  type: "RollingUpdate"
+  #For rolling update, what percentage of total pods can be created above desired amount
+  maxSurge: 25%
+  #For rolling update, what percentage of total pods can be brought down to update
+  maxUnavailable: 25%
+
+podSecurityContext:
+  fsGroup: 33
+  runAsNonRoot: true
+  runAsUser: 33
+  runAsGroup: 33
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+
+service:
+  type: ClusterIP
+  port: 80
+  containerPort: 8080
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 8
+    memory: 96Gi
+  requests:
+    cpu: 4
+    memory: 64Gi
+
+ingress:
+  enabled: true
+  className: "haproxy"
+  annotations:
+    cert-manager.io/cluster-issuer: rutgers-acme
+    kubernetes.io/tls-acme: "true"
+    haproxy.org/allow-list: "132.249.210.0/24,128.6.150.0/25,132.249.213.0/24,128.6.158.0/23"
+  hosts:
+    - host: seqcoordinates.ihm.k8s.rcsb.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: seqcoordinates.ihm.east.k8s.rcsb.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: seqcoordinates.ihm.west.k8s.rcsb.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - seqcoordinates.ihm.k8s.rcsb.org
+        - seqcoordinates.ihm.east.k8s.rcsb.org
+        - seqcoordinates.ihm.west.k8s.rcsb.org
+      secretName: seqcoordinates.ihm.k8s.rcsb.org-tls
+
+# App specific configurations
+seqcoordAppProperties:
+  log4j2.xml: |-
+    <configuration status="WARN" monitorInterval="30">
+      <Properties>
+          <Property name="PATTERN">%d{yyy-MM-dd HH:mm:ss.SSS Z} [%t] %-5level %logger{36} - %msg%n</Property>
+      </Properties>
+      <appenders>
+          <Console name="stdout" target="SYSTEM_OUT" follow="true">
+              <PatternLayout pattern="${PATTERN}"/>
+          </Console>
+      </appenders>
+      <loggers>
+          <root level="info">
+              <appender-ref ref="stdout"/>
+          </root>
+          <!--  Setting special levels for some packages  -->
+          <Logger name="org.mongodb.driver" level="warn" additivity="false">
+              <appender-ref ref="stdout"/>
+          </Logger>
+      </loggers>
+    </configuration>
+  
+
+javaOptions: "-Xmx20g  -server -DrcsbConfigProfile=file:///var/www -Dlog4j.configurationFile=/var/www/log4j2.xml"
+
+elasticAPM:
+  elasticAPMEnabled: false
+  elasticAPMImage: docker.elastic.co/observability/apm-agent-java:1.51.0
+  elasticAPMServerUrl: http://apm.devops:8200
+  elasticAPMEnvironment: k8s-ihm

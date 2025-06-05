@@ -16,8 +16,7 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 
 import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Filters.or;
+import static com.mongodb.client.model.Filters.*;
 import static org.rcsb.collectors.alignments.AlignmentsMongoHelper.*;
 import static org.rcsb.collectors.alignments.AlignmentsReferenceHelper.equivalentReferences;
 import static org.rcsb.collectors.alignments.AlignmentsReferenceHelper.testGenome;
@@ -81,7 +80,7 @@ public class SequenceAlignmentsCollector implements AlignmentsCollector {
 
     private static Flux<Document> getMapDocuments(String collection, String attribute, List<String> ids){
         List<Bson> aggregation = List.of(
-                match(or(ids.stream().map(id->eq(attribute, id)).toList())),
+                match(in(attribute, ids)),
                 mapFields()
         );
         return Flux.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation));
