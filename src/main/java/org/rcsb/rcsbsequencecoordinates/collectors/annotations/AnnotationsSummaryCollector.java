@@ -22,11 +22,15 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.annotations.Annotation
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/14/24, Wednesday
- **/
+ */
 @Service
 public class AnnotationsSummaryCollector {
+
+    private final AnnotationsCollector annotationsCollector;
+
+    public AnnotationsSummaryCollector() {
+        this.annotationsCollector = new AnnotationsCollector();
+    }
 
     public Flux<Document> getAnnotations(
             String groupId,
@@ -34,7 +38,7 @@ public class AnnotationsSummaryCollector {
             List<AnnotationReference> annotationReferences,
             List<AnnotationFilter> annotationFilters
     ){
-        return new AnnotationsCollector().getAnnotations(groupId, groupReference, annotationReferences, annotationFilters)
+        return annotationsCollector.getAnnotations(groupId, groupReference, annotationReferences, annotationFilters)
                 .reduce(new AnnotationSourceMap(), this::addAnnotation)
                 .flatMapMany(annotationSourceMap -> annotationsSummary(groupId, groupReference, annotationSourceMap));
     }
