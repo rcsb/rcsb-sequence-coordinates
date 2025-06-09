@@ -6,9 +6,9 @@ package org.rcsb.rcsbsequencecoordinates.controller;
 
 import graphql.schema.DataFetchingEnvironment;
 import org.bson.Document;
-import org.rcsb.collectors.alignments.AlignmentLengthCollector;
-import org.rcsb.collectors.alignments.AlignmentLogoCollector;
-import org.rcsb.collectors.alignments.SequenceAlignmentsCollector;
+import org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentLengthCollector;
+import org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentLogoCollector;
+import org.rcsb.rcsbsequencecoordinates.collectors.alignments.SequenceAlignmentsCollector;
 import org.rcsb.graphqlschema.response.SequenceAlignments;
 import org.rcsb.graphqlschema.response.TargetAlignments;
 import org.rcsb.graphqlschema.service.AlignmentsQuery;
@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static org.rcsb.collectors.sequence.SequenceCollector.request;
+import static org.rcsb.rcsbsequencecoordinates.collectors.sequence.SequenceCollector.request;
 import static org.rcsb.graphqlschema.reference.GroupReference.MATCHING_UNIPROT_ACCESSION;
 import static org.rcsb.graphqlschema.reference.GroupReference.SEQUENCE_IDENTITY;
 import static org.rcsb.utils.GraphqlMethods.getArgument;

@@ -5,8 +5,8 @@
 package org.rcsb.rcsbsequencecoordinates.controller;
 
 import org.bson.Document;
-import org.rcsb.collectors.annotations.AnnotationsCollector;
-import org.rcsb.collectors.annotations.AnnotationsSummaryCollector;
+import org.rcsb.rcsbsequencecoordinates.collectors.annotations.AnnotationsCollector;
+import org.rcsb.rcsbsequencecoordinates.collectors.annotations.AnnotationsSummaryCollector;
 import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.service.AnnotationsSubscription;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
