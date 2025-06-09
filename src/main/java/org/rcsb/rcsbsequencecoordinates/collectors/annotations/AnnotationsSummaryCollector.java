@@ -12,6 +12,7 @@ import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.mojave.auto.FeaturesAdditionalPropertiesPropertyName;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import java.util.List;
 import java.util.Map;
@@ -24,20 +25,21 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.annotations.Annotation
  * @mailto : joan.segura@rcsb.org
  * @created : 2/14/24, Wednesday
  **/
+@Service
 public class AnnotationsSummaryCollector {
 
-    public static Flux<Document> getAnnotations(
+    public Flux<Document> getAnnotations(
             String groupId,
             GroupReference groupReference,
             List<AnnotationReference> annotationReferences,
             List<AnnotationFilter> annotationFilters
     ){
-        return AnnotationsCollector.getAnnotations(groupId, groupReference, annotationReferences, annotationFilters)
-                .reduce(new AnnotationSourceMap(), AnnotationsSummaryCollector::addAnnotation)
+        return new AnnotationsCollector().getAnnotations(groupId, groupReference, annotationReferences, annotationFilters)
+                .reduce(new AnnotationSourceMap(), this::addAnnotation)
                 .flatMapMany(annotationSourceMap -> annotationsSummary(groupId, groupReference, annotationSourceMap));
     }
 
-    private static Flux<Document> annotationsSummary(
+    private Flux<Document> annotationsSummary(
             String groupId,
             GroupReference groupReference,
             AnnotationSourceMap annotationSourceMap
@@ -46,7 +48,7 @@ public class AnnotationsSummaryCollector {
                 .flatMapMany(alignmentLength-> annotationsSummary(alignmentLength, annotationSourceMap));
     }
 
-    private static Flux<Document> annotationsSummary(
+    private Flux<Document> annotationsSummary(
             int alignmentLength,
             AnnotationSourceMap annotationSourceMap
     ){
@@ -61,7 +63,7 @@ public class AnnotationsSummaryCollector {
         );
     }
 
-    private static List<Document> featureSummary(
+    private List<Document> featureSummary(
             int alignmentLength,
             AnnotationSourceMap.AnnotationTypeMap annotationTypeMap
     ) {
@@ -71,7 +73,7 @@ public class AnnotationsSummaryCollector {
     }
 
 
-    private static List<Document> featureSummary(
+    private List<Document> featureSummary(
             int alignmentLength,
             String type,
             AnnotationSourceMap.AnnotationTypeMap.AnnotationNameMap annotationNameMap
@@ -87,7 +89,7 @@ public class AnnotationsSummaryCollector {
         ).toList();
     }
 
-    private static Document featureSummary(
+    private Document featureSummary(
             int alignmentLength,
             String type,
             String name,
@@ -103,21 +105,21 @@ public class AnnotationsSummaryCollector {
         ));
     }
 
-    private static List<Document> targetList(Set<String> targetIds){
+    private List<Document> targetList(Set<String> targetIds){
         return List.of(new Document(Map.of(
                 SchemaConstants.Field.PROPERTY_NAME, FeaturesAdditionalPropertiesPropertyName.TARGET_ID,
                 SchemaConstants.Field.PROPERTY_VALUE, targetIds
         )));
     }
 
-    private static AnnotationSourceMap addAnnotation(AnnotationSourceMap annotationSourceMap, Document annotation){
+    private AnnotationSourceMap addAnnotation(AnnotationSourceMap annotationSourceMap, Document annotation){
         annotation.getList(SchemaConstants.Field.FEATURES, Document.class).forEach(
                 feature -> addFeature(annotationSourceMap, annotation, feature)
         );
         return annotationSourceMap;
     }
 
-    private static void addFeature(AnnotationSourceMap annotationSourceMap, Document annotation, Document feature){
+    private void addFeature(AnnotationSourceMap annotationSourceMap, Document annotation, Document feature){
         String source = annotation.get(SchemaConstants.Field.SOURCE, AnnotationReference.class).toString();
         String type = feature.getString(SchemaConstants.Field.TYPE);
         String name = feature.getString(SchemaConstants.Field.NAME);

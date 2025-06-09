@@ -15,6 +15,7 @@ import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.utils.MongoStream;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -27,10 +28,10 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.annotations.Annotation
  * @mailto : joan.segura@rcsb.org
  * @created : 2/5/24, Monday
  **/
-
+@Service
 public class AnnotationsCollector {
 
-    public static Flux<Document> getAnnotations(
+    public Flux<Document> getAnnotations(
             String queryId,
             SequenceReference sequenceReference,
             List<AnnotationReference> annotationReferences,
@@ -43,7 +44,7 @@ public class AnnotationsCollector {
                 .map(annotationRangeIntersection::applyRange);
     }
 
-    public static Flux<Document> getAnnotations(
+    public Flux<Document> getAnnotations(
             String groupId,
             GroupReference groupReference,
             List<AnnotationReference> annotationReferences,
@@ -57,7 +58,7 @@ public class AnnotationsCollector {
                 );
     }
 
-    private static Flux<Document> getAnnotations(
+    private Flux<Document> getAnnotations(
             String queryId,
             SequenceReference sequenceReference,
             List<AnnotationReference> annotationReferences,
@@ -69,7 +70,7 @@ public class AnnotationsCollector {
                 );
     }
 
-    private static Flux<Document> getAnnotations(
+    private Flux<Document> getAnnotations(
             String groupId,
             GroupReference groupReference,
             AnnotationReference annotationReference,
@@ -89,7 +90,7 @@ public class AnnotationsCollector {
                 );
     }
 
-    private static Flux<Document> getAnnotations(
+    private Flux<Document> getAnnotations(
             String groupId,
             GroupReference groupReference,
             List<String> groupFilter,
@@ -113,7 +114,7 @@ public class AnnotationsCollector {
                 );
     }
 
-    private static Flux<Document> getAnnotations(
+    private Flux<Document> getAnnotations(
             String queryId,
             SequenceReference sequenceReference,
             AnnotationReference annotationReference,
@@ -130,7 +131,7 @@ public class AnnotationsCollector {
                     alignment -> getAnnotations(annotationReference, annotationFilters, alignment)
                 );
     }
-    private static Flux<Document> getAnnotations(
+    private Flux<Document> getAnnotations(
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters,
             Document alignment
@@ -146,7 +147,7 @@ public class AnnotationsCollector {
                .map(annotations -> mapAnnotations(annotations, alignment));
     }
 
-    private static Flux<Document> switchAlignmentEntityIdToReference(Document alignment, SequenceReference reference){
+    private Flux<Document> switchAlignmentEntityIdToReference(Document alignment, SequenceReference reference){
         return SequenceAlignmentsCollector
             .request(
                     alignment.getString(getTargetIndex()),
