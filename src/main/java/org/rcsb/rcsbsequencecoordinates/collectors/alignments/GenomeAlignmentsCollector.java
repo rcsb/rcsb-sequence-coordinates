@@ -30,9 +30,7 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.alignments.GenomeAlign
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/23/24, Friday
- **/
+ */
 public class GenomeAlignmentsCollector implements AlignmentsCollector {
 
     private final Supplier<Flux<Document>> documentSupplier;

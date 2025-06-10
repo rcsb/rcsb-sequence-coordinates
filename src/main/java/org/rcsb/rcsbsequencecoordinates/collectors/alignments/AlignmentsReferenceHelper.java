@@ -8,9 +8,7 @@ import org.rcsb.graphqlschema.reference.SequenceReference;
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/26/24, Monday
- **/
+ */
 public class AlignmentsReferenceHelper {
 
     public static boolean equivalentReferences(SequenceReference from, SequenceReference to){
