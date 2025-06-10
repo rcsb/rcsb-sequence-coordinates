@@ -9,10 +9,7 @@ import java.util.Map;
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/13/24, Tuesday
- **/
-
+ */
 public class SequenceSymbol {
 
     private static final Map<Character, Integer> residueType = new HashMap<>() {{

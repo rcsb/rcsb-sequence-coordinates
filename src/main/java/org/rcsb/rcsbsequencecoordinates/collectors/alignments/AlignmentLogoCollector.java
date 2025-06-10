@@ -28,9 +28,6 @@ public class AlignmentLogoCollector {
     private final AlignmentLengthCollector alignmentLengthCollector;
     private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
 
-    // TODO see how to avoid this field. Or how to reset it...
-    private int alignmentLength = -1;
-
     private AlignmentLogoCollector(){
         this.alignmentLengthCollector = new AlignmentLengthCollector();
         this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector();
@@ -50,39 +47,37 @@ public class AlignmentLogoCollector {
 
     private Flux<int[][]> buildAlignmentLogo(String groupId, GroupReference group, List<String> filter){
         return alignmentLengthCollector.request(groupId, group)
-                .doOnNext(this::setAlignmentLength)
-                .thenMany(processAlignments(groupId, group, filter));
+                .flatMapMany(alignmentLength->processAlignments(groupId, group, filter, alignmentLength));
     }
 
     private Flux<int[][]> buildAlignmentLogo(String queryId, SequenceReference from, SequenceReference to, List<String> filter){
         return alignmentLengthCollector.request(queryId, from, to)
-                .doOnNext(this::setAlignmentLength)
-                .thenMany(processAlignments(queryId, from, to, filter));
+                .flatMapMany(alignmentLength -> processAlignments(queryId, from, to, filter, alignmentLength));
     }
 
-    private Flux<int[][]> processAlignments(String groupId, GroupReference group, List<String> filter){
+    private Flux<int[][]> processAlignments(String groupId, GroupReference group, List<String> filter, int alignmentLength){
         return sequenceAlignmentsCollector
                 .request(groupId, group)
                 .filter(filter)
                 .get()
-                .flatMap(this::buildAlignmentLogo);
+                .flatMap(alignment->buildAlignmentLogo(alignment ,alignmentLength));
     }
 
-    private Flux<int[][]> processAlignments(String queryId, SequenceReference from, SequenceReference to, List<String> filter){
+    private Flux<int[][]> processAlignments(String queryId, SequenceReference from, SequenceReference to, List<String> filter, int alignmentLength){
         return sequenceAlignmentsCollector
                 .request(queryId, from, to)
                 .filter(filter)
                 .get()
-                .flatMap(this::buildAlignmentLogo);
+                .flatMap(alignment -> buildAlignmentLogo(alignment, alignmentLength));
     }
 
-    private Mono<int[][]> buildAlignmentLogo(Document alignment){
+    private Mono<int[][]> buildAlignmentLogo(Document alignment, int alignmentLength){
         return SequenceCollector.request(alignment.getString(SchemaConstants.Field.TARGET_ID))
-                .flatMap(sequence->buildAlignmentLogo(alignment, sequence));
+                .flatMap(sequence->buildAlignmentLogo(alignment, sequence, alignmentLength));
     }
 
-    private Mono<int[][]> buildAlignmentLogo(Document alignment, String sequence){
-        int[][] logo = initLogo();
+    private Mono<int[][]> buildAlignmentLogo(Document alignment, String sequence, int alignmentLength){
+        int[][] logo = initLogo(alignmentLength);
         char[] seq = sequence.toCharArray();
         alignment.getList(SchemaConstants.Field.ALIGNED_REGIONS, Document.class).forEach(region->{
             int queryBegin = region.getInteger(SchemaConstants.Field.QUERY_BEGIN)-1;
@@ -112,13 +107,8 @@ public class AlignmentLogoCollector {
         ).toList();
     }
 
-    private void setAlignmentLength(int length){
-        alignmentLength = length;
-    }
-
-    private int[][] initLogo(){
-        int length = alignmentLength;
-        int[][] logo = zeroLogo();
+    private int[][] initLogo(int length){
+        int[][] logo = new int[length][SequenceSymbol.getLength()];
         for(int i=0; i<length; i++){
             logo[i][SequenceSymbol.getLength()-1] = 1;
         }
@@ -132,10 +122,6 @@ public class AlignmentLogoCollector {
             }
         }
         return logoA;
-    }
-
-    private int[][] zeroLogo(){
-        return new int[alignmentLength][SequenceSymbol.getLength()];
     }
 
 }
