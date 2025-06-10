@@ -27,9 +27,11 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.annotations.Annotation
 public class AnnotationsSummaryCollector {
 
     private final AnnotationsCollector annotationsCollector;
+    private final AlignmentLengthCollector alignmentLengthCollector;
 
     public AnnotationsSummaryCollector() {
         this.annotationsCollector = new AnnotationsCollector();
+        this.alignmentLengthCollector = new AlignmentLengthCollector();
     }
 
     public Flux<Document> getAnnotations(
@@ -48,7 +50,7 @@ public class AnnotationsSummaryCollector {
             GroupReference groupReference,
             AnnotationSourceMap annotationSourceMap
     ){
-        return AlignmentLengthCollector.request(groupId, groupReference)
+        return alignmentLengthCollector.request(groupId, groupReference)
                 .flatMapMany(alignmentLength-> annotationsSummary(alignmentLength, annotationSourceMap));
     }
 
