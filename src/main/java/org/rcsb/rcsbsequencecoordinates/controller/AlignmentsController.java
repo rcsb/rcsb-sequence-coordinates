@@ -18,6 +18,7 @@ import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.rcsb.rcsbsequencecoordinates.configuration.GraphqlSchemaMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
@@ -42,6 +43,19 @@ import static org.rcsb.utils.GraphqlMethods.getQueryName;
 
 @Controller
 public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, AlignmentsSubscription<Flux<Document>> {
+
+    private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
+    private final AlignmentLengthCollector alignmentLengthCollector;
+    private final AlignmentLogoCollector alignmentLogoCollector;
+
+    @Autowired
+    public AlignmentsController(SequenceAlignmentsCollector sequenceAlignmentsCollector,
+                                AlignmentLengthCollector alignmentLengthCollector,
+                                AlignmentLogoCollector alignmentLogoCollector) {
+        this.sequenceAlignmentsCollector = sequenceAlignmentsCollector;
+        this.alignmentLengthCollector = alignmentLengthCollector;
+        this.alignmentLogoCollector = alignmentLogoCollector;
+    }
 
     @Override
     @QueryMapping(name = SchemaConstants.Query.ALIGNMENTS)
@@ -72,7 +86,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.TO) SequenceReference to,
             @Argument(name = SchemaConstants.Param.RANGE) List<Integer> range
     ) {
-        return SequenceAlignmentsCollector
+        return sequenceAlignmentsCollector
                 .request(queryId, from, to)
                 .range(range)
                 .get();
@@ -85,7 +99,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.GROUP) GroupReference group,
             @Argument(name = SchemaConstants.Param.GROUP_FILTER) List<String> filter
     ) {
-        return SequenceAlignmentsCollector
+        return sequenceAlignmentsCollector
                 .request(groupId, group)
                 .filter(filter)
                 .get();
@@ -98,7 +112,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
             @Argument(name = SchemaConstants.Param.OFFSET) Integer offset
     ){
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.ALIGNMENTS))
-            return SequenceAlignmentsCollector
+            return sequenceAlignmentsCollector
                     .request(
                         getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
                         SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
@@ -108,7 +122,7 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
                     .page(first, offset)
                     .get();
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS))
-            return SequenceAlignmentsCollector
+            return sequenceAlignmentsCollector
                     .request(
                         getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
                         GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP))
@@ -161,11 +175,11 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     @SchemaMapping(typeName = SequenceAlignments.CLASS_NAME, field = GraphqlSchemaMapping.ALIGNMENT_LENGTH)
     public Mono<Integer> getAlignmentLength(DataFetchingEnvironment dataFetchingEnvironment){
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS))
-            return AlignmentLengthCollector.request(
+            return alignmentLengthCollector.request(
                     getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
                     GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP))
             );
-        return AlignmentLengthCollector.request(
+        return alignmentLengthCollector.request(
                 getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
                 SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),
                 SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
@@ -175,13 +189,13 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     @SchemaMapping(typeName = SequenceAlignments.CLASS_NAME, field = GraphqlSchemaMapping.ALIGNMENT_LOGO)
     public Mono<List<List<Document>>> getAlignmentLogo(DataFetchingEnvironment dataFetchingEnvironment){
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS))
-            return AlignmentLogoCollector.build()
+            return alignmentLogoCollector
                     .request(
                             getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
                             GroupReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP)),
                             getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_FILTER)
                     );
-        return AlignmentLogoCollector.build()
+        return alignmentLogoCollector
                 .request(
                         getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
                         SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM)),

@@ -10,6 +10,7 @@ import org.rcsb.rcsbsequencecoordinates.collectors.utils.SequenceSymbol;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -20,16 +21,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/13/24, Tuesday
- **/
+ */
+@Service
 public class AlignmentLogoCollector {
 
-    private int alignmentLength = -1;
-    private AlignmentLogoCollector(){}
+    private final AlignmentLengthCollector alignmentLengthCollector;
+    private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
 
-    public static AlignmentLogoCollector build(){
-        return new AlignmentLogoCollector();
+    // TODO see how to avoid this field. Or how to reset it...
+    private int alignmentLength = -1;
+
+    private AlignmentLogoCollector(){
+        this.alignmentLengthCollector = new AlignmentLengthCollector();
+        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector();
     }
 
     public Mono<List<List<Document>>> request(String groupId, GroupReference group, List<String> filter){
@@ -45,19 +49,19 @@ public class AlignmentLogoCollector {
     }
 
     private Flux<int[][]> buildAlignmentLogo(String groupId, GroupReference group, List<String> filter){
-        return AlignmentLengthCollector.request(groupId, group)
+        return alignmentLengthCollector.request(groupId, group)
                 .doOnNext(this::setAlignmentLength)
                 .thenMany(processAlignments(groupId, group, filter));
     }
 
     private Flux<int[][]> buildAlignmentLogo(String queryId, SequenceReference from, SequenceReference to, List<String> filter){
-        return AlignmentLengthCollector.request(queryId, from, to)
+        return alignmentLengthCollector.request(queryId, from, to)
                 .doOnNext(this::setAlignmentLength)
                 .thenMany(processAlignments(queryId, from, to, filter));
     }
 
     private Flux<int[][]> processAlignments(String groupId, GroupReference group, List<String> filter){
-        return SequenceAlignmentsCollector
+        return sequenceAlignmentsCollector
                 .request(groupId, group)
                 .filter(filter)
                 .get()
@@ -65,7 +69,7 @@ public class AlignmentLogoCollector {
     }
 
     private Flux<int[][]> processAlignments(String queryId, SequenceReference from, SequenceReference to, List<String> filter){
-        return SequenceAlignmentsCollector
+        return sequenceAlignmentsCollector
                 .request(queryId, from, to)
                 .filter(filter)
                 .get()

@@ -37,10 +37,12 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
 
     private final Supplier<Flux<Document>> documentSupplier;
     private final SequenceReference reference;
+    private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
     private Function<Flux<Document>,Flux<Document>> filterRange = Function.identity();
     private Range range = new Range(0, -1);
 
     private GenomeAlignmentsCollector(String queryId, SequenceReference from, SequenceReference to){
+        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector();
         this.reference = from;
         if(testGenome(to))
             documentSupplier = () -> getProteinToGenome(queryId, from);
@@ -135,7 +137,7 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
     }
 
     private Flux<String> mapNcbiProteinToReference(Document genomeMap, SequenceReference to){
-        return SequenceAlignmentsCollector
+        return sequenceAlignmentsCollector
                 .mapIds(SequenceReference.NCBI_PROTEIN, to, List.of(genomeMap.getString(SchemaConstants.Field.TARGET_ID)));
     }
 

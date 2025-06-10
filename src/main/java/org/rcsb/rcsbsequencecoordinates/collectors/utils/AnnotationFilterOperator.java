@@ -70,7 +70,7 @@ public class AnnotationFilterOperator {
                 .collectList()
                 .filter(list-> !list.isEmpty())
                 .flatMapMany(
-                        ids -> SequenceAlignmentsCollector.mapIds(annotationReference.toSequenceReference(), sequenceReference, ids)
+                        ids -> new SequenceAlignmentsCollector().mapIds(annotationReference.toSequenceReference(), sequenceReference, ids)
                 );
     }
 

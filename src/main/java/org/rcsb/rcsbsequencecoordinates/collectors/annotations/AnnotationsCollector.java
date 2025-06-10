@@ -31,6 +31,12 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.annotations.Annotation
 @Service
 public class AnnotationsCollector {
 
+    private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
+
+    public AnnotationsCollector() {
+        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector();
+    }
+
     public Flux<Document> getAnnotations(
             String queryId,
             SequenceReference sequenceReference,
@@ -97,7 +103,7 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return SequenceAlignmentsCollector
+        return sequenceAlignmentsCollector
                 .request(
                         groupId,
                         groupReference
@@ -120,7 +126,7 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return SequenceAlignmentsCollector
+        return sequenceAlignmentsCollector
                 .request(
                     queryId,
                     sequenceReference,
@@ -148,7 +154,7 @@ public class AnnotationsCollector {
     }
 
     private Flux<Document> switchAlignmentEntityIdToReference(Document alignment, SequenceReference reference){
-        return SequenceAlignmentsCollector
+        return sequenceAlignmentsCollector
             .request(
                     alignment.getString(getTargetIndex()),
                     SequenceReference.PDB_ENTITY,

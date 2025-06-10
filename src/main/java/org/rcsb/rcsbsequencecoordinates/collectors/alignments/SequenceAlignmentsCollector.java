@@ -11,6 +11,7 @@ import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.utils.MongoStream;
 import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -23,18 +24,17 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentsR
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/23/24, Friday
- **/
+ */
+@Service
 public class SequenceAlignmentsCollector implements AlignmentsCollector {
 
-    public static AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to) {
+    public AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to) {
         if(testGenome(from, to))
             return GenomeAlignmentsCollector.request(queryId, from, to);
         return ProteinAlignmentsCollector.request(queryId, from, to);
     }
 
-    public static AlignmentsCollector request(String groupId, GroupReference group) {
+    public AlignmentsCollector request(String groupId, GroupReference group) {
         return ProteinAlignmentsCollector.request(groupId, group);
     }
 
@@ -68,7 +68,7 @@ public class SequenceAlignmentsCollector implements AlignmentsCollector {
         return null;
     }
 
-    public static Flux<String> mapIds(SequenceReference from, SequenceReference to, List<String> ids){
+    public Flux<String> mapIds(SequenceReference from, SequenceReference to, List<String> ids){
         if(equivalentReferences(from,to))
             return MapCollector.mapEquivalentReferences(from, to, ids);
         return getMapDocuments(
@@ -78,7 +78,7 @@ public class SequenceAlignmentsCollector implements AlignmentsCollector {
         ).map(map -> map.getString(getAltIndex(from, to)));
     }
 
-    private static Flux<Document> getMapDocuments(String collection, String attribute, List<String> ids){
+    private Flux<Document> getMapDocuments(String collection, String attribute, List<String> ids){
         List<Bson> aggregation = List.of(
                 match(in(attribute, ids)),
                 mapFields()
