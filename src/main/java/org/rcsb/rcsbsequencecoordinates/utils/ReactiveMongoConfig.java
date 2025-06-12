@@ -8,17 +8,20 @@ import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Configuration
 public class ReactiveMongoConfig {
 
-//    @Bean
-//    public MongoClient reactiveMongoClient(MongoProperties mongoProperties) {
-//        return MongoClients.create(mongoProperties.getUri());
-//    }
-
     @Bean
-    public MongoConnectionDetails mongoConnectionDetails(MongoProperties mongoProperties) {
-        return () -> new ConnectionString(mongoProperties.getUri());
+    public MongoConnectionDetails mongoConnectionDetails(MongoProperties props) {
+        String uri = String.format("mongodb://%s:%s@%s:%d",
+                props.getUsername(),
+                URLEncoder.encode(new String(props.getPassword()), StandardCharsets.UTF_8),
+                props.getHost(),
+                props.getPort());
+        return () -> new ConnectionString(uri);
     }
 
     @Bean
