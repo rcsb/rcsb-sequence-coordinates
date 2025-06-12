@@ -20,18 +20,18 @@ At project build time GrapQL schema is built from these definitions (`org.rcsb.g
 
 ## Application Configuration
 
-Configuration happens through the usual rcsb config method (from the
-[rcsb-util](https://github.com/rcsb/rcsb-util) package). Pass the configuration directory
-with `-DrcsbConfigProfile=<URL>`. The rcsb-sequence-coordinates config file must be called 
-`borrego.app.properties`.
+Configuration happens through Spring's configs mechanisms. 
+The properties that are required are:
 
-The properties are:
+| Property                            | Action                    | 
+|-------------------------------------|---------------------------|
+| `spring.data.mongodb.host`          | The MongoDB host          |
+| `spring.data.mongodb.port`          | The MongoDB port          |
+| `spring.data.mongodb.database`      | The MongoDB database name. |
 
-| Property             | Action                                                                              | 
-|----------------------|-------------------------------------------------------------------------------------|
-| `aw.mongodb.db.name` | Set the DB name for the annotations warehouse DB.                                   |
-| `aw.mongodb.uri`     | Set the MongoDB connection URI (including host, username and password) for the AWH. |
-
+The MongoDB username and password must be passed via environment variables:
+- `MONGO_USER`
+- `MONGO_PWD`
 
 ## GraphQL schema generation
 
