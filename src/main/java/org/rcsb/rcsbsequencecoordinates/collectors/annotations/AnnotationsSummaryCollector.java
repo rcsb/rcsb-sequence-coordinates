@@ -4,7 +4,6 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.annotations;
 
-import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentLengthCollector;
 import org.rcsb.rcsbsequencecoordinates.collectors.utils.AnnotationSourceMap;
@@ -13,8 +12,8 @@ import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.mojave.auto.FeaturesAdditionalPropertiesPropertyName;
+import org.rcsb.rcsbsequencecoordinates.utils.ReactiveMongoResource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import java.util.List;
@@ -33,9 +32,9 @@ public class AnnotationsSummaryCollector {
     private final AlignmentLengthCollector alignmentLengthCollector;
 
     @Autowired
-    public AnnotationsSummaryCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
-        this.annotationsCollector = new AnnotationsCollector(mongoClient, mongoProperties);
-        this.alignmentLengthCollector = new AlignmentLengthCollector(mongoClient, mongoProperties);
+    public AnnotationsSummaryCollector(ReactiveMongoResource mongoResource) {
+        this.annotationsCollector = new AnnotationsCollector(mongoResource);
+        this.alignmentLengthCollector = new AlignmentLengthCollector(mongoResource);
     }
 
     public Flux<Document> getAnnotations(

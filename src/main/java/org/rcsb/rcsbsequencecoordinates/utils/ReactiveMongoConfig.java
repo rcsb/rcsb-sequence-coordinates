@@ -28,4 +28,9 @@ public class ReactiveMongoConfig {
     public MongoClient reactiveMongoClient(MongoConnectionDetails mongoConnectionDetails) {
         return MongoClients.create(mongoConnectionDetails.getConnectionString());
     }
+
+    @Bean
+    public ReactiveMongoResource reactiveMongoResource(MongoClient mongoClient, MongoProperties mongoProperties) {
+        return new ReactiveMongoResource(mongoClient, mongoProperties.getDatabase());
+    }
 }

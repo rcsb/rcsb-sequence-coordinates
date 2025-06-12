@@ -4,13 +4,12 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.sequence;
 
-import com.mongodb.reactivestreams.client.MongoClient;
 import org.rcsb.common.constants.MongoCollections;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.rcsb.rcsbsequencecoordinates.collectors.map.MapCollector;
+import org.rcsb.rcsbsequencecoordinates.utils.ReactiveMongoResource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -28,15 +27,13 @@ import static com.mongodb.client.model.Projections.fields;
 @Service
 public class SequenceCollector {
 
-    private final MongoClient mongoClient;
-    private final MongoProperties mongoProperties;
+    private final ReactiveMongoResource mongoResource;
     private final MapCollector mapCollector;
 
     @Autowired
-    public  SequenceCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
-        this.mongoClient = mongoClient;
-        this.mongoProperties = mongoProperties;
-        this.mapCollector = new MapCollector(mongoClient, mongoProperties);
+    public  SequenceCollector(ReactiveMongoResource mongoResource) {
+        this.mongoResource = mongoResource;
+        this.mapCollector = new MapCollector(mongoResource);
     }
 
     public Mono<String> request(String sequenceId, SequenceReference reference){
@@ -46,7 +43,7 @@ public class SequenceCollector {
     }
 
     public Mono<String> request(String sequenceId) {
-        return Mono.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCES)
+        return Mono.from(mongoResource.getDatabase().getCollection(MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCES)
                 .aggregate(List.of(
                         match(eq(SequenceCoordinatesConstants.SEQUENCE_ID, sequenceId)),
                         project(fields(excludeId()))

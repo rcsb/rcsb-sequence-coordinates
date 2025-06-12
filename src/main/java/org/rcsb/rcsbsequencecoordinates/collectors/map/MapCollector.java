@@ -4,9 +4,8 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.map;
 
-import com.mongodb.reactivestreams.client.MongoClient;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.rcsb.rcsbsequencecoordinates.utils.ReactiveMongoResource;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -21,12 +20,10 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.map.MapHelper.*;
  */
 public class MapCollector {
 
-    private final MongoClient mongoClient;
-    private final MongoProperties mongoProperties;
+    private final ReactiveMongoResource mongoResource;
 
-    public MapCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
-        this.mongoClient = mongoClient;
-        this.mongoProperties = mongoProperties;
+    public MapCollector(ReactiveMongoResource mongoResource) {
+        this.mongoResource = mongoResource;
     }
 
     public Flux<String> getQueryIdMap(String queryId, SequenceReference reference){
@@ -60,7 +57,7 @@ public class MapCollector {
     }
 
     private Flux<String> pdbInstanceToEntityMap(List<String> ids) {
-        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(getPdbInstanceMapCollection()).aggregate(
+        return Flux.from(mongoResource.getDatabase().getCollection(getPdbInstanceMapCollection()).aggregate(
                 List.of(match(or(ids.stream().map(
                         id -> and(
                                 eq(getEntryIdField(), parseEntryFromInstance(id)),
@@ -75,7 +72,7 @@ public class MapCollector {
     }
 
     private Flux<String> pdbEntityToInstanceMap(List<String> ids) {
-        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(getPdbInstanceMapCollection()).aggregate(
+        return Flux.from(mongoResource.getDatabase().getCollection(getPdbInstanceMapCollection()).aggregate(
                 List.of(match(or(ids.stream().map(
                         id -> and(
                                 eq(getEntryIdField(), parseEntryFromEntity(id)),

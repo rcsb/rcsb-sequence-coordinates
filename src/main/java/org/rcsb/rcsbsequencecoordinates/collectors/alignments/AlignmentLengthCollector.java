@@ -4,14 +4,13 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.alignments;
 
-import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.rcsb.rcsbsequencecoordinates.collectors.sequence.SequenceCollector;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.mojave.SequenceCoordinatesConstants;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.rcsb.rcsbsequencecoordinates.utils.ReactiveMongoResource;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -29,14 +28,12 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentsR
 @Service
 public class AlignmentLengthCollector {
 
-    private final MongoClient mongoClient;
-    private final MongoProperties mongoProperties;
+    private final ReactiveMongoResource mongoResource;
     private final SequenceCollector sequenceCollector;
 
-    public AlignmentLengthCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
-        this.mongoClient = mongoClient;
-        this.mongoProperties = mongoProperties;
-        this.sequenceCollector = new SequenceCollector(mongoClient, mongoProperties);
+    public AlignmentLengthCollector(ReactiveMongoResource mongoResource) {
+        this.mongoResource = mongoResource;
+        this.sequenceCollector = new SequenceCollector(mongoResource);
     }
 
     public Mono<Integer> request(String queryId, SequenceReference from, SequenceReference to){
@@ -68,7 +65,7 @@ public class AlignmentLengthCollector {
                 match(eq(attribute, id)),
                 alignmentLengthFields()
         ));
-        return Mono.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(collection).aggregate(aggregation).first());
+        return Mono.from(mongoResource.getDatabase().getCollection(collection).aggregate(aggregation).first());
     }
 
     private Mono<Integer> getIdentityLength(String queryId){

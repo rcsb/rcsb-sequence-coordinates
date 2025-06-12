@@ -4,15 +4,14 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.alignments;
 
-import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.rcsb.rcsbsequencecoordinates.collectors.sequence.SequenceCollector;
 import org.rcsb.rcsbsequencecoordinates.collectors.utils.SequenceSymbol;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
+import org.rcsb.rcsbsequencecoordinates.utils.ReactiveMongoResource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -33,10 +32,10 @@ public class AlignmentLogoCollector {
     private final SequenceCollector sequenceCollector;
 
     @Autowired
-    public AlignmentLogoCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
-        this.alignmentLengthCollector = new AlignmentLengthCollector(mongoClient, mongoProperties);
-        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector(mongoClient, mongoProperties);
-        this.sequenceCollector = new SequenceCollector(mongoClient, mongoProperties);
+    public AlignmentLogoCollector(ReactiveMongoResource mongoResource) {
+        this.alignmentLengthCollector = new AlignmentLengthCollector(mongoResource);
+        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector(mongoResource);
+        this.sequenceCollector = new SequenceCollector(mongoResource);
     }
 
     public Mono<List<List<Document>>> request(String groupId, GroupReference group, List<String> filter){

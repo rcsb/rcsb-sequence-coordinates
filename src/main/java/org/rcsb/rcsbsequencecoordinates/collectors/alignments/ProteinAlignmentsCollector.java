@@ -4,7 +4,6 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.alignments;
 
-import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.rcsb.rcsbsequencecoordinates.collectors.sequence.SequenceCollector;
@@ -13,8 +12,8 @@ import org.rcsb.rcsbsequencecoordinates.collectors.utils.RangeIntersectionOperat
 import org.rcsb.rcsbsequencecoordinates.collectors.map.MapCollector;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
+import org.rcsb.rcsbsequencecoordinates.utils.ReactiveMongoResource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -36,8 +35,7 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentsR
 @Service
 public class ProteinAlignmentsCollector implements AlignmentsCollector {
 
-    private final MongoClient mongoClient;
-    private final MongoProperties mongoProperties;
+    private final ReactiveMongoResource mongoResource;
     private final SequenceCollector sequenceCollector;
     private final MapCollector mapCollector;
     private Supplier<Flux<Document>> documentSupplier;
@@ -48,22 +46,21 @@ public class ProteinAlignmentsCollector implements AlignmentsCollector {
     private int max = 0;
 
     @Autowired
-    public ProteinAlignmentsCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
-        this.mongoClient = mongoClient;
-        this.mongoProperties = mongoProperties;
-        this.sequenceCollector = new SequenceCollector(mongoClient, mongoProperties);
-        this.mapCollector = new MapCollector(mongoClient, mongoProperties);
+    public ProteinAlignmentsCollector(ReactiveMongoResource mongoResource) {
+        this.mongoResource = mongoResource;
+        this.sequenceCollector = new SequenceCollector(mongoResource);
+        this.mapCollector = new MapCollector(mongoResource);
     }
 
-    public static AlignmentsCollector request(MongoClient mongoClient, MongoProperties mongoProperties, String queryId, SequenceReference from, SequenceReference to) {
-        ProteinAlignmentsCollector pac =  new ProteinAlignmentsCollector(mongoClient, mongoProperties);
+    public static AlignmentsCollector request(ReactiveMongoResource mongoResource, String queryId, SequenceReference from, SequenceReference to) {
+        ProteinAlignmentsCollector pac =  new ProteinAlignmentsCollector(mongoResource);
         pac.sortAggregator = getSortFields(from,to);
         pac.documentSupplier = () -> pac.getAlignments(queryId, from, to);
         return pac;
     }
 
-    public static AlignmentsCollector request(MongoClient mongoClient, MongoProperties mongoProperties, String groupId, GroupReference group) {
-        ProteinAlignmentsCollector pac =  new ProteinAlignmentsCollector(mongoClient, mongoProperties);
+    public static AlignmentsCollector request(ReactiveMongoResource mongoResource, String groupId, GroupReference group) {
+        ProteinAlignmentsCollector pac =  new ProteinAlignmentsCollector(mongoResource);
         pac.sortAggregator = getGroupSortFields();
         pac.documentSupplier = () -> pac.getAlignments(groupId, group);
         return pac;
@@ -167,7 +164,7 @@ public class ProteinAlignmentsCollector implements AlignmentsCollector {
         aggregation.addAll(aggregationFilter(attribute));
         aggregation.addAll(limitRequest());
         aggregation.addAll(aggregationPage());
-        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(collection).aggregate(aggregation));
+        return Flux.from(mongoResource.getDatabase().getCollection(collection).aggregate(aggregation));
     }
 
     private List<Bson> aggregationPage(){
