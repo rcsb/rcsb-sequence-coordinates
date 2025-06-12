@@ -10,10 +10,7 @@ import reactor.core.publisher.Flux;
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/5/24, Monday
- **/
-
+*/
 public interface AlignmentBuilder {
     Flux<Document> apply(String queryId, SequenceReference from, SequenceReference to);
 }

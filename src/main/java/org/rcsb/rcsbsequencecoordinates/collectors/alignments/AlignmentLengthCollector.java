@@ -4,13 +4,14 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.alignments;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.rcsb.rcsbsequencecoordinates.collectors.sequence.SequenceCollector;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.mojave.SequenceCoordinatesConstants;
-import org.rcsb.utils.MongoStream;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -27,6 +28,16 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentsR
  */
 @Service
 public class AlignmentLengthCollector {
+
+    private final MongoClient mongoClient;
+    private final MongoProperties mongoProperties;
+    private final SequenceCollector sequenceCollector;
+
+    public AlignmentLengthCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
+        this.mongoClient = mongoClient;
+        this.mongoProperties = mongoProperties;
+        this.sequenceCollector = new SequenceCollector(mongoClient, mongoProperties);
+    }
 
     public Mono<Integer> request(String queryId, SequenceReference from, SequenceReference to){
         if(equivalentReferences(from,to))
@@ -57,11 +68,11 @@ public class AlignmentLengthCollector {
                 match(eq(attribute, id)),
                 alignmentLengthFields()
         ));
-        return Mono.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation).first());
+        return Mono.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(collection).aggregate(aggregation).first());
     }
 
     private Mono<Integer> getIdentityLength(String queryId){
-        return Mono.from(SequenceCollector.request(queryId).map(String::length));
+        return Mono.from(sequenceCollector.request(queryId).map(String::length));
     }
 
 }

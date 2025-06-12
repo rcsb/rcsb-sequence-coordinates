@@ -4,12 +4,13 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.alignments;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.rcsb.rcsbsequencecoordinates.collectors.map.MapCollector;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.utils.MongoStream;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -28,14 +29,24 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentsR
 @Service
 public class SequenceAlignmentsCollector implements AlignmentsCollector {
 
+    private final MongoClient mongoClient;
+    private final MongoProperties mongoProperties;
+    private final MapCollector mapCollector;
+
+    public SequenceAlignmentsCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
+        this.mongoClient = mongoClient;
+        this.mongoProperties = mongoProperties;
+        this.mapCollector = new MapCollector(mongoClient, mongoProperties);
+    }
+
     public AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to) {
         if(testGenome(from, to))
-            return GenomeAlignmentsCollector.request(queryId, from, to);
-        return ProteinAlignmentsCollector.request(queryId, from, to);
+            return GenomeAlignmentsCollector.request(queryId, from, to, mongoClient, mongoProperties, this);
+        return ProteinAlignmentsCollector.request(mongoClient, mongoProperties, queryId, from, to);
     }
 
     public AlignmentsCollector request(String groupId, GroupReference group) {
-        return ProteinAlignmentsCollector.request(groupId, group);
+        return ProteinAlignmentsCollector.request(mongoClient, mongoProperties, groupId, group);
     }
 
     @Override
@@ -70,7 +81,7 @@ public class SequenceAlignmentsCollector implements AlignmentsCollector {
 
     public Flux<String> mapIds(SequenceReference from, SequenceReference to, List<String> ids){
         if(equivalentReferences(from,to))
-            return MapCollector.mapEquivalentReferences(from, to, ids);
+            return mapCollector.mapEquivalentReferences(from, to, ids);
         return getMapDocuments(
                 getCollection(from, to),
                 getIndex(from, to),
@@ -83,7 +94,7 @@ public class SequenceAlignmentsCollector implements AlignmentsCollector {
                 match(in(attribute, ids)),
                 mapFields()
         );
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation));
+        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(collection).aggregate(aggregation));
     }
 
 }

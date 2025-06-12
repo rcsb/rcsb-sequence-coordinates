@@ -4,6 +4,7 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.utils;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.rcsb.rcsbsequencecoordinates.collectors.alignments.SequenceAlignmentsCollector;
 import org.rcsb.graphqlschema.params.AnnotationFilter;
@@ -11,7 +12,7 @@ import org.rcsb.graphqlschema.params.AnnotationFilter.FieldName;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
-import org.rcsb.utils.MongoStream;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import reactor.core.publisher.Flux;
 
 import java.util.*;
@@ -21,18 +22,22 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.map.MapHelper.instance
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/8/24, Thursday
- **/
+ */
 public class AnnotationFilterOperator {
 
     private final List<AnnotationFilter> annotationFilter;
+    private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
+    private final MongoClient mongoClient;
+    private final MongoProperties mongoProperties;
 
-    public static AnnotationFilterOperator build(List<AnnotationFilter> annotationFilter){
-        return new AnnotationFilterOperator(annotationFilter);
+    public static AnnotationFilterOperator build(List<AnnotationFilter> annotationFilter, MongoClient mongoClient, MongoProperties mongoProperties) {
+        return new AnnotationFilterOperator(annotationFilter, mongoClient, mongoProperties);
     }
 
-    private AnnotationFilterOperator(List<AnnotationFilter> annotationFilter){
+    private AnnotationFilterOperator(List<AnnotationFilter> annotationFilter, MongoClient mongoClient, MongoProperties mongoProperties) {
+        this.mongoClient = mongoClient;
+        this.mongoProperties = mongoProperties;
+        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector(mongoClient, mongoProperties);
         if(annotationFilter == null || annotationFilter.isEmpty())
             this.annotationFilter = null;
         else
@@ -70,14 +75,14 @@ public class AnnotationFilterOperator {
                 .collectList()
                 .filter(list-> !list.isEmpty())
                 .flatMapMany(
-                        ids -> new SequenceAlignmentsCollector().mapIds(annotationReference.toSequenceReference(), sequenceReference, ids)
+                        ids -> sequenceAlignmentsCollector.mapIds(annotationReference.toSequenceReference(), sequenceReference, ids)
                 );
     }
 
     private Flux<String> mapIds(AnnotationReference annotationReference, List<String>ids){
         if( !annotationReference.equals(AnnotationReference.PDB_INTERFACE) )
             return Flux.fromIterable(ids);
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getCollection(annotationReference)).aggregate(
+        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(getCollection(annotationReference)).aggregate(
                 getAggregation(ids)
         )).map(
                 interfaceMap -> instanceFromInstanceMap(interfaceMap.get(getTargetIdentifiersAttribute(), Document.class))

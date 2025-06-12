@@ -4,6 +4,7 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.annotations;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.rcsb.rcsbsequencecoordinates.collectors.alignments.SequenceAlignmentsCollector;
 import org.rcsb.rcsbsequencecoordinates.collectors.utils.AnnotationFilterOperator;
@@ -14,7 +15,8 @@ import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
-import org.rcsb.utils.MongoStream;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -25,16 +27,19 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.annotations.Annotation
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/5/24, Monday
- **/
+ */
 @Service
 public class AnnotationsCollector {
 
+    private final MongoClient mongoClient;
+    private final MongoProperties  mongoProperties;
     private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
 
-    public AnnotationsCollector() {
-        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector();
+    @Autowired
+    public AnnotationsCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
+        this.mongoClient = mongoClient;
+        this.mongoProperties = mongoProperties;
+        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector(mongoClient, mongoProperties);
     }
 
     public Flux<Document> getAnnotations(
@@ -82,7 +87,7 @@ public class AnnotationsCollector {
             AnnotationReference annotationReference,
             List<AnnotationFilter> annotationFilters
     ) {
-        return AnnotationFilterOperator.build(annotationFilters)
+        return AnnotationFilterOperator.build(annotationFilters, mongoClient, mongoProperties)
                 .applyToAlignments(SequenceReference.PDB_ENTITY, annotationReference)
                 .collectList()
                 .flatMapMany(
@@ -142,8 +147,8 @@ public class AnnotationsCollector {
             List<AnnotationFilter> annotationFilters,
             Document alignment
     ) {
-        AnnotationFilterOperator filter = AnnotationFilterOperator.build(annotationFilters);
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getCollection(annotationReference)).aggregate(
+        AnnotationFilterOperator filter = AnnotationFilterOperator.build(annotationFilters, mongoClient, mongoProperties);
+        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(getCollection(annotationReference)).aggregate(
                        getAggregation(alignment.getString(getTargetIndex()), annotationReference)
                ))
                .map(annotations -> addSource(annotationReference, annotations))

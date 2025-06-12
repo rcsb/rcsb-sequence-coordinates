@@ -17,6 +17,7 @@ import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.mojave.SequenceCoordinatesConstants;
+import org.rcsb.rcsbsequencecoordinates.collectors.sequence.SequenceCollector;
 import org.rcsb.rcsbsequencecoordinates.configuration.GraphqlSchemaMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -29,7 +30,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static org.rcsb.rcsbsequencecoordinates.collectors.sequence.SequenceCollector.request;
 import static org.rcsb.graphqlschema.reference.GroupReference.MATCHING_UNIPROT_ACCESSION;
 import static org.rcsb.graphqlschema.reference.GroupReference.SEQUENCE_IDENTITY;
 import static org.rcsb.utils.GraphqlMethods.getArgument;
@@ -47,14 +47,17 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
     private final AlignmentLengthCollector alignmentLengthCollector;
     private final AlignmentLogoCollector alignmentLogoCollector;
+    private final SequenceCollector sequenceCollector;
 
     @Autowired
     public AlignmentsController(SequenceAlignmentsCollector sequenceAlignmentsCollector,
                                 AlignmentLengthCollector alignmentLengthCollector,
-                                AlignmentLogoCollector alignmentLogoCollector) {
+                                AlignmentLogoCollector alignmentLogoCollector,
+                                SequenceCollector sequenceCollector) {
         this.sequenceAlignmentsCollector = sequenceAlignmentsCollector;
         this.alignmentLengthCollector = alignmentLengthCollector;
         this.alignmentLogoCollector = alignmentLogoCollector;
+        this.sequenceCollector = sequenceCollector;
     }
 
     @Override
@@ -139,11 +142,11 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
                 getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS) ||
                 getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Subscription.GROUP_ALIGNMENTS_SUBSCRIPTION)
         )
-            return request(
+            return sequenceCollector.request(
                     targetAlignment.getString(SequenceCoordinatesConstants.TARGET_ID),
                     SequenceReference.PDB_ENTITY
             );
-        return request(
+        return sequenceCollector.request(
                 targetAlignment.getString(SequenceCoordinatesConstants.TARGET_ID),
                 SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.TO))
         );
@@ -161,12 +164,12 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
                 getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.GROUP_ALIGNMENTS) &&
                 getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP).equals(MATCHING_UNIPROT_ACCESSION.toString())
         )
-            return request(
+            return sequenceCollector.request(
                     getArgument(dataFetchingEnvironment, SchemaConstants.Param.GROUP_ID),
                     SequenceReference.UNIPROT
             );
 
-        return request(
+        return sequenceCollector.request(
                 getArgument(dataFetchingEnvironment, SchemaConstants.Param.QUERY_ID),
                 SequenceReference.valueOf(getArgument(dataFetchingEnvironment, SchemaConstants.Param.FROM))
         );

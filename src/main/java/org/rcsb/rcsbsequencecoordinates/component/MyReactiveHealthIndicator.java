@@ -4,10 +4,12 @@
 
 package org.rcsb.rcsbsequencecoordinates.component;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
-import org.rcsb.utils.MongoStream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.ReactiveHealthIndicator;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -15,12 +17,18 @@ import reactor.core.publisher.Mono;
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 8/26/24, Monday
- **/
-
+ */
 @Component
 public class MyReactiveHealthIndicator implements ReactiveHealthIndicator {
+
+    private final MongoClient mongoClient;
+    private final MongoProperties mongoProperties;
+
+    @Autowired
+    public MyReactiveHealthIndicator(MongoClient mongoClient, MongoProperties mongoProperties) {
+        this.mongoClient = mongoClient;
+        this.mongoProperties = mongoProperties;
+    }
 
     @Override
     public Mono<Health> health() {
@@ -29,7 +37,7 @@ public class MyReactiveHealthIndicator implements ReactiveHealthIndicator {
     }
 
     private Mono<Health> doHealthCheck() {
-        return Mono.from(MongoStream.getMongoDatabase().runCommand(new Document("ping", 1))).map(
+        return Mono.from(mongoClient.getDatabase(mongoProperties.getDatabase()).runCommand(new Document("ping", 1))).map(
                 pinDoc -> {
                     if(pinDoc.getDouble("ok").equals(1.0))
                         return Health.up().build();

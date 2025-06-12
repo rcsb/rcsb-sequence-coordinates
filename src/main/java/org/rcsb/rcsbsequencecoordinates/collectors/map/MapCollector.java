@@ -4,8 +4,9 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.map;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import org.rcsb.graphqlschema.reference.SequenceReference;
-import org.rcsb.utils.MongoStream;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -17,25 +18,30 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.map.MapHelper.*;
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/5/24, Monday
- **/
-
+ */
 public class MapCollector {
 
-    public static Flux<String> getQueryIdMap(String queryId, SequenceReference reference){
+    private final MongoClient mongoClient;
+    private final MongoProperties mongoProperties;
+
+    public MapCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
+        this.mongoClient = mongoClient;
+        this.mongoProperties = mongoProperties;
+    }
+
+    public Flux<String> getQueryIdMap(String queryId, SequenceReference reference){
         if (Objects.requireNonNull(reference) == SequenceReference.PDB_INSTANCE)
             return pdbInstanceToEntityMap(queryId);
         return Flux.just(queryId);
     }
 
-    public static Flux<String> getTargetIdMap(String targetId, SequenceReference reference){
+    public Flux<String> getTargetIdMap(String targetId, SequenceReference reference){
         if (Objects.requireNonNull(reference) == SequenceReference.PDB_INSTANCE)
             return pdbEntityToInstanceMap(targetId);
         return Flux.just(targetId);
     }
 
-    public static Flux<String> mapEquivalentReferences(SequenceReference from, SequenceReference to, List<String> ids){
+    public Flux<String> mapEquivalentReferences(SequenceReference from, SequenceReference to, List<String> ids){
         if(from.equals(SequenceReference.PDB_ENTITY) && to.equals(SequenceReference.PDB_INSTANCE))
             return pdbEntityToInstanceMap(ids);
         if(from.equals(SequenceReference.PDB_INSTANCE) && to.equals(SequenceReference.PDB_ENTITY))
@@ -49,12 +55,12 @@ public class MapCollector {
         ));
     }
 
-    private static Flux<String> pdbInstanceToEntityMap(String id){
+    private Flux<String> pdbInstanceToEntityMap(String id){
         return pdbInstanceToEntityMap(List.of(id));
     }
 
-    private static Flux<String> pdbInstanceToEntityMap(List<String> ids) {
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getPdbInstanceMapCollection()).aggregate(
+    private Flux<String> pdbInstanceToEntityMap(List<String> ids) {
+        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(getPdbInstanceMapCollection()).aggregate(
                 List.of(match(or(ids.stream().map(
                         id -> and(
                                 eq(getEntryIdField(), parseEntryFromInstance(id)),
@@ -64,12 +70,12 @@ public class MapCollector {
         )).map(MapHelper::entityFromInstanceMap);
     }
 
-    private static Flux<String> pdbEntityToInstanceMap(String id){
+    private Flux<String> pdbEntityToInstanceMap(String id){
         return pdbEntityToInstanceMap(List.of(id));
     }
 
-    private static Flux<String> pdbEntityToInstanceMap(List<String> ids) {
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(getPdbInstanceMapCollection()).aggregate(
+    private Flux<String> pdbEntityToInstanceMap(List<String> ids) {
+        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(getPdbInstanceMapCollection()).aggregate(
                 List.of(match(or(ids.stream().map(
                         id -> and(
                                 eq(getEntryIdField(), parseEntryFromEntity(id)),

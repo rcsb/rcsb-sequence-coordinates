@@ -4,12 +4,15 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.alignments;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.rcsb.rcsbsequencecoordinates.collectors.sequence.SequenceCollector;
 import org.rcsb.rcsbsequencecoordinates.collectors.utils.SequenceSymbol;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -27,10 +30,13 @@ public class AlignmentLogoCollector {
 
     private final AlignmentLengthCollector alignmentLengthCollector;
     private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
+    private final SequenceCollector sequenceCollector;
 
-    private AlignmentLogoCollector(){
-        this.alignmentLengthCollector = new AlignmentLengthCollector();
-        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector();
+    @Autowired
+    public AlignmentLogoCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
+        this.alignmentLengthCollector = new AlignmentLengthCollector(mongoClient, mongoProperties);
+        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector(mongoClient, mongoProperties);
+        this.sequenceCollector = new SequenceCollector(mongoClient, mongoProperties);
     }
 
     public Mono<List<List<Document>>> request(String groupId, GroupReference group, List<String> filter){
@@ -72,7 +78,7 @@ public class AlignmentLogoCollector {
     }
 
     private Mono<int[][]> buildAlignmentLogo(Document alignment, int alignmentLength){
-        return SequenceCollector.request(alignment.getString(SchemaConstants.Field.TARGET_ID))
+        return sequenceCollector.request(alignment.getString(SchemaConstants.Field.TARGET_ID))
                 .flatMap(sequence->buildAlignmentLogo(alignment, sequence, alignmentLength));
     }
 

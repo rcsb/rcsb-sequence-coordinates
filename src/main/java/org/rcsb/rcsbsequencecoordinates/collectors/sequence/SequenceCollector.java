@@ -4,10 +4,14 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.sequence;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import org.rcsb.common.constants.MongoCollections;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.mojave.SequenceCoordinatesConstants;
-import org.rcsb.utils.MongoStream;
+import org.rcsb.rcsbsequencecoordinates.collectors.map.MapCollector;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -17,24 +21,32 @@ import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
-import static org.rcsb.rcsbsequencecoordinates.collectors.map.MapCollector.getQueryIdMap;
 
 /**
  * @author : joan
- * @mailto : joan.segura@rcsb.org
- * @created : 2/5/24, Monday
- **/
-
+ */
+@Service
 public class SequenceCollector {
 
-    public static Mono<String> request(String sequenceId, SequenceReference reference){
+    private final MongoClient mongoClient;
+    private final MongoProperties mongoProperties;
+    private final MapCollector mapCollector;
+
+    @Autowired
+    public  SequenceCollector(MongoClient mongoClient, MongoProperties mongoProperties) {
+        this.mongoClient = mongoClient;
+        this.mongoProperties = mongoProperties;
+        this.mapCollector = new MapCollector(mongoClient, mongoProperties);
+    }
+
+    public Mono<String> request(String sequenceId, SequenceReference reference){
         if(reference.equals(SequenceReference.PDB_INSTANCE))
-            return getQueryIdMap(sequenceId, reference).flatMap(SequenceCollector::request).next();
+            return mapCollector.getQueryIdMap(sequenceId, reference).flatMap(this::request).next();
         return request(sequenceId);
     }
 
-    public static Mono<String> request(String sequenceId){
-        return Mono.from(MongoStream.getMongoDatabase().getCollection(MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCES)
+    public Mono<String> request(String sequenceId) {
+        return Mono.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(MongoCollections.COLL_SEQUENCE_COORDINATES_SEQUENCES)
                 .aggregate(List.of(
                         match(eq(SequenceCoordinatesConstants.SEQUENCE_ID, sequenceId)),
                         project(fields(excludeId()))

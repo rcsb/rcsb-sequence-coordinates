@@ -4,6 +4,7 @@
 
 package org.rcsb.rcsbsequencecoordinates.collectors.alignments;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.rcsb.rcsbsequencecoordinates.collectors.map.MapCollector;
@@ -11,8 +12,8 @@ import org.rcsb.rcsbsequencecoordinates.collectors.utils.GenomeRangeIntersection
 import org.rcsb.rcsbsequencecoordinates.collectors.utils.RangeIntersectionOperator;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
-import org.rcsb.utils.MongoStream;
 import org.rcsb.utils.Range;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import reactor.core.publisher.Flux;
 
@@ -33,14 +34,21 @@ import static org.rcsb.rcsbsequencecoordinates.collectors.alignments.GenomeAlign
  */
 public class GenomeAlignmentsCollector implements AlignmentsCollector {
 
+    private final MongoClient mongoClient;
+    private final MongoProperties mongoProperties;
+
     private final Supplier<Flux<Document>> documentSupplier;
     private final SequenceReference reference;
     private final SequenceAlignmentsCollector sequenceAlignmentsCollector;
+    private final MapCollector mapCollector;
     private Function<Flux<Document>,Flux<Document>> filterRange = Function.identity();
     private Range range = new Range(0, -1);
 
-    private GenomeAlignmentsCollector(String queryId, SequenceReference from, SequenceReference to){
-        this.sequenceAlignmentsCollector = new SequenceAlignmentsCollector();
+    private GenomeAlignmentsCollector(String queryId, SequenceReference from, SequenceReference to, MongoClient mongoClient, MongoProperties mongoProperties, SequenceAlignmentsCollector sequenceAlignmentsCollector) {
+        this.mongoClient = mongoClient;
+        this.mongoProperties = mongoProperties;
+        this.sequenceAlignmentsCollector = sequenceAlignmentsCollector;
+        this.mapCollector = new MapCollector(mongoClient, mongoProperties);
         this.reference = from;
         if(testGenome(to))
             documentSupplier = () -> getProteinToGenome(queryId, from);
@@ -54,8 +62,8 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
             ));
     }
 
-    public static AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to) {
-        return new GenomeAlignmentsCollector(queryId, from, to);
+    public static AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to, MongoClient mongoClient, MongoProperties mongoProperties, SequenceAlignmentsCollector sequenceAlignmentsCollector) {
+        return new GenomeAlignmentsCollector(queryId, from, to, mongoClient, mongoProperties, sequenceAlignmentsCollector);
     }
 
     @Override
@@ -99,7 +107,7 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
 
     private Flux<Document> getProteinToGenome(String queryId, SequenceReference from){
         return ProteinAlignmentsCollector
-                .request(queryId, from, SequenceReference.NCBI_PROTEIN)
+                .request(mongoClient, mongoProperties, queryId, from, SequenceReference.NCBI_PROTEIN)
                 .sort(getTargetCoverage(), IndexDirection.DESCENDING)
                 .max(1)
                 .get()
@@ -109,7 +117,7 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
     private Flux<Document> getGenomeToProtein(String queryId, SequenceReference to){
         return mapNcbiGenomeToProtein(queryId)
                 .flatMap(map -> mapNcbiProteinToReference(map, to))
-                .flatMap(targetId-> MapCollector.getTargetIdMap(targetId, to))
+                .flatMap(targetId-> mapCollector.getTargetIdMap(targetId, to))
                 .distinct()
                 .flatMap(
                         targetId -> getProteinToGenome(targetId, to).map(d -> switchAlignment(targetId, d))
@@ -144,7 +152,7 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
                 match(eq(attribute, id)),
                 genomeFields()
         ));
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation));
+        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(collection).aggregate(aggregation));
     }
 
     private Flux<Document> getMapDocuments(String collection, String attribute, String id){
@@ -152,7 +160,7 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
                 buildMatch(attribute, id),
                 mapFields()
         ));
-        return Flux.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation));
+        return Flux.from(mongoClient.getDatabase(mongoProperties.getDatabase()).getCollection(collection).aggregate(aggregation));
     }
 
     private Bson buildMatch(String attribute, String id){
