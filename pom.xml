@@ -125,11 +125,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.rcsb</groupId>
-			<artifactId>rcsb-util</artifactId>
-			<version>1.8.2</version>
-		</dependency>
 
 		<!--The rsocket client needs this-->
 		<dependency>
