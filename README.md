@@ -32,7 +32,7 @@ The properties that are required are:
 | `spring.data.mongodb.database`   | The MongoDB database name where the annotations data lives.              |
 | `seqcoords.mongo-db-uri-scheme`  | The MongoDB URI scheme (MongoDB connection string), default is "mongodb" |
 
-The MongoDB username and password must be passed via environment variables:
+The MongoDB username and password must be passed via environment variables. These 2 together with the above will compose the MongoDB URI:
 - `MONGO_USER`
 - `MONGO_PWD`
 
