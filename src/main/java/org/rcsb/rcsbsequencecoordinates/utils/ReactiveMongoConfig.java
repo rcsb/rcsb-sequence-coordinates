@@ -42,6 +42,7 @@ public class ReactiveMongoConfig {
 
     @Bean
     public MongoClient reactiveMongoClient(MongoConnectionDetails mongoConnectionDetails) {
+        logger.info("Will now create reactive MongoDB client with URI {}", mongoConnectionDetails.getConnectionString());
         return MongoClients.create(mongoConnectionDetails.getConnectionString());
     }
 
