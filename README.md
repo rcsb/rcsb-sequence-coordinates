@@ -16,7 +16,7 @@ At project build time GrapQL schema is built from these definitions (`org.rcsb.g
   The wiring factory defines the right way of accessing the GraphQL schema fields in data objects.
   - `controller`: Defines the different GraphQL entry points for alignments and annotations requests. 
   Some of the GrapQL schema fields are mapped to specific entry points using the `@SchemaMapping` annotation. 
-- `org.rcsb.collector`: Contains the methods to fetch alignments and annotations from a MongoDB. Data is always dispatched as streams.
+- `org.rcsb.rcsbsequencecoordinates.collectors`: Contains the methods to fetch alignments and annotations from a MongoDB. Data is always dispatched as streams.
 
 ## Application Configuration
 
