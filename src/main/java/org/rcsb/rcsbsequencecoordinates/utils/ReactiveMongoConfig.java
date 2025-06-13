@@ -42,7 +42,7 @@ public class ReactiveMongoConfig {
                 pwdEncoded,
                 props.getHost());
         final String uri;
-        if (props.getPort() > 0)
+        if (props.getPort()!=null && props.getPort() > 0)
             uri = uriNoPort + ":" + props.getPort();
         else
             uri = uriNoPort;
