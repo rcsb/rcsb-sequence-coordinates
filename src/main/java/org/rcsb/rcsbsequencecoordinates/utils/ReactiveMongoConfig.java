@@ -3,6 +3,9 @@ package org.rcsb.rcsbsequencecoordinates.utils;
 import com.mongodb.ConnectionString;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
+import org.rcsb.rcsbsequencecoordinates.configuration.SeqCoordAppConfigs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.mongo.MongoConnectionDetails;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,13 +17,26 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class ReactiveMongoConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(ReactiveMongoConfig.class);
+
+    private final SeqCoordAppConfigs seqCoordAppConfigs;
+
+    public ReactiveMongoConfig(SeqCoordAppConfigs seqCoordAppConfigs) {
+        this.seqCoordAppConfigs = seqCoordAppConfigs;
+    }
+
     @Bean
     public MongoConnectionDetails mongoConnectionDetails(MongoProperties props) {
-        String uri = String.format("mongodb://%s:%s@%s:%d",
-                props.getUsername(),
-                URLEncoder.encode(new String(props.getPassword()), StandardCharsets.UTF_8),
+        String userEncoded = URLEncoder.encode(props.getUsername(), StandardCharsets.UTF_8);
+        String pwdEncoded = URLEncoder.encode(new String(props.getPassword()), StandardCharsets.UTF_8);
+        String uri = String.format("%s://%s:%s@%s:%d",
+                seqCoordAppConfigs.getMongoDbUriScheme(),
+                userEncoded,
+                pwdEncoded,
                 props.getHost(),
                 props.getPort());
+        String uriRedacted = uri.replace(userEncoded, "********").replace(pwdEncoded, "********");
+        logger.info("Reactive MongoDB connection final connection URI: {}", uriRedacted);
         return () -> new ConnectionString(uri);
     }
 
