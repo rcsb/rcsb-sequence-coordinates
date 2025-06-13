@@ -25,12 +25,12 @@ can also be provided via CLI parameter, configurations are composable. See [more
 
 The properties that are required are:
 
-| Property                         | Action                                                      | 
-|----------------------------------|-------------------------------------------------------------|
-| `spring.data.mongodb.host`       | The MongoDB host                                            |
-| `spring.data.mongodb.port`       | The MongoDB port                                            |
-| `spring.data.mongodb.database`   | The MongoDB database name where the annotations data lives. |
-| `seqcoords.mongo-db-uri-scheme`  | The MongoDB URI scheme, default is "mongodb"                |
+| Property                         | Action                                                                   | 
+|----------------------------------|--------------------------------------------------------------------------|
+| `spring.data.mongodb.host`       | The MongoDB host                                                         |
+| `spring.data.mongodb.port`       | The MongoDB port                                                         |
+| `spring.data.mongodb.database`   | The MongoDB database name where the annotations data lives.              |
+| `seqcoords.mongo-db-uri-scheme`  | The MongoDB URI scheme (MongoDB connection string), default is "mongodb" |
 
 The MongoDB username and password must be passed via environment variables:
 - `MONGO_USER`
