@@ -36,12 +36,14 @@ public class ReactiveMongoConfig {
         }
         String userEncoded = URLEncoder.encode(props.getUsername(), StandardCharsets.UTF_8);
         String pwdEncoded = URLEncoder.encode(new String(props.getPassword()), StandardCharsets.UTF_8);
-        String uri = String.format("%s://%s:%s@%s:%d",
+        String uri = String.format("%s://%s:%s@%s",
                 seqCoordAppConfigs.getMongoDbUriScheme(),
                 userEncoded,
                 pwdEncoded,
-                props.getHost(),
-                props.getPort());
+                props.getHost());
+        if (props.getPort() > 0) {
+            uri = uri + ":" + props.getPort();
+        }
         logger.info("Reactive MongoDB connection final connection URI: {}", getUriRedacted(uri, userEncoded, pwdEncoded));
         return () -> new ConnectionString(uri);
     }
