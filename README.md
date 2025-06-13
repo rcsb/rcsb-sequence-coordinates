@@ -20,14 +20,16 @@ At project build time GrapQL schema is built from these definitions (`org.rcsb.g
 
 ## Application Configuration
 
-Configuration happens through Spring's configs mechanisms. 
+Configuration happens through Spring's configs mechanisms. In brief: properties or yaml files can be used, any configuration 
+can also be provided via CLI parameter, configurations are composable. See [more info here](https://docs.spring.io/spring-boot/reference/features/external-config.html#features.external-config.files).
+
 The properties that are required are:
 
-| Property                            | Action                    | 
-|-------------------------------------|---------------------------|
-| `spring.data.mongodb.host`          | The MongoDB host          |
-| `spring.data.mongodb.port`          | The MongoDB port          |
-| `spring.data.mongodb.database`      | The MongoDB database name. |
+| Property                            | Action                                                      | 
+|-------------------------------------|-------------------------------------------------------------|
+| `spring.data.mongodb.host`          | The MongoDB host                                            |
+| `spring.data.mongodb.port`          | The MongoDB port                                            |
+| `spring.data.mongodb.database`      | The MongoDB database name where the annotations data lives. |
 
 The MongoDB username and password must be passed via environment variables:
 - `MONGO_USER`
