@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 @Configuration
 public class ReactiveMongoConfig {
@@ -27,6 +28,12 @@ public class ReactiveMongoConfig {
 
     @Bean
     public MongoConnectionDetails mongoConnectionDetails(MongoProperties props) {
+        if (props.getUsername().isBlank()) {
+            logger.warn("Username read from environment variable is blank");
+        }
+        if (Arrays.toString(props.getPassword()).isBlank()) {
+            logger.warn("Password read from environment variable is blank");
+        }
         String userEncoded = URLEncoder.encode(props.getUsername(), StandardCharsets.UTF_8);
         String pwdEncoded = URLEncoder.encode(new String(props.getPassword()), StandardCharsets.UTF_8);
         String uri = String.format("%s://%s:%s@%s:%d",
@@ -35,19 +42,21 @@ public class ReactiveMongoConfig {
                 pwdEncoded,
                 props.getHost(),
                 props.getPort());
-        String uriRedacted = uri.replace(userEncoded, "********").replace(pwdEncoded, "********");
-        logger.info("Reactive MongoDB connection final connection URI: {}", uriRedacted);
+        logger.info("Reactive MongoDB connection final connection URI: {}", getUriRedacted(uri, userEncoded, pwdEncoded));
         return () -> new ConnectionString(uri);
     }
 
     @Bean
     public MongoClient reactiveMongoClient(MongoConnectionDetails mongoConnectionDetails) {
-        logger.info("Will now create reactive MongoDB client with URI {}", mongoConnectionDetails.getConnectionString());
         return MongoClients.create(mongoConnectionDetails.getConnectionString());
     }
 
     @Bean
     public ReactiveMongoResource reactiveMongoResource(MongoClient mongoClient, MongoProperties mongoProperties) {
         return new ReactiveMongoResource(mongoClient, mongoProperties.getDatabase());
+    }
+
+    private String getUriRedacted(String uri, String userEncoded, String pwdEncoded) {
+        return uri.replace(userEncoded, "********").replace(pwdEncoded, "********");
     }
 }
