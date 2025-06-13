@@ -100,29 +100,16 @@ ingress:
 
 # App specific configurations
 seqcoordAppProperties:
-  log4j2.xml: |-
-    <configuration status="WARN" monitorInterval="30">
-      <Properties>
-          <Property name="PATTERN">%d{yyy-MM-dd HH:mm:ss.SSS Z} [%t] %-5level %logger{36} - %msg%n</Property>
-      </Properties>
-      <appenders>
-          <Console name="stdout" target="SYSTEM_OUT" follow="true">
-              <PatternLayout pattern="${PATTERN}"/>
-          </Console>
-      </appenders>
-      <loggers>
-          <root level="info">
-              <appender-ref ref="stdout"/>
-          </root>
-          <!--  Setting special levels for some packages  -->
-          <Logger name="org.mongodb.driver" level="warn" additivity="false">
-              <appender-ref ref="stdout"/>
-          </Logger>
-      </loggers>
-    </configuration>
-  
+  seqcoord.a.app.properties: |-
+    spring.data.mongodb.host=production-mongodb-borrego-a-svc.production.svc.cluster.local
+    spring.data.mongodb.database=annot
+    seqcoords.mongo-db-uri-scheme=mongodb+srv
+  seqcoord.b.app.properties: |-
+    spring.data.mongodb.host=production-mongodb-borrego-b-svc.production.svc.cluster.local
+    spring.data.mongodb.database=annot
+    seqcoords.mongo-db-uri-scheme=mongodb+srv
 
-javaOptions: "-Xmx20g  -server -DrcsbConfigProfile=file:///var/www -Dlog4j.configurationFile=/var/www/log4j2.xml"
+javaOptions: "-Xmx20g -server -Dspring.config.additional-location=/var/www/seqcoord.app.properties -Dlog4j.configurationFile=/var/www/log4j2.xml"
 
 elasticAPM:
   elasticAPMEnabled: false
