@@ -10,13 +10,13 @@
 	</parent>
 	<groupId>org.rcsb</groupId>
 	<artifactId>rcsb-sequence-coordinates</artifactId>
-	<version>0.0.52-SNAPSHOT</version>
+	<version>1.0.3-SNAPSHOT</version>
 	<name>rcsb-sequence-coordinates</name>
 	<description>RCSB PDB Sequence Alignment Map Service</description>
 	<properties>
 		<java.version>17</java.version>
 
-		<rcsb.mojave.model.version>1.49.1</rcsb.mojave.model.version>
+		<rcsb.mojave.model.version>1.50.1</rcsb.mojave.model.version>
 		<rcsb.common.version>2.8.0</rcsb.common.version>
 
 		<schema.location>src/main/resources/schema</schema.location>
@@ -52,6 +52,34 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.mongodb</groupId>
+					<artifactId>mongodb-driver-reactivestreams</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.mongodb</groupId>
+					<artifactId>mongodb-driver-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-reactivestreams</artifactId>
+			<version>5.2.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.mongodb</groupId>
+					<artifactId>mongodb-driver-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-core</artifactId>
+			<version>5.2.0</version>
 		</dependency>
 
 		<dependency>
