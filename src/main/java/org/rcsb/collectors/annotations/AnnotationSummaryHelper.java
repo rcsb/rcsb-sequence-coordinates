@@ -60,7 +60,7 @@ public class AnnotationSummaryHelper {
         if(region.containsKey(SchemaConstants.Field.VALUES))
             mapValuesToSummary(summary, region);
         int begin = region.getInteger(SchemaConstants.Field.BEG_SEQ_ID);
-        int end = region.getInteger(SchemaConstants.Field.END_SEQ_ID);
+        int end = region.containsKey(SchemaConstants.Field.END_SEQ_ID) ? region.getInteger(SchemaConstants.Field.END_SEQ_ID) : begin;
         for(int i=begin; i<=end; i++){
             summary[i-1] += 1.;
         }
