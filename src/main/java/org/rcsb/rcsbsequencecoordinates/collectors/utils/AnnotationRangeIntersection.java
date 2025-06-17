@@ -37,7 +37,7 @@ public class AnnotationRangeIntersection implements RangeIntersection {
     public int getRegionEnd(Document region) {
         if(region.containsKey(SchemaConstants.Field.VALUES))
             return region.getInteger(SchemaConstants.Field.BEG_SEQ_ID) + region.getList(SchemaConstants.Field.VALUES, Double.class).size() -1;
-        return region.getInteger(SchemaConstants.Field.END_SEQ_ID);
+        return region.containsKey(SchemaConstants.Field.END_SEQ_ID) ? region.getInteger(SchemaConstants.Field.END_SEQ_ID) : region.getInteger(SchemaConstants.Field.BEG_SEQ_ID);
     }
 
     @Override
