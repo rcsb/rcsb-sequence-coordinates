@@ -1,4 +1,4 @@
-# Default values for prerelease.
+# Default values for rcsb-sequence-coordinates chart.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -29,7 +29,7 @@ image:
   repository: harbor.devops.k8s.rcsb.org/rcsb/rcsb-sequence-coordinates
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "production"
+  tag: "latest"
 
 imagePullSecrets: "harbor-docker-registry-conf"
 
@@ -72,47 +72,48 @@ resources:
     memory: 64Gi
 
 ingress:
-  enabled: true
+  enabled: false
   className: "haproxy"
   annotations:
     cert-manager.io/cluster-issuer: rutgers-acme
     kubernetes.io/tls-acme: "true"
-    haproxy.org/allow-list: "132.249.210.0/24,128.6.150.0/25,132.249.213.0/24,128.6.158.0/23"
+    haproxy.org/allow-list:
   hosts:
-    - host: seqcoordinates.k8s.rcsb.org
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-    - host: seqcoordinates.east.k8s.rcsb.org
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-    - host: seqcoordinates.west.k8s.rcsb.org
+    - host:
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls:
     - hosts:
-        - seqcoordinates.k8s.rcsb.org
-        - seqcoordinates.east.k8s.rcsb.org
-        - seqcoordinates.west.k8s.rcsb.org
-      secretName: seqcoordinates.k8s.rcsb.org-tls
+      secretName:
 
 # App specific configurations
 seqcoordAppProperties:
-  seqcoord.a.app.properties: |-
-    spring.data.mongodb.host=production-mongodb-borrego-a-svc.production.svc.cluster.local
-    spring.data.mongodb.database=annot
-    seqcoords.mongo-db-uri-scheme=mongodb+srv
-  seqcoord.b.app.properties: |-
-    spring.data.mongodb.host=production-mongodb-borrego-b-svc.production.svc.cluster.local
-    spring.data.mongodb.database=annot
-    seqcoords.mongo-db-uri-scheme=mongodb+srv
+  # mongoDwUser is the MongoDB DataWarehouse user name
+  mongoDwUser: readonly
+  log4j2.xml: |-
+    <Configuration status="WARN" monitorInterval="30">
+        <Properties>
+            <Property name="PATTERN">%d{yyy-MM-dd HH:mm:ss.SSS Z} [%t] %-5level %logger{36} - %msg%n</Property>
+        </Properties>
+        <Appenders>
+            <Console name="console" target="SYSTEM_OUT">
+              <PatternLayout pattern="${PATTERN}"/>
+            </Console>
+        </Appenders>
+        <Loggers>
+            <Root level="info">
+                <AppenderRef ref="console"/>
+            </Root>
+        </Loggers>
+    </Configuration>
+  seqcoord.a.app.properties:
+  seqcoord.b.app.properties:
 
-javaOptions: "-Xmx20g -server -Dspring.config.additional-location=/var/www/seqcoord.app.properties -Dlog4j.configurationFile=/var/www/log4j2.xml"
+javaOptions: "-Xmx20g -server -Dspring.config.additional-location=/var/www -Dlog4j.configurationFile=/var/www/log4j2.xml"
 
 elasticAPM:
   elasticAPMEnabled: false
   elasticAPMImage: docker.elastic.co/observability/apm-agent-java:1.51.0
   elasticAPMServerUrl: http://apm.devops:8200
-  elasticAPMEnvironment: k8s-production
+  elasticAPMEnvironment:

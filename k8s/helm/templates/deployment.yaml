@@ -80,9 +80,9 @@ spec:
             - mountPath: /var/www/log4j2.xml
               subPath: log4j2.xml
               name: {{ include "helm_chart.fullname" $ }}-config
-            - mountPath: /var/www/borrego.app.properties
-              subPath: seqcoordinates.{{ . }}.app.properties
-              name: {{ include "helm_chart.fullname" $ }}-secret
+            - mountPath: /var/www/seqcoord.app.properties
+              subPath: seqcoord.{{ . }}.app.properties
+              name: {{ include "helm_chart.fullname" $ }}-config
             - mountPath: /elastic/apm/agent
               name: elastic-apm-agent
           resources:
@@ -90,6 +90,13 @@ spec:
           env:
             - name: JDK_JAVA_OPTIONS
               value: {{ $.Values.javaOptions }}
+            - name: MONGO_USER
+              value: {{ $.Values.seqcoordAppProperties.mongoDwUser }}
+            - name: MONGO_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "helm_chart.fullname" $ }}-secret
+                  key: mongodb_pwd
             - name: JAVA_TOOL_OPTIONS
               value: -javaagent:/elastic/apm/agent/elastic-apm-agent.jar
             - name: ELASTIC_APM_SERVER_URL

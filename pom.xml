@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.rcsb</groupId>
 	<artifactId>rcsb-sequence-coordinates</artifactId>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<name>rcsb-sequence-coordinates</name>
 	<description>RCSB PDB Sequence Alignment Map Service</description>
 	<properties>
@@ -125,11 +125,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.rcsb</groupId>
-			<artifactId>rcsb-util</artifactId>
-			<version>1.8.2</version>
-		</dependency>
 
 		<!--The rsocket client needs this-->
 		<dependency>
@@ -198,7 +193,7 @@
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.3.1</version>
+				<version>3.4.5</version>
 				<configuration>
 					<container>
 						<ports>

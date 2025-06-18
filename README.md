@@ -16,22 +16,25 @@ At project build time GrapQL schema is built from these definitions (`org.rcsb.g
   The wiring factory defines the right way of accessing the GraphQL schema fields in data objects.
   - `controller`: Defines the different GraphQL entry points for alignments and annotations requests. 
   Some of the GrapQL schema fields are mapped to specific entry points using the `@SchemaMapping` annotation. 
-- `org.rcsb.collector`: Contains the methods to fetch alignments and annotations from a MongoDB. Data is always dispatched as streams.
+  - `collectors`: Contains the methods to fetch alignments and annotations from a MongoDB. Data is always dispatched as streams.
 
 ## Application Configuration
 
-Configuration happens through the usual rcsb config method (from the
-[rcsb-util](https://github.com/rcsb/rcsb-util) package). Pass the configuration directory
-with `-DrcsbConfigProfile=<URL>`. The rcsb-sequence-coordinates config file must be called 
-`borrego.app.properties`.
+Configuration happens through Spring's configs mechanisms. In brief: properties or yaml files can be used, any configuration 
+can also be provided via CLI parameter, configurations are composable. See [more info here](https://docs.spring.io/spring-boot/reference/features/external-config.html#features.external-config.files).
 
-The properties are:
+The properties that are required are:
 
-| Property             | Action                                                                              | 
-|----------------------|-------------------------------------------------------------------------------------|
-| `aw.mongodb.db.name` | Set the DB name for the annotations warehouse DB.                                   |
-| `aw.mongodb.uri`     | Set the MongoDB connection URI (including host, username and password) for the AWH. |
+| Property                         | Action                                                                   | 
+|----------------------------------|--------------------------------------------------------------------------|
+| `spring.data.mongodb.host`       | The MongoDB host                                                         |
+| `spring.data.mongodb.port`       | The MongoDB port                                                         |
+| `spring.data.mongodb.database`   | The MongoDB database name where the annotations data lives.              |
+| `seqcoords.mongo-db-uri-scheme`  | The MongoDB URI scheme (MongoDB connection string), default is "mongodb" |
 
+The MongoDB username and password must be passed via environment variables. These 2 together with the above will compose the MongoDB URI:
+- `MONGO_USER`
+- `MONGO_PWD`
 
 ## GraphQL schema generation
 

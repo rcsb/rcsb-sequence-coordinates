@@ -5,8 +5,8 @@
 package org.rcsb.rcsbsequencecoordinates.controller;
 
 import org.bson.Document;
-import org.rcsb.collectors.annotations.AnnotationsCollector;
-import org.rcsb.collectors.annotations.AnnotationsSummaryCollector;
+import org.rcsb.rcsbsequencecoordinates.collectors.annotations.AnnotationsCollector;
+import org.rcsb.rcsbsequencecoordinates.collectors.annotations.AnnotationsSummaryCollector;
 import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.service.AnnotationsSubscription;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
@@ -14,6 +14,7 @@ import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.graphqlschema.service.AnnotationsQuery;
 import org.rcsb.graphqlschema.reference.GroupReference;
 import org.rcsb.graphqlschema.reference.SequenceReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
@@ -32,6 +33,15 @@ import java.util.List;
 @Controller
 public class AnnotationsController implements AnnotationsQuery<Flux<Document>> , AnnotationsSubscription<Flux<Document>> {
 
+    private final AnnotationsCollector annotationsCollector;
+    private final AnnotationsSummaryCollector annotationsSummaryCollector;
+
+    @Autowired
+    public AnnotationsController(AnnotationsCollector annotationsCollector, AnnotationsSummaryCollector annotationsSummaryCollector) {
+        this.annotationsCollector = annotationsCollector;
+        this.annotationsSummaryCollector = annotationsSummaryCollector;
+    }
+
     @Override
     @QueryMapping(name = SchemaConstants.Query.ANNOTATIONS)
     public Flux<Document> annotations(
@@ -41,7 +51,7 @@ public class AnnotationsController implements AnnotationsQuery<Flux<Document>> ,
             @Argument(name = SchemaConstants.Param.ANNOTATION_FILTERS) List<AnnotationFilter> annotationFilters,
             @Argument(name = SchemaConstants.Param.RANGE) List<Integer> range
             ) {
-        return AnnotationsCollector.getAnnotations(queryId, reference, annotationReferences, annotationFilters, range);
+        return annotationsCollector.getAnnotations(queryId, reference, annotationReferences, annotationFilters, range);
     }
 
     @Override
@@ -52,7 +62,7 @@ public class AnnotationsController implements AnnotationsQuery<Flux<Document>> ,
             @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences,
             @Argument(name = SchemaConstants.Param.ANNOTATION_FILTERS) List<AnnotationFilter> annotationFilters
     ) {
-        return AnnotationsCollector.getAnnotations(groupId, group, annotationReferences, annotationFilters);
+        return annotationsCollector.getAnnotations(groupId, group, annotationReferences, annotationFilters);
     }
 
     @Override
@@ -63,7 +73,7 @@ public class AnnotationsController implements AnnotationsQuery<Flux<Document>> ,
             @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences,
             @Argument(name = SchemaConstants.Param.ANNOTATION_FILTERS) List<AnnotationFilter> annotationFilters
     ) {
-        return AnnotationsSummaryCollector.getAnnotations(groupId, group, annotationReferences, annotationFilters);
+        return annotationsSummaryCollector.getAnnotations(groupId, group, annotationReferences, annotationFilters);
     }
 
     @Override
@@ -75,7 +85,7 @@ public class AnnotationsController implements AnnotationsQuery<Flux<Document>> ,
             @Argument(name = SchemaConstants.Param.ANNOTATION_FILTERS) List<AnnotationFilter> annotationFilters,
             @Argument(name = SchemaConstants.Param.RANGE) List<Integer> range
     ) {
-        return AnnotationsCollector.getAnnotations(queryId, reference, annotationReferences, annotationFilters, range);
+        return annotationsCollector.getAnnotations(queryId, reference, annotationReferences, annotationFilters, range);
     }
 
     @Override
@@ -86,6 +96,6 @@ public class AnnotationsController implements AnnotationsQuery<Flux<Document>> ,
             @Argument(name = SchemaConstants.Param.SOURCES) List<AnnotationReference> annotationReferences,
             @Argument(name = SchemaConstants.Param.ANNOTATION_FILTERS) List<AnnotationFilter> annotationFilters
     ) {
-        return AnnotationsCollector.getAnnotations(groupId, group, annotationReferences, annotationFilters);
+        return annotationsCollector.getAnnotations(groupId, group, annotationReferences, annotationFilters);
     }
 }
