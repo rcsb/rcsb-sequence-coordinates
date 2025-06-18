@@ -69,13 +69,7 @@ public class SequenceAlignmentsCollector implements AlignmentsCollector {
     }
 
     public static Flux<String> mapIds(SequenceReference from, SequenceReference to, List<String> ids){
-        if(equivalentReferences(from,to))
-            return MapCollector.mapEquivalentReferences(from, to, ids);
-        return getMapDocuments(
-                getCollection(from, to),
-                getIndex(from, to),
-                ids
-        ).map(map -> map.getString(getAltIndex(from, to)));
+        return MapCollector.mapIds(from, to, ids);
     }
 
     private static Flux<Document> getMapDocuments(String collection, String attribute, List<String> ids){

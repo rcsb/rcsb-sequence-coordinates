@@ -135,8 +135,7 @@ public class GenomeAlignmentsCollector implements AlignmentsCollector {
     }
 
     private Flux<String> mapNcbiProteinToReference(Document genomeMap, SequenceReference to){
-        return SequenceAlignmentsCollector
-                .mapIds(SequenceReference.NCBI_PROTEIN, to, List.of(genomeMap.getString(SchemaConstants.Field.TARGET_ID)));
+        return MapCollector.mapIds(SequenceReference.NCBI_PROTEIN, to, List.of(genomeMap.getString(SchemaConstants.Field.TARGET_ID)));
     }
 
     private Flux<Document> getAlignmentDocuments(String collection, String attribute, String id){

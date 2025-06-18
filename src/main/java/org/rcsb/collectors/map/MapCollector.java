@@ -4,6 +4,8 @@
 
 package org.rcsb.collectors.map;
 
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.rcsb.graphqlschema.reference.SequenceReference;
 import org.rcsb.utils.MongoStream;
 import reactor.core.publisher.Flux;
@@ -13,6 +15,9 @@ import java.util.Objects;
 
 import static com.mongodb.client.model.Aggregates.match;
 import static com.mongodb.client.model.Filters.*;
+import static org.rcsb.collectors.alignments.AlignmentsMongoHelper.*;
+import static org.rcsb.collectors.alignments.AlignmentsMongoHelper.mapFields;
+import static org.rcsb.collectors.alignments.AlignmentsReferenceHelper.equivalentReferences;
 import static org.rcsb.collectors.map.MapHelper.*;
 
 /**
@@ -47,6 +52,24 @@ public class MapCollector {
                 from,
                 to
         ));
+    }
+
+    public static Flux<String> mapIds(SequenceReference from, SequenceReference to, List<String> ids){
+        if(equivalentReferences(from,to))
+            return mapEquivalentReferences(from, to, ids);
+        return getMapDocuments(
+                getCollection(from, to),
+                getIndex(from, to),
+                ids
+        ).map(map -> map.getString(getAltIndex(from, to)));
+    }
+
+    private static Flux<Document> getMapDocuments(String collection, String attribute, List<String> ids){
+        List<Bson> aggregation = List.of(
+                match(in(attribute, ids)),
+                mapFields()
+        );
+        return Flux.from(MongoStream.getMongoDatabase().getCollection(collection).aggregate(aggregation));
     }
 
     private static Flux<String> pdbInstanceToEntityMap(String id){
