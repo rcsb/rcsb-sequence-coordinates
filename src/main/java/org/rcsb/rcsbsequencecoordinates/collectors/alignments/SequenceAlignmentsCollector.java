@@ -38,6 +38,7 @@ public class SequenceAlignmentsCollector implements AlignmentsCollector {
 
     public AlignmentsCollector request(String queryId, SequenceReference from, SequenceReference to) {
         if(testGenome(from, to))
+            // TODO remove circular dependency between GenomeAlignmentsCollector and SequenceAlignmentsCollector
             return GenomeAlignmentsCollector.request(queryId, from, to, mongoResource, this);
         return ProteinAlignmentsCollector.request(mongoResource, queryId, from, to);
     }
