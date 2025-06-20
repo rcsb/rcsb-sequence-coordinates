@@ -36,16 +36,15 @@ public class ReactiveMongoConfig {
         }
         String userEncoded = URLEncoder.encode(props.getUsername(), StandardCharsets.UTF_8);
         String pwdEncoded = URLEncoder.encode(new String(props.getPassword()), StandardCharsets.UTF_8);
-        String uriNoPort = String.format("%s://%s:%s@%s",
+        String extraParams = buildParamsString(props.getSsl() != null && props.getSsl().isEnabled(), props.getReplicaSetName());
+        String uri = String.format("%s://%s:%s@%s%s/%s%s",
                 seqCoordAppConfigs.getMongoDbUriScheme(),
                 userEncoded,
                 pwdEncoded,
-                props.getHost());
-        final String uri;
-        if (props.getPort()!=null && props.getPort() > 0)
-            uri = uriNoPort + ":" + props.getPort();
-        else
-            uri = uriNoPort;
+                props.getHost(),
+                props.getPort()!=null && props.getPort()>0 ? ":" + props.getPort() : "",
+                props.getAuthenticationDatabase(),
+                extraParams);
         logger.info("Reactive MongoDB connection final connection URI: {}", getUriRedacted(uri, userEncoded, pwdEncoded));
         return () -> new ConnectionString(uri);
     }
@@ -62,5 +61,13 @@ public class ReactiveMongoConfig {
 
     private String getUriRedacted(String uri, String userEncoded, String pwdEncoded) {
         return uri.replace(userEncoded, "********").replace(pwdEncoded, "********");
+    }
+
+    private String buildParamsString(boolean sslEnabled, String replicaSet) {
+        String repSetStr = "";
+        if (replicaSet != null && !replicaSet.isEmpty()) {
+            repSetStr = "&replicaSet=" + replicaSet;
+        }
+        return "?ssl=" + sslEnabled + repSetStr;
     }
 }
