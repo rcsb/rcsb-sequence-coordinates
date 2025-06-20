@@ -99,6 +99,8 @@ spec:
                   key: mongodb_pwd
             - name: JAVA_TOOL_OPTIONS
               value: -javaagent:/elastic/apm/agent/elastic-apm-agent.jar
+            - name: ELASTIC_APM_ENABLED
+              value: "{{ $.Values.elasticAPM.elasticAPMEnabled }}"
             - name: ELASTIC_APM_SERVER_URL
               value: {{ $.Values.elasticAPM.elasticAPMServerUrl }}
             - name: ELASTIC_APM_SERVICE_NAME
