@@ -35,7 +35,7 @@ public class LoggingInstrumentationConfig {
                     InstrumentationExecutionParameters parameters,
                     InstrumentationState state
             ) {
-                log.info("GraphQL query:\n{}\nvariables: {}", executionInput.getQuery(), executionInput.getVariables());
+                log.debug("GraphQL query:\n{}\nvariables: {}", executionInput.getQuery(), executionInput.getVariables());
                 return executionInput;
             }
         };
