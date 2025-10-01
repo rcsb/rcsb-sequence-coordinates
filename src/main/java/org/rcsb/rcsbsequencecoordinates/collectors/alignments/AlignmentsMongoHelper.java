@@ -88,13 +88,13 @@ public class AlignmentsMongoHelper {
 
     public static Bson getSortFields(SequenceReference from, SequenceReference to){
         if(from.equals(SequenceReference.NCBI_PROTEIN))
-            return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END);
+            return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END, SequenceCoordinatesConstants.TARGET_ID);
         if(to.equals(SequenceReference.NCBI_PROTEIN))
-            return sortAggregator(SequenceCoordinatesConstants.TARGET_BEGIN, SequenceCoordinatesConstants.TARGET_END);
+            return sortAggregator(SequenceCoordinatesConstants.TARGET_BEGIN, SequenceCoordinatesConstants.TARGET_END, SequenceCoordinatesConstants.QUERY_ID);
         if(from.equals(SequenceReference.UNIPROT))
-            return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END);
+            return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END,  SequenceCoordinatesConstants.TARGET_ID);
         if(to.equals(SequenceReference.UNIPROT))
-            return sortAggregator(SequenceCoordinatesConstants.TARGET_BEGIN, SequenceCoordinatesConstants.TARGET_END);
+            return sortAggregator(SequenceCoordinatesConstants.TARGET_BEGIN, SequenceCoordinatesConstants.TARGET_END, SequenceCoordinatesConstants.QUERY_ID);
         if(equivalentReferences(from, to))
             return sortAggregator(SequenceCoordinatesConstants.QUERY_BEGIN, SequenceCoordinatesConstants.QUERY_END);
         throw new RuntimeException(
