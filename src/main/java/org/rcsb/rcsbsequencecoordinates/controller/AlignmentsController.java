@@ -5,6 +5,8 @@
 package org.rcsb.rcsbsequencecoordinates.controller;
 
 import graphql.schema.DataFetchingEnvironment;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.bson.Document;
 import org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentLengthCollector;
 import org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentLogoCollector;
@@ -111,8 +113,8 @@ public class AlignmentsController implements AlignmentsQuery<Mono<Document>>, Al
     @SchemaMapping(typeName = SequenceAlignments.CLASS_NAME, field = GraphqlSchemaMapping.TARGET_ALIGNMENTS)
     public Flux<Document> getTargetAlignments(
             DataFetchingEnvironment dataFetchingEnvironment,
-            @Argument(name = SchemaConstants.Param.FIRST) Integer first,
-            @Argument(name = SchemaConstants.Param.OFFSET) Integer offset
+            @Argument(name = SchemaConstants.Param.FIRST) @Positive Integer first,
+            @Argument(name = SchemaConstants.Param.OFFSET) @PositiveOrZero Integer offset
     ){
         if(getQueryName(dataFetchingEnvironment).equals(SchemaConstants.Query.ALIGNMENTS))
             return sequenceAlignmentsCollector
