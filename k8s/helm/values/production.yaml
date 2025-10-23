@@ -90,11 +90,26 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
+    - host: sequence-coordinates.rcsb.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: sequence-coordinates-west.rcsb.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: sequence-coordinates-east.rcsb.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
   tls:
     - hosts:
         - seqcoordinates.k8s.rcsb.org
         - seqcoordinates.east.k8s.rcsb.org
         - seqcoordinates.west.k8s.rcsb.org
+        - sequence-coordinates.rcsb.org
+        - sequence-coordinates-west.rcsb.org
+        - sequence-coordinates-east.rcsb.org
       secretName: seqcoordinates.k8s.rcsb.org-tls
 
 # App specific configurations
