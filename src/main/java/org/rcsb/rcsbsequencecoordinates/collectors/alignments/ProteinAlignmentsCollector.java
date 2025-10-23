@@ -20,6 +20,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -84,8 +85,9 @@ public class ProteinAlignmentsCollector implements AlignmentsCollector {
 
     @Override
     public AlignmentsCollector page(Integer first, Integer offset){
-        if(first != null && offset != null)
-            page = List.of(offset, first);
+        if(first == null && offset == null)
+            return this;
+        page = List.of(Objects.requireNonNullElse(offset, 0), Objects.requireNonNullElse(first, 1));
         return this;
     }
 
