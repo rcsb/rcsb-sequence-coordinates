@@ -68,7 +68,7 @@ resources:
     cpu: 48
     memory: 96Gi
   requests:
-    cpu: 32
+    cpu: 4
     memory: 64Gi
 
 ingress:
