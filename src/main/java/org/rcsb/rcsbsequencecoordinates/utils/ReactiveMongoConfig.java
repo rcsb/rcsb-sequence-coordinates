@@ -36,7 +36,7 @@ public class ReactiveMongoConfig {
         }
         String userEncoded = URLEncoder.encode(props.getUsername(), StandardCharsets.UTF_8);
         String pwdEncoded = URLEncoder.encode(new String(props.getPassword()), StandardCharsets.UTF_8);
-        String extraParams = buildParamsString(props.getSsl() != null && props.getSsl().isEnabled(), props.getReplicaSetName());
+        String extraParams = buildParamsString(props.getSsl() != null && props.getSsl().isEnabled(), props.getReplicaSetName(), seqCoordAppConfigs.getReadPreference());
         String uri = String.format("%s://%s:%s@%s%s/%s%s",
                 seqCoordAppConfigs.getMongoDbUriScheme(),
                 userEncoded,
@@ -63,11 +63,15 @@ public class ReactiveMongoConfig {
         return uri.replace(userEncoded, "********").replace(pwdEncoded, "********");
     }
 
-    private String buildParamsString(boolean sslEnabled, String replicaSet) {
+    private String buildParamsString(boolean sslEnabled, String replicaSet, String readPreference) {
         String repSetStr = "";
         if (replicaSet != null && !replicaSet.isEmpty()) {
             repSetStr = "&replicaSet=" + replicaSet;
         }
-        return "?ssl=" + sslEnabled + repSetStr;
+        String readPrefStr = "";
+        if (readPreference != null && !readPreference.isEmpty()) {
+            readPrefStr = "&readPreference=" + readPreference;
+        }
+        return "?ssl=" + sslEnabled + repSetStr + readPrefStr;
     }
 }

@@ -128,6 +128,7 @@ seqcoordAppProperties:
     spring.data.mongodb.replica-set-name=production-mongodb-borrego-a
     spring.data.mongodb.ssl.enabled=false    
     seqcoords.mongo-db-uri-scheme=mongodb+srv
+    seqcoords.read-preference=secondaryPreferred
   seqcoord.b.app.properties: |-
     spring.data.mongodb.host=production-mongodb-borrego-b-svc.production.svc.cluster.local
     spring.data.mongodb.database=annot
@@ -135,6 +136,7 @@ seqcoordAppProperties:
     spring.data.mongodb.replica-set-name=production-mongodb-borrego-b
     spring.data.mongodb.ssl.enabled=false    
     seqcoords.mongo-db-uri-scheme=mongodb+srv
+    seqcoords.read-preference=secondaryPreferred
 
 javaOptions: "-Xmx20g -server -Dspring.config.additional-location=/var/www/seqcoord.app.properties -Dlog4j.configurationFile=/var/www/log4j2.xml"
 
