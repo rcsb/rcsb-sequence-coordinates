@@ -11,6 +11,7 @@ import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.rcsb.mojave.auto.FeaturesType;
+import org.rcsb.rcsbsequencecoordinates.collectors.alignments.GenomeAlignmentsHelper;
 import org.rcsb.utils.Range;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Projections.*;
+import static org.rcsb.rcsbsequencecoordinates.collectors.alignments.GenomeAlignmentsHelper.mapToGenomeIndex;
 import static org.rcsb.rcsbsequencecoordinates.collectors.map.MapHelper.parseAsymFromInstance;
 import static org.rcsb.rcsbsequencecoordinates.collectors.map.MapHelper.parseEntryFromInstance;
 import static org.rcsb.utils.RangeMethods.intersection;
@@ -195,8 +197,12 @@ public class AnnotationsHelper {
                 alignmentRegion.getInteger(SequenceCoordinatesConstants.QUERY_END)
         );
         return new Document(Map.of(
-                SchemaConstants.Field.BEG_SEQ_ID, mapIndex(intersection.bottom(), targetRange, queryRange),
-                SchemaConstants.Field.END_SEQ_ID, mapIndex(intersection.top(), targetRange, queryRange),
+                SchemaConstants.Field.BEG_SEQ_ID, alignmentRegion.containsKey(SequenceCoordinatesConstants.EXON_SHIFT) ?
+                        mapToGenomeIndex(intersection.bottom(), targetRange, queryRange).get(0) :
+                        mapIndex(intersection.bottom(), targetRange, queryRange),
+                SchemaConstants.Field.END_SEQ_ID, alignmentRegion.containsKey(SequenceCoordinatesConstants.EXON_SHIFT) ?
+                        mapToGenomeIndex(intersection.top(), targetRange, queryRange).get(2) :
+                        mapIndex(intersection.top(), targetRange, queryRange),
                 SchemaConstants.Field.BEG_ORI_ID, intersection.bottom(),
                 SchemaConstants.Field.END_ORI_ID, intersection.top(),
                 SchemaConstants.Field.OPEN_BEGIN, intersection.bottom() != featureRegion.getInteger(SequenceCoordinatesConstants.BEG_SEQ_ID),
