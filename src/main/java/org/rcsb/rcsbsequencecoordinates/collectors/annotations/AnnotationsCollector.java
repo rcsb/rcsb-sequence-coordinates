@@ -5,10 +5,9 @@
 package org.rcsb.rcsbsequencecoordinates.collectors.annotations;
 
 import org.bson.Document;
+import org.rcsb.rcsbsequencecoordinates.collectors.alignments.AlignmentsCollector;
 import org.rcsb.rcsbsequencecoordinates.collectors.alignments.SequenceAlignmentsCollector;
 import org.rcsb.rcsbsequencecoordinates.collectors.utils.AnnotationFilterOperator;
-import org.rcsb.rcsbsequencecoordinates.collectors.utils.AnnotationRangeIntersection;
-import org.rcsb.rcsbsequencecoordinates.collectors.utils.RangeIntersectionOperator;
 import org.rcsb.graphqlschema.params.AnnotationFilter;
 import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.reference.GroupReference;
@@ -46,10 +45,10 @@ public class AnnotationsCollector {
             List<AnnotationFilter> annotationFilters,
             List<Integer> range
     ) {
-        RangeIntersectionOperator annotationRangeIntersection = new RangeIntersectionOperator(range, new AnnotationRangeIntersection());
-        return getAnnotations(queryId, sequenceReference, annotationReferences, annotationFilters)
-                .filter(annotationRangeIntersection::isConnected)
-                .map(annotationRangeIntersection::applyRange);
+        return Flux.fromIterable(annotationReferences)
+                .flatMap(
+                        annotationReference -> getAnnotations(queryId, sequenceReference, annotationReference, annotationFilters, range)
+                );
     }
 
     public Flux<Document> getAnnotations(
@@ -59,22 +58,10 @@ public class AnnotationsCollector {
             List<AnnotationFilter> annotationFilters
     ){
         if(groupReference.equals(GroupReference.MATCHING_UNIPROT_ACCESSION))
-            return getAnnotations(groupId, SequenceReference.UNIPROT, annotationReferences, annotationFilters);
+            return getAnnotations(groupId, SequenceReference.UNIPROT, annotationReferences, annotationFilters, null);
         return Flux.fromIterable(annotationReferences)
                 .flatMap(
                         annotationReference -> getAnnotations(groupId, groupReference, annotationReference, annotationFilters)
-                );
-    }
-
-    private Flux<Document> getAnnotations(
-            String queryId,
-            SequenceReference sequenceReference,
-            List<AnnotationReference> annotationReferences,
-            List<AnnotationFilter> annotationFilters
-    ) {
-        return Flux.fromIterable(annotationReferences)
-                .flatMap(
-                        annotationReference -> getAnnotations(queryId, sequenceReference, annotationReference, annotationFilters)
                 );
     }
 
@@ -126,14 +113,18 @@ public class AnnotationsCollector {
             String queryId,
             SequenceReference sequenceReference,
             AnnotationReference annotationReference,
-            List<AnnotationFilter> annotationFilters
+            List<AnnotationFilter> annotationFilters,
+            List<Integer> range
     ) {
-        return sequenceAlignmentsCollector
+        AlignmentsCollector alignmentsCollector = sequenceAlignmentsCollector
                 .request(
-                    queryId,
-                    sequenceReference,
-                    annotationReference.toSequenceReference()
-                )
+                        queryId,
+                        sequenceReference,
+                        annotationReference.toSequenceReference()
+                );
+        if(range != null)
+            alignmentsCollector.range(range);
+        return alignmentsCollector
                 .get()
                 .flatMap(
                     alignment -> getAnnotations(annotationReference, annotationFilters, alignment)
@@ -152,7 +143,8 @@ public class AnnotationsCollector {
                .filter(filter::targetCheck)
                .map(filter::applyFilterToFeatures)
                .filter(AnnotationsHelper::hasFeatures)
-               .map(annotations -> mapAnnotations(annotations, alignment));
+               .map(annotations -> mapAnnotations(annotations, alignment))
+               .filter(annotations -> !annotations.isEmpty());
     }
 
     private Flux<Document> switchAlignmentEntityIdToReference(Document alignment, SequenceReference reference){

@@ -11,7 +11,6 @@ import org.rcsb.graphqlschema.reference.AnnotationReference;
 import org.rcsb.graphqlschema.schema.SchemaConstants;
 import org.rcsb.mojave.SequenceCoordinatesConstants;
 import org.rcsb.mojave.auto.FeaturesType;
-import org.rcsb.rcsbsequencecoordinates.collectors.alignments.GenomeAlignmentsHelper;
 import org.rcsb.utils.Range;
 
 import java.util.ArrayList;
@@ -71,12 +70,15 @@ public class AnnotationsHelper {
     }
 
     public static Document mapAnnotations(Document annotations, Document alignment){
+        List<Document> features = annotations.getList(SequenceCoordinatesConstants.FEATURES, Document.class).stream()
+                .map(feature-> mapFeature(feature, alignment))
+                .filter(d->!d.getList(SequenceCoordinatesConstants.FEATURE_POSITIONS, Document.class).isEmpty())
+                .toList();
+        if (features.isEmpty())
+            return new Document();
         annotations.put(
                 SchemaConstants.Field.FEATURES,
-                annotations.getList(SequenceCoordinatesConstants.FEATURES, Document.class).stream()
-                        .map(feature-> mapFeature(feature, alignment))
-                        .filter(d->!d.getList(SequenceCoordinatesConstants.FEATURE_POSITIONS, Document.class).isEmpty())
-                        .toList()
+                features
         );
         return annotations;
     }
@@ -166,7 +168,9 @@ public class AnnotationsHelper {
                 alignmentRegion.getInteger(SequenceCoordinatesConstants.QUERY_END)
         );
         return new Document(Map.of(
-                SchemaConstants.Field.BEG_SEQ_ID, mapIndex(intersection.bottom(), targetRange, queryRange),
+                SchemaConstants.Field.BEG_SEQ_ID, alignmentRegion.containsKey(SequenceCoordinatesConstants.EXON_SHIFT) ?
+                        mapToGenomeIndex(intersection.bottom(), targetRange, queryRange).get(0) :
+                        mapIndex(intersection.bottom(), targetRange, queryRange),
                 SchemaConstants.Field.BEG_ORI_ID, intersection.bottom(),
                 SchemaConstants.Field.VALUES, featureValues.subList(
                         intersection.bottom() - featureRange.bottom(),
