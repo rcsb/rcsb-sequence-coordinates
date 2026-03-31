@@ -23,6 +23,7 @@ import static com.mongodb.client.model.Aggregates.project;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Projections.*;
+import static org.rcsb.rcsbsequencecoordinates.collectors.alignments.GenomeAlignmentsHelper.mapToGenomeIndex;
 import static org.rcsb.rcsbsequencecoordinates.collectors.map.MapHelper.parseAsymFromInstance;
 import static org.rcsb.rcsbsequencecoordinates.collectors.map.MapHelper.parseEntryFromInstance;
 import static org.rcsb.utils.RangeMethods.intersection;
@@ -69,12 +70,15 @@ public class AnnotationsHelper {
     }
 
     public static Document mapAnnotations(Document annotations, Document alignment){
+        List<Document> features = annotations.getList(SequenceCoordinatesConstants.FEATURES, Document.class).stream()
+                .map(feature-> mapFeature(feature, alignment))
+                .filter(d->!d.getList(SequenceCoordinatesConstants.FEATURE_POSITIONS, Document.class).isEmpty())
+                .toList();
+        if (features.isEmpty())
+            return new Document();
         annotations.put(
                 SchemaConstants.Field.FEATURES,
-                annotations.getList(SequenceCoordinatesConstants.FEATURES, Document.class).stream()
-                        .map(feature-> mapFeature(feature, alignment))
-                        .filter(d->!d.getList(SequenceCoordinatesConstants.FEATURE_POSITIONS, Document.class).isEmpty())
-                        .toList()
+                features
         );
         return annotations;
     }
@@ -164,7 +168,9 @@ public class AnnotationsHelper {
                 alignmentRegion.getInteger(SequenceCoordinatesConstants.QUERY_END)
         );
         return new Document(Map.of(
-                SchemaConstants.Field.BEG_SEQ_ID, mapIndex(intersection.bottom(), targetRange, queryRange),
+                SchemaConstants.Field.BEG_SEQ_ID, alignmentRegion.containsKey(SequenceCoordinatesConstants.EXON_SHIFT) ?
+                        mapToGenomeIndex(intersection.bottom(), targetRange, queryRange).get(0) :
+                        mapIndex(intersection.bottom(), targetRange, queryRange),
                 SchemaConstants.Field.BEG_ORI_ID, intersection.bottom(),
                 SchemaConstants.Field.VALUES, featureValues.subList(
                         intersection.bottom() - featureRange.bottom(),
@@ -195,8 +201,12 @@ public class AnnotationsHelper {
                 alignmentRegion.getInteger(SequenceCoordinatesConstants.QUERY_END)
         );
         return new Document(Map.of(
-                SchemaConstants.Field.BEG_SEQ_ID, mapIndex(intersection.bottom(), targetRange, queryRange),
-                SchemaConstants.Field.END_SEQ_ID, mapIndex(intersection.top(), targetRange, queryRange),
+                SchemaConstants.Field.BEG_SEQ_ID, alignmentRegion.containsKey(SequenceCoordinatesConstants.EXON_SHIFT) ?
+                        mapToGenomeIndex(intersection.bottom(), targetRange, queryRange).get(0) :
+                        mapIndex(intersection.bottom(), targetRange, queryRange),
+                SchemaConstants.Field.END_SEQ_ID, alignmentRegion.containsKey(SequenceCoordinatesConstants.EXON_SHIFT) ?
+                        mapToGenomeIndex(intersection.top(), targetRange, queryRange).get(2) :
+                        mapIndex(intersection.top(), targetRange, queryRange),
                 SchemaConstants.Field.BEG_ORI_ID, intersection.bottom(),
                 SchemaConstants.Field.END_ORI_ID, intersection.top(),
                 SchemaConstants.Field.OPEN_BEGIN, intersection.bottom() != featureRegion.getInteger(SequenceCoordinatesConstants.BEG_SEQ_ID),

@@ -156,7 +156,7 @@ public class GenomeAlignmentsHelper {
         return genomeAlignment.getInteger(SchemaConstants.Field.ORIENTATION);
     }
 
-    private static List<Integer> mapToGenomeIndex(int proteinIndex, Range proteinRange, Range genomeRange){
+    public static List<Integer> mapToGenomeIndex(int proteinIndex, Range proteinRange, Range genomeRange){
         if(!proteinRange.contains(proteinIndex))
             return List.of();
         int begin = 3 * (proteinIndex - proteinRange.bottom()) + genomeRange.bottom();
