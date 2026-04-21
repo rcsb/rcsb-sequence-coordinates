@@ -60,7 +60,7 @@ service:
   containerPort: 8080
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 3
   maxReplicas: 6
   targetCPUUtilization: 6000m
