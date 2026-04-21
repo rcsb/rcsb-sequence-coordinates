@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 3
 revisionHistoryLimit: 3
 
 # vaultSecretStoreName is the name of the ClusterSecretStore resource to pull secret credentials
@@ -60,8 +60,8 @@ service:
   containerPort: 8080
 
 autoscaling:
-  enabled: true
-  minReplicas: 2
+  enabled: false
+  minReplicas: 3
   maxReplicas: 6
   targetCPUUtilization: 6000m
   targetMemoryUtilization: 60Gi
@@ -77,47 +77,6 @@ resources:
   requests:
     cpu: 4
     memory: 64Gi
-
-ingress:
-  enabled: true
-  className: "haproxy"
-  annotations:
-    cert-manager.io/cluster-issuer: rutgers-acme
-    kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: seqcoordinates.k8s.rcsb.org
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-    - host: seqcoordinates.east.k8s.rcsb.org
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-    - host: seqcoordinates.west.k8s.rcsb.org
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-    - host: sequence-coordinates.rcsb.org
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-    - host: sequence-coordinates-west.rcsb.org
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-    - host: sequence-coordinates-east.rcsb.org
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls:
-    - hosts:
-        - seqcoordinates.k8s.rcsb.org
-        - seqcoordinates.east.k8s.rcsb.org
-        - seqcoordinates.west.k8s.rcsb.org
-        - sequence-coordinates.rcsb.org
-        - sequence-coordinates-west.rcsb.org
-        - sequence-coordinates-east.rcsb.org
-      secretName: seqcoordinates.k8s.rcsb.org-tls
 
 # App specific configurations
 seqcoordAppProperties:
