@@ -84,7 +84,7 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: rutgers-acme
     kubernetes.io/tls-acme: "true"
-    haproxy.org/allow-list:
+    haproxy.org/allow-list: ""
   hosts:
     - host:
       paths:
