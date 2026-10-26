@@ -117,7 +117,7 @@ seqcoordAppProperties:
   seqcoord.a.app.properties:
   seqcoord.b.app.properties:
 
-javaOptions: "-Xmx20g -server -Dspring.config.additional-location=/var/www -Dlog4j.configurationFile=/var/www/log4j2.xml"
+javaOptions: "-Xmx20g -server -Dspring.config.additional-location=/var/www/seqcoord.app.properties -Dlog4j.configurationFile=/var/www/log4j2.xml"
 
 elasticAPM:
   elasticAPMEnabled: true
