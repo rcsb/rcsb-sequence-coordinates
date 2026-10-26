@@ -1,0 +1,73 @@
+image:
+  repository: harbor.devops.k8s.rcsb.org/rcsb/rcsb-sequence-coordinates
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "production"
+
+autoscaling:
+  enabled: false
+
+ingress:
+  enabled: true
+  className: "haproxy"
+  annotations:
+    cert-manager.io/cluster-issuer: rutgers-acme
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: seqcoordinates-beta.k8s.rcsb.org
+      # no coast: this name can resolve to either cluster, so both request its cert
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: seqcoordinates-beta.east.k8s.rcsb.org
+      coast: east
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: seqcoordinates-beta.west.k8s.rcsb.org
+      coast: west
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: sequence-coordinates-beta.rcsb.org
+      # no coast: this name can resolve to either cluster, so both request its cert
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: sequence-coordinates-beta-west.rcsb.org
+      coast: west
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+    - host: sequence-coordinates-beta-east.rcsb.org
+      coast: east
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  # One single-name cert per host in ingress.hosts (secret <host>-tls); the current
+  # ACME provider rejects multi-SAN requests. A host's `coast` is the cluster whose
+  # DNS it resolves to; only that cluster requests its cert (ingress.coast is set by
+  # ArgoCD from the cluster's regionID).
+  tlsPerHost: true
+
+# App specific configurations
+seqcoordAppProperties:
+  seqcoord.a.app.properties: |-
+    spring.data.mongodb.host=production-mongodb-borrego-a-svc.prod-ext-ids.svc.cluster.local
+    spring.data.mongodb.database=annot
+    spring.data.mongodb.authentication-database=admin
+    spring.data.mongodb.replica-set-name=production-mongodb-borrego-a
+    spring.data.mongodb.ssl.enabled=false    
+    seqcoords.mongo-db-uri-scheme=mongodb+srv
+    seqcoords.read-preference=secondaryPreferred
+  seqcoord.b.app.properties: |-
+    spring.data.mongodb.host=production-mongodb-borrego-b-svc.prod-ext-ids.svc.cluster.local
+    spring.data.mongodb.database=annot
+    spring.data.mongodb.authentication-database=admin
+    spring.data.mongodb.replica-set-name=production-mongodb-borrego-b
+    spring.data.mongodb.ssl.enabled=false    
+    seqcoords.mongo-db-uri-scheme=mongodb+srv
+    seqcoords.read-preference=secondaryPreferred
+
+elasticAPM:
+  elasticAPMEnabled: false
