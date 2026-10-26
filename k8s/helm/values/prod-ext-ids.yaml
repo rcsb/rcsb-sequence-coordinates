@@ -53,19 +53,19 @@ ingress:
 # App specific configurations
 seqcoordAppProperties:
   seqcoord.a.app.properties: |-
-    spring.data.mongodb.host=production-mongodb-borrego-a-svc.prod-ext-ids.svc.cluster.local
+    spring.data.mongodb.host=prod-ext-ids-mongodb-borrego-a-svc.prod-ext-ids.svc.cluster.local
     spring.data.mongodb.database=annot
     spring.data.mongodb.authentication-database=admin
-    spring.data.mongodb.replica-set-name=production-mongodb-borrego-a
-    spring.data.mongodb.ssl.enabled=false    
+    spring.data.mongodb.replica-set-name=prod-ext-ids-mongodb-borrego-a
+    spring.data.mongodb.ssl.enabled=false
     seqcoords.mongo-db-uri-scheme=mongodb+srv
     seqcoords.read-preference=secondaryPreferred
   seqcoord.b.app.properties: |-
-    spring.data.mongodb.host=production-mongodb-borrego-b-svc.prod-ext-ids.svc.cluster.local
+    spring.data.mongodb.host=prod-ext-ids-mongodb-borrego-b-svc.prod-ext-ids.svc.cluster.local
     spring.data.mongodb.database=annot
     spring.data.mongodb.authentication-database=admin
-    spring.data.mongodb.replica-set-name=production-mongodb-borrego-b
-    spring.data.mongodb.ssl.enabled=false    
+    spring.data.mongodb.replica-set-name=prod-ext-ids-mongodb-borrego-b
+    spring.data.mongodb.ssl.enabled=false
     seqcoords.mongo-db-uri-scheme=mongodb+srv
     seqcoords.read-preference=secondaryPreferred
 
